@@ -21,6 +21,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.util.XMLUtil;
 
 public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T> {
 
@@ -64,16 +65,16 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	public abstract String getUnmarshallingXPath();
 	
 	@SuppressWarnings("unchecked")
-	public T unmarshall(Node aDocument){
+	public List<T> unmarshall(Node aDocument){
 		try {
-			return (T) getUnmarshallingClass().getDeclaredMethod("unmarshall", List.class).invoke(null, xPathList(aDocument, getUnmarshallingXPath()));
+			return (List<T>) XMLUtil.unmarshall(xPathList(aDocument, getUnmarshallingXPath()), getUnmarshallingClass());
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 	
 	@Override
-	public T execute() {
+	public List<T> execute() {
 
 		HttpClient client = new DefaultHttpClient();
 

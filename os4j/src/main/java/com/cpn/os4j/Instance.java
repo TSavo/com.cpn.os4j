@@ -1,8 +1,5 @@
 package com.cpn.os4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -14,13 +11,6 @@ public class Instance {
 
 	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
 
-	public static List<Instance> unmarshall(List<Node> aList){
-		ArrayList<Instance> list = new ArrayList<Instance>();
-		for(Node n : aList){
-			list.add(unmarshall(n));
-		}
-		return list;
-	}
 	public static Instance unmarshall(Node aNode) {
 		Instance i = new Instance();
 		XMLUtil r = new XMLUtil(aNode);

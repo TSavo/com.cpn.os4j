@@ -2,6 +2,7 @@ package com.cpn.os4j.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +61,19 @@ public class XMLUtil {
 
 	public static final String xPathString(Node aNode, String anXPath) throws XPathExpressionException {
 		return (String) xPath.compile(anXPath).evaluate(aNode, XPathConstants.STRING);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> unmarshall(List<Node> aList, Class<T> anUnmarshaller){
+		ArrayList<T> list = new ArrayList<T>();
+		for(Node n : aList){
+			try {
+				list.add((T)anUnmarshaller.getDeclaredMethod("unmarshall", Node.class).invoke(null, n));
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		}
+		return list;
 	}
 	
 	public static final Document toXML(String anXMLDoc) {

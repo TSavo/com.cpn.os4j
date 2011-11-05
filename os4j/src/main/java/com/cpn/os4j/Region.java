@@ -1,8 +1,5 @@
 package com.cpn.os4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -17,14 +14,6 @@ public class Region {
 
 	public String toString() {
 		return new ToStringBuilder(this).append("regionName", regionName).append("regionEndpoint", regionEndpoint).toString();
-	}
-
-	public static List<Region> unmarshall(List<Node> aList) {
-		ArrayList<Region> list = new ArrayList<Region>();
-		for (Node n : aList) {
-			list.add(unmarshall(n));
-		}
-		return list;
 	}
 
 	public static Region unmarshall(Node node) {

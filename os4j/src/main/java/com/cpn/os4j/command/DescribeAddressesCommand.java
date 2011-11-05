@@ -2,9 +2,10 @@ package com.cpn.os4j.command;
 
 import java.util.List;
 
+import com.cpn.os4j.IPAddress;
 import com.cpn.os4j.OpenStack;
 
-public class DescribeAddressesCommand extends AbstractOpenStackCommand<List<IPAddress>> {
+public class DescribeAddressesCommand extends AbstractOpenStackCommand<IPAddress> {
 
 	public DescribeAddressesCommand(OpenStack anEndPoint) {
 		super(anEndPoint);

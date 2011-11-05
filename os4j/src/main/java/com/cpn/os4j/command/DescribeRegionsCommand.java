@@ -1,11 +1,9 @@
 package com.cpn.os4j.command;
 
-import java.util.List;
-
 import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.Region;
 
-public class DescribeRegionsCommand extends AbstractOpenStackCommand<List<Region>> {
+public class DescribeRegionsCommand extends AbstractOpenStackCommand<Region> {
 
 	public DescribeRegionsCommand(OpenStack anOpenStack) {
 		super(anOpenStack);

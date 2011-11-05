@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,6 +23,6 @@ public interface OpenStackCommand<T> {
 	public abstract TreeMap<String, String> getQueryString();
 	public abstract OpenStack getEndPoint();
 	public abstract String getAction();
-	public abstract T execute() throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException, ClientProtocolException, IOException, ParserConfigurationException, URISyntaxException, SAXException, XPathExpressionException;
+	public abstract List<T> execute() throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException, ClientProtocolException, IOException, ParserConfigurationException, URISyntaxException, SAXException, XPathExpressionException;
 
 }
