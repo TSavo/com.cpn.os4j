@@ -3,16 +3,38 @@ package com.cpn.os4j;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
+import com.cpn.os4j.cache.Cacheable;
+import com.cpn.os4j.command.GetConsoleOutputCommand;
+import com.cpn.os4j.command.RebootInstancesCommand;
 import com.cpn.os4j.util.XMLUtil;
 
-public class Instance {
+@SuppressWarnings("serial")
+@Immutable
+public class Instance implements Cacheable<String>{
 
 	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
 
-	public static Instance unmarshall(Node aNode) {
-		Instance i = new Instance();
+	private OpenStack endPoint;
+
+	private Instance(OpenStack anEndPoint) {
+		endPoint = anEndPoint;
+	}
+
+	@Override
+	public String getKey() {
+		return instanceId;
+	}
+	
+	
+	public OpenStack getEndPoint(){
+		return endPoint;
+	}
+	
+	public static Instance unmarshall(Node aNode, OpenStack anEndPoint) {
+		Instance i = new Instance(anEndPoint);
 		XMLUtil r = new XMLUtil(aNode);
 		try {
 			i.displayName = r.get("displayName");
@@ -40,11 +62,20 @@ public class Instance {
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("displayName", displayName).append("rootDeviceType", rootDeviceType).append("keyName", keyName).append("instanceId", instanceId).append("instanceState", instanceState).append("publicDnsName", publicDnsName).append("imageId", imageId)
-				.append("privateDnsName", privateDnsName).append("launchTime", launchTime).append("amiLaunchIndex", amiLaunchIndex).append("rootDeviceName", rootDeviceName).append("ramdiskId", ramdiskId)
-				.append("ipAddress", ipAddress).append("instanceType", instanceType).append("privateIpAddress", privateIpAddress);
+				.append("privateDnsName", privateDnsName).append("launchTime", launchTime).append("amiLaunchIndex", amiLaunchIndex).append("rootDeviceName", rootDeviceName).append("ramdiskId", ramdiskId).append("ipAddress", ipAddress)
+				.append("instanceType", instanceType).append("privateIpAddress", privateIpAddress);
 		return builder.toString();
 	}
 
+	public Instance reboot(){
+		new RebootInstancesCommand(endPoint, this).execute();
+		endPoint.getInstances();
+		return this;
+	}
+	
+	public ConsoleOutput getConsoleOutput(){
+		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
+	}
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -88,7 +119,6 @@ public class Instance {
 	public String getRootDeviceName() {
 		return rootDeviceName;
 	}
-
 
 	public String getRamdiskId() {
 		return ramdiskId;

@@ -1,7 +1,5 @@
 package com.cpn.os4j.command;
 
-import java.util.List;
-
 import com.cpn.os4j.Instance;
 import com.cpn.os4j.OpenStack;
 

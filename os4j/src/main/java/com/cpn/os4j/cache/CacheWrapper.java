@@ -1,10 +1,14 @@
 package com.cpn.os4j.cache;
 
-public interface CacheWrapper<K, V>
+import java.util.List;
+
+public interface CacheWrapper<K, V extends Cacheable<K>>
 {
-  void put(K key, V value);
+  CacheWrapper<K, V> put(K key, V value);
 
   V get(K key);
 
-	public abstract void removeAll();
+	public abstract CacheWrapper<K, V> removeAll();
+
+	public abstract CacheWrapper<K, V> putAll(List<V> aList);
 }

@@ -10,7 +10,6 @@ import java.util.TreeMap;
 
 import org.junit.Test;
 
-import com.cpn.os4j.command.DescribeRegionsCommand;
 import com.cpn.os4j.command.OpenStackCommand;
 import com.cpn.os4j.signature.HmacSHA256SignatureStrategy;
 import com.cpn.os4j.signature.SignatureStrategy;
@@ -21,7 +20,18 @@ public class OpenStackTest {
 
 	static {
 		try {
-			ep = new OpenStack(new URI("http://10.1.10.249:8773/services/Cloud/"), "ed391003-88b9-4408-9e87-1a87ba460121%3Avsp", "e23517e4-f511-47f3-8b93-3e595a0607ca");
+			ep = new OpenStack(new URI("http://10.1.10.249:8773/services/Cloud/"), new OpenStackCredentials() {
+				
+				@Override
+				public String getSecretKey() {
+					return "e23517e4-f511-47f3-8b93-3e595a0607ca";
+				}
+				
+				@Override
+				public String getAccessKey() {
+					return "ed391003-88b9-4408-9e87-1a87ba460121%3Avsp";
+				}
+			});
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -40,8 +50,11 @@ public class OpenStackTest {
 
 		OpenStack os = mock(OpenStack.class);
 		URI uri = new URI("http://10.1.10.249:8773/services/Cloud/");
+		OpenStackCredentials creds = mock(OpenStackCredentials.class);
+		
 		when(os.getURI()).thenReturn(uri);
-		when(os.getSecretKey()).thenReturn("e23517e4-f511-47f3-8b93-3e595a0607ca");
+		when(os.getCredentials()).thenReturn(creds);
+		when(creds.getSecretKey()).thenReturn("e23517e4-f511-47f3-8b93-3e595a0607ca");
 
 		OpenStackCommand<?> command = mock(OpenStackCommand.class);
 		when(command.getQueryString()).thenReturn(map);
@@ -54,12 +67,6 @@ public class OpenStackTest {
 	}
 
 	@Test
-	public void testDescribeRegionsCommand() throws Exception {
-		DescribeRegionsCommand command = new DescribeRegionsCommand(ep);
-		System.out.println(command.execute());
-	}
-
-	@Test
 	public void testGetRegions() throws Exception {
 		System.out.println(ep.getRegions());
 	}
@@ -69,4 +76,38 @@ public class OpenStackTest {
 		System.out.println(ep.getInstances());
 	}
 
+	@Test
+	public void testGetIpAddresses() throws Exception {
+		System.out.println(ep.getIPAddresses());
+	}
+
+	@Test
+	public void testGetSecurityGroups() throws Exception {
+		System.out.println(ep.getSecurityGroups());
+	}
+
+	@Test
+	public void testGetVolumes() throws Exception {
+		System.out.println(ep.getVolumes());
+	}
+
+	@Test
+	public void testGetImages() throws Exception {
+		System.out.println(ep.getImages());
+	}
+	
+	@Test
+	public void testKeyPairs() throws Exception {
+		System.out.println(ep.getKeyPairs());
+	}
+
+	@Test
+	public void testRebootInstances() throws Exception {
+		ep.getInstances().get(0).reboot();
+	}
+
+	@Test
+	public void testGetConsoleOutput() throws Exception {
+		System.out.println(ep.getInstances().get(0).getConsoleOutput());
+	}
 }

@@ -7,6 +7,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.cpn.os4j.command.OpenStackCommand;
 
@@ -24,11 +25,18 @@ public class HmacSHA256SignatureStrategy implements SignatureStrategy {
 	}
 
 	@Override
+	public String toString() {
+		ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("getSignatureMethod()", getSignatureMethod()).append("getSignatureVersion()", getSignatureVersion());
+		return builder.toString();
+	}
+
+	@Override
 	public String getSignature(OpenStackCommand<?> aCommand) {
 		Mac mac;
 		try {
 			mac = Mac.getInstance("HmacSHA256");
-			mac.init(new SecretKeySpec(aCommand.getEndPoint().getSecretKey().getBytes(), "HmacSHA256"));
+			mac.init(new SecretKeySpec(aCommand.getEndPoint().getCredentials().getSecretKey().getBytes(), "HmacSHA256"));
 		} catch (NoSuchAlgorithmException | InvalidKeyException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

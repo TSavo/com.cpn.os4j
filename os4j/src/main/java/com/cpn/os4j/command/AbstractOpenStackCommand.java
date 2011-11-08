@@ -32,7 +32,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 
 	public AbstractOpenStackCommand(OpenStack anEndPoint) {
 		endPoint = anEndPoint;
-		queryString.put("AWSAccessKeyId", endPoint.getAccessKeyId());
+		queryString.put("AWSAccessKeyId", endPoint.getCredentials().getAccessKey());
 		queryString.put("SignatureMethod", endPoint.getSignatureStrategy().getSignatureMethod());
 		queryString.put("SignatureVersion", new Integer(endPoint.getSignatureStrategy().getSignatureVersion()).toString());
 		queryString.put("Action", getAction());
@@ -60,19 +60,22 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		return "GET";
 	}
 
-	public abstract Class<?> getUnmarshallingClass();
-	
+	public abstract Class<T> getUnmarshallingClass();
+
 	public abstract String getUnmarshallingXPath();
-	
-	@SuppressWarnings("unchecked")
-	public List<T> unmarshall(Node aDocument){
+
+	public List<T> unmarshall(Node aDocument) {
 		try {
-			return (List<T>) XMLUtil.unmarshall(xPathList(aDocument, getUnmarshallingXPath()), getUnmarshallingClass());
+			if (getUnmarshallingClass() != null && getUnmarshallingXPath() != null) {
+				return (List<T>) endPoint.unmarshall(XMLUtil.xPathList(aDocument, getUnmarshallingXPath()), getUnmarshallingClass());
+			} else {
+				return null;
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
 	public List<T> execute() {
 
@@ -105,4 +108,6 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
+	
+
 }
