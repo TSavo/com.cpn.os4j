@@ -1,11 +1,12 @@
-package com.cpn.os4j;
+package com.cpn.os4j.model;
 
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.w3c.dom.Node;
 
-import com.cpn.os4j.cache.Cacheable;
+import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
 @SuppressWarnings("serial")

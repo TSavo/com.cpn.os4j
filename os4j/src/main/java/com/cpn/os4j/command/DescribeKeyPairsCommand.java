@@ -1,7 +1,7 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.KeyPair;
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.KeyPair;
 
 public class DescribeKeyPairsCommand extends AbstractOpenStackCommand<KeyPair> {
 

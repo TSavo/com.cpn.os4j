@@ -11,8 +11,6 @@ import java.util.TreeMap;
 import org.junit.Test;
 
 import com.cpn.os4j.command.OpenStackCommand;
-import com.cpn.os4j.signature.HmacSHA256SignatureStrategy;
-import com.cpn.os4j.signature.SignatureStrategy;
 
 public class OpenStackTest {
 

@@ -1,4 +1,4 @@
-package com.cpn.os4j.cache;
+package com.cpn.os4j.model.cache;
 
 import java.util.List;
 

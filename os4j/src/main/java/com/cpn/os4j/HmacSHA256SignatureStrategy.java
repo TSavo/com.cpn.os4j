@@ -1,4 +1,4 @@
-package com.cpn.os4j.signature;
+package com.cpn.os4j;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;

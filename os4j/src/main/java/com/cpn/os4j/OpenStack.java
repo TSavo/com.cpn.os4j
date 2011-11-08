@@ -18,8 +18,6 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Node;
 
-import com.cpn.os4j.cache.CacheWrapper;
-import com.cpn.os4j.cache.EhcacheWrapper;
 import com.cpn.os4j.command.DescribeAddressesCommand;
 import com.cpn.os4j.command.DescribeImagesCommand;
 import com.cpn.os4j.command.DescribeInstancesCommand;
@@ -27,8 +25,15 @@ import com.cpn.os4j.command.DescribeKeyPairsCommand;
 import com.cpn.os4j.command.DescribeRegionsCommand;
 import com.cpn.os4j.command.DescribeSecurityGroupsCommand;
 import com.cpn.os4j.command.DescribeVolumesCommand;
-import com.cpn.os4j.signature.HmacSHA256SignatureStrategy;
-import com.cpn.os4j.signature.SignatureStrategy;
+import com.cpn.os4j.model.IPAddress;
+import com.cpn.os4j.model.Image;
+import com.cpn.os4j.model.Instance;
+import com.cpn.os4j.model.KeyPair;
+import com.cpn.os4j.model.Region;
+import com.cpn.os4j.model.SecurityGroup;
+import com.cpn.os4j.model.Volume;
+import com.cpn.os4j.model.cache.CacheWrapper;
+import com.cpn.os4j.model.cache.EhcacheWrapper;
 
 public class OpenStack {
 

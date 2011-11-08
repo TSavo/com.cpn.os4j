@@ -1,4 +1,4 @@
-package com.cpn.os4j;
+package com.cpn.os4j.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
+import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.util.XMLUtil;
 
 @SuppressWarnings("serial")

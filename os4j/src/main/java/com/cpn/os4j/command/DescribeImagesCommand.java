@@ -1,7 +1,7 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.Image;
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.Image;
 
 public class DescribeImagesCommand extends AbstractOpenStackCommand<Image> {
 	

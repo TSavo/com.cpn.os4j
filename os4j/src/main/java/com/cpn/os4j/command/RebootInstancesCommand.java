@@ -3,8 +3,8 @@ package com.cpn.os4j.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cpn.os4j.Instance;
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.Instance;
 
 public class RebootInstancesCommand extends AbstractOpenStackCommand<Object> {
 

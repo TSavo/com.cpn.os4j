@@ -1,7 +1,7 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.IPAddress;
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.IPAddress;
 
 public class DescribeAddressesCommand extends AbstractOpenStackCommand<IPAddress> {
 

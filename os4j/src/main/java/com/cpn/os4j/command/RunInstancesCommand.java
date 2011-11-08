@@ -3,10 +3,10 @@ package com.cpn.os4j.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cpn.os4j.Image;
-import com.cpn.os4j.KeyPair;
 import com.cpn.os4j.OpenStack;
-import com.cpn.os4j.SecurityGroup;
+import com.cpn.os4j.model.Image;
+import com.cpn.os4j.model.KeyPair;
+import com.cpn.os4j.model.SecurityGroup;
 
 public class RunInstancesCommand extends AbstractOpenStackCommand<Object> {
 

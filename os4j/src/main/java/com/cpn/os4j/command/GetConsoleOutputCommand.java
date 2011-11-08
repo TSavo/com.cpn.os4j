@@ -2,9 +2,9 @@ package com.cpn.os4j.command;
 
 import java.util.List;
 
-import com.cpn.os4j.ConsoleOutput;
-import com.cpn.os4j.Instance;
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.ConsoleOutput;
+import com.cpn.os4j.model.Instance;
 
 public class GetConsoleOutputCommand extends AbstractOpenStackCommand<ConsoleOutput> {
 	public Instance instance; 
