@@ -1,7 +1,5 @@
 package com.cpn.os4j;
 
-import java.util.Calendar;
-
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;

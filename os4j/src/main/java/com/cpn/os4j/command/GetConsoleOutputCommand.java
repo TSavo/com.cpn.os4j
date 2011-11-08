@@ -1,6 +1,5 @@
 package com.cpn.os4j.command;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.cpn.os4j.ConsoleOutput;

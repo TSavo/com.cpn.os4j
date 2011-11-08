@@ -12,11 +12,13 @@ import org.w3c.dom.Node;
 import com.cpn.os4j.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
+@SuppressWarnings("serial")
 @Immutable
 public class Volume implements Cacheable<String> {
 	private String status, availabilityZone, displayName, volumeId, displayDescription, snapshotId, size, createTime;
 
 	private List<VolumeAttachment> volumeAttachments = new ArrayList<>();
+	@SuppressWarnings("unused")
 	private OpenStack endPoint;
 
 	private Volume(OpenStack anEndPoint) {

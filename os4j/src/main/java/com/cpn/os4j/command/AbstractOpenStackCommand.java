@@ -1,7 +1,6 @@
 package com.cpn.os4j.command;
 
 import static com.cpn.os4j.util.XMLUtil.toXML;
-import static com.cpn.os4j.util.XMLUtil.xPathList;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

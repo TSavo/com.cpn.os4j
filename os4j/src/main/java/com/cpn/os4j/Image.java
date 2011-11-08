@@ -10,6 +10,7 @@ import com.cpn.os4j.cache.Cacheable;
 import com.cpn.os4j.command.RunInstancesCommand;
 import com.cpn.os4j.util.XMLUtil;
 
+@SuppressWarnings("serial")
 @Immutable
 public class Image implements Cacheable<String> {
 
