@@ -19,13 +19,33 @@ public class Volume implements Cacheable<String> {
 	private String status, availabilityZone, displayName, volumeId, displayDescription, snapshotId, size, createTime;
 
 	private List<VolumeAttachment> volumeAttachments = new ArrayList<>();
-	@SuppressWarnings("unused")
 	private OpenStack endPoint;
 
 	private Volume(OpenStack anEndPoint) {
 		endPoint = anEndPoint;
 	}
-
+	
+	public Volume delete(){
+		endPoint.deleteVolume(this);
+		return this;
+	}
+	
+	public Volume waitUntilAvailable() throws InterruptedException{
+		if(status.contains("available")){
+			return this;
+		}
+		Thread.sleep(1000);
+		endPoint.getVolumes();
+		return endPoint.getVolumeCache().get(getKey()).waitUntilAvailable();
+	}
+	
+	public Volume waitUntilDeleted() throws InterruptedException {
+		while(endPoint.getVolumeCache().get(getKey()) != null){
+			Thread.sleep(1000);
+			endPoint.getVolumes();
+		}
+		return this;
+	}
 	@Override
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this);
@@ -131,6 +151,8 @@ public class Volume implements Cacheable<String> {
 			return builder.toString();
 		}
 
+		
+		
 		public String getStatus() {
 			return status;
 		}

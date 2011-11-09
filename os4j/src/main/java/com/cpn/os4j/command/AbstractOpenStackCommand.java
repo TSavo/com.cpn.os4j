@@ -2,6 +2,7 @@ package com.cpn.os4j.command;
 
 import static com.cpn.os4j.util.XMLUtil.toXML;
 
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -10,6 +11,12 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -17,6 +24,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
@@ -54,6 +62,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		return queryString;
 	}
 
+	public OpenStackCommand<T> put(String aKey, String aValue){
+		queryString.put(aKey,  aValue);
+		return this;
+	}
+	
 	@Override
 	public String getVerb() {
 		return "GET";
@@ -68,7 +81,14 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 			if (getUnmarshallingClass() != null && getUnmarshallingXPath() != null) {
 				return (List<T>) endPoint.unmarshall(XMLUtil.xPathList(aDocument, getUnmarshallingXPath()), getUnmarshallingClass());
 			} else {
-				return null;
+		  	Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		  	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		  	StreamResult result = new StreamResult(new StringWriter());
+		  	DOMSource source = new DOMSource(aDocument);
+		  	transformer.transform(source, result);
+		  	String xmlString = result.getWriter().toString();
+		  	LoggerFactory.getLogger(AbstractOpenStackCommand.class).warn(xmlString);
+		  	return null;
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);

@@ -18,6 +18,10 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Node;
 
+import com.cpn.os4j.command.AllocateAddressCommand;
+import com.cpn.os4j.command.AssociateAddressCommand;
+import com.cpn.os4j.command.CreateVolumeCommand;
+import com.cpn.os4j.command.DeleteVolumeCommand;
 import com.cpn.os4j.command.DescribeAddressesCommand;
 import com.cpn.os4j.command.DescribeImagesCommand;
 import com.cpn.os4j.command.DescribeInstancesCommand;
@@ -25,6 +29,11 @@ import com.cpn.os4j.command.DescribeKeyPairsCommand;
 import com.cpn.os4j.command.DescribeRegionsCommand;
 import com.cpn.os4j.command.DescribeSecurityGroupsCommand;
 import com.cpn.os4j.command.DescribeVolumesCommand;
+import com.cpn.os4j.command.DisassociateAddressCommand;
+import com.cpn.os4j.command.RebootInstancesCommand;
+import com.cpn.os4j.command.ReleaseAddressCommand;
+import com.cpn.os4j.command.RunInstancesCommand;
+import com.cpn.os4j.command.TerminateInstancesCommand;
 import com.cpn.os4j.model.IPAddress;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.Instance;
@@ -51,7 +60,6 @@ public class OpenStack {
 	private CacheWrapper<String, SecurityGroup> securityGroupCache = new EhcacheWrapper<>("securityGroups", cacheManager);
 	private CacheWrapper<String, Image> imagesCache = new EhcacheWrapper<>("imagesCache", cacheManager);
 	private CacheWrapper<String, KeyPair> keyPairsCache = new EhcacheWrapper<>("keyPairsCache", cacheManager);
-	
 
 	public OpenStack(URI aUrl, OpenStackCredentials aCreds) {
 		uri = aUrl;
@@ -62,7 +70,7 @@ public class OpenStack {
 	public CacheWrapper<String, KeyPair> getKeyPairsCache() {
 		return keyPairsCache;
 	}
-	
+
 	public CacheWrapper<String, SecurityGroup> getSecurityGroupCache() {
 		return securityGroupCache;
 	}
@@ -86,13 +94,12 @@ public class OpenStack {
 	public CacheWrapper<String, Volume> getVolumeCache() {
 		return volumeCache;
 	}
-	
 
 	public URI getURI() {
 		return uri;
 	}
-	
-	public OpenStackCredentials getCredentials(){
+
+	public OpenStackCredentials getCredentials() {
 		return credentials;
 	}
 
@@ -112,7 +119,6 @@ public class OpenStack {
 		return responseBody;
 
 	}
-
 
 	public List<Region> getRegions() {
 		List<Region> results = new DescribeRegionsCommand(this).execute();
@@ -149,13 +155,75 @@ public class OpenStack {
 		securityGroupCache.removeAll().putAll(results);
 		return results;
 	}
-	
-	public List<KeyPair> getKeyPairs(){
+
+	public List<KeyPair> getKeyPairs() {
 		List<KeyPair> results = new DescribeKeyPairsCommand(this).execute();
 		keyPairsCache.removeAll().putAll(results);
 		return results;
 	}
+
+	public IPAddress allocateIPAddress() {
+		List<IPAddress> results = new AllocateAddressCommand(this).execute();
+		ipAddessCache.put(results.get(0).getKey(), results.get(0));
+		return results.get(0);
+	}
+
+	public OpenStack releaseAddress(IPAddress ipAddress) {
+		new ReleaseAddressCommand(this, ipAddress).execute();
+		getIPAddresses();
+		return this;
+	}
+
+	public Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, SecurityGroup... groups) {
+		Instance i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, groups).execute().get(0);
+		instanceCache.put(i.getKey(), i);
+		return i;
+	}
+
+	public OpenStack rebootInstance(Instance instance) {
+		new RebootInstancesCommand(this, instance).execute();
+		getInstances();
+		return this;
+	}
+
+	public OpenStack terminateInstance(Instance anInstance) {
+		new TerminateInstancesCommand(this, anInstance).execute();
+		getInstances();
+		return this;
+	}
+
+	public OpenStack associateAddress(Instance anInstance, IPAddress anIPAddress) {
+		new AssociateAddressCommand(this, anInstance, anIPAddress).execute();
+		anInstance.setIPAddress(anIPAddress.getIpAddress());
+		anIPAddress.setInstanceId(anInstance.getInstanceId());
+		getInstances();
+		getIPAddresses();
+		return this;
+	}
+
+	public OpenStack disassociateAddress(IPAddress ipAddress) {
+		Instance i = ipAddress.getInstance();
+		if (i != null) {
+			i.setIPAddress(null);
+		}
+		new DisassociateAddressCommand(this, ipAddress).execute();
+		ipAddress.setInstanceId(null);
+		getInstances();
+		getIPAddresses();
+		return this;
+	}
 	
+	public Volume createVolume(String anAvailabilityZone, int aSize){
+		Volume v = new CreateVolumeCommand(this, anAvailabilityZone, aSize).execute().get(0);
+		getVolumes();
+		return v;
+	}
+	
+	public OpenStack deleteVolume(Volume aVolume){
+		new DeleteVolumeCommand(this, aVolume).execute();
+		return this;
+	}
+
 	public OpenStack populateCaches() {
 		getInstances();
 		getIPAddresses();
@@ -186,6 +254,5 @@ public class OpenStack {
 		}
 		return list;
 	}
-
 
 }

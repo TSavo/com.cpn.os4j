@@ -45,8 +45,8 @@ public class XMLUtil {
 	public String get(String anXPath) throws XPathExpressionException {
 		return xPathString(node, anXPath);
 	}
-	
-	public Calendar getCalendar(String anXPath) throws XPathExpressionException{
+
+	public Calendar getCalendar(String anXPath) throws XPathExpressionException {
 		Calendar c = new GregorianCalendar();
 		Date d;
 		try {
@@ -56,7 +56,7 @@ public class XMLUtil {
 		}
 		c.setTime(d);
 		return c;
-		
+
 	}
 
 	public String getString(String anXPath) throws XPathExpressionException {
@@ -89,13 +89,16 @@ public class XMLUtil {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static final <T> List<T> toStringList(NodeList aList) {
-		List<T> list = new ArrayList<T>();
-		for (int x = 0; x < aList.getLength(); ++x) {
-			list.add((T) aList.item(x).getNodeValue());
+	public static final List<String> toStringList(List<Node> someNodes) {
+		List<String> list = new ArrayList<>();
+		for (Node n : someNodes) {
+			list.add(n.getNodeValue());
 		}
 		return list;
+	}
+
+	public static final List<String> toStringList(NodeList aList) {
+		return toStringList(XMLUtil.<Node>toList(aList));
 	}
 
 	public static final List<Node> xPathList(Node aNode, String anXPath) throws XPathExpressionException {

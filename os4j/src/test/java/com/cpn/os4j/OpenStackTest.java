@@ -6,11 +6,18 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.TreeMap;
 
 import org.junit.Test;
 
+import com.cpn.os4j.command.AllocateAddressCommand;
+import com.cpn.os4j.command.CreateVolumeCommand;
 import com.cpn.os4j.command.OpenStackCommand;
+import com.cpn.os4j.command.RunInstancesCommand;
+import com.cpn.os4j.model.Image;
+import com.cpn.os4j.model.KeyPair;
+import com.cpn.os4j.model.SecurityGroup;
 
 public class OpenStackTest {
 
@@ -19,12 +26,12 @@ public class OpenStackTest {
 	static {
 		try {
 			ep = new OpenStack(new URI("http://10.1.10.249:8773/services/Cloud/"), new OpenStackCredentials() {
-				
+
 				@Override
 				public String getSecretKey() {
 					return "e23517e4-f511-47f3-8b93-3e595a0607ca";
 				}
-				
+
 				@Override
 				public String getAccessKey() {
 					return "ed391003-88b9-4408-9e87-1a87ba460121%3Avsp";
@@ -49,7 +56,7 @@ public class OpenStackTest {
 		OpenStack os = mock(OpenStack.class);
 		URI uri = new URI("http://10.1.10.249:8773/services/Cloud/");
 		OpenStackCredentials creds = mock(OpenStackCredentials.class);
-		
+
 		when(os.getURI()).thenReturn(uri);
 		when(os.getCredentials()).thenReturn(creds);
 		when(creds.getSecretKey()).thenReturn("e23517e4-f511-47f3-8b93-3e595a0607ca");
@@ -93,7 +100,7 @@ public class OpenStackTest {
 	public void testGetImages() throws Exception {
 		System.out.println(ep.getImages());
 	}
-	
+
 	@Test
 	public void testKeyPairs() throws Exception {
 		System.out.println(ep.getKeyPairs());
@@ -107,5 +114,25 @@ public class OpenStackTest {
 	@Test
 	public void testGetConsoleOutput() throws Exception {
 		System.out.println(ep.getInstances().get(0).getConsoleOutput());
+	}
+
+	@Test
+	public void testWaitUntilRunningThenTerminate() throws Exception {
+		Image image = ep.getImages().get(0);
+		KeyPair key = ep.getKeyPairs().get(0);
+		SecurityGroup sg = ep.getSecurityGroups().get(0);
+		System.out.println("Starting: " + new Date());
+		image.runInstance(key, "m1.large", "public", "1", "1", sg).waitUntilRunning().terminate().waitUntilTerminated();
+		System.out.println("Finished: " + new Date());
+	}
+
+	@Test
+	public void testReleaseAndAllocateAddress() throws Exception {
+		ep.allocateIPAddress().associateWithInstance(ep.getInstances().get(0)).disassociate().release();
+	}
+
+	@Test
+	public void testCreateVolume() throws Exception {
+		ep.createVolume("nova", 18).waitUntilAvailable().delete().waitUntilDeleted();
 	}
 }

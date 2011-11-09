@@ -73,9 +73,8 @@ public class Image implements Cacheable<String> {
 		return getImageId();
 	}
 
-	public Image runInstance(KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, SecurityGroup... groups){
-		new RunInstancesCommand(endPoint, this, keyPair, instanceType, addressingType, minCount, maxCount, groups).execute();
-		return this;
+	public Instance runInstance(KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, SecurityGroup... groups){
+		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, groups);
 	}
 	
 	@Override

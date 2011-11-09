@@ -8,13 +8,12 @@ import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.command.GetConsoleOutputCommand;
-import com.cpn.os4j.command.RebootInstancesCommand;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable
-public class Instance implements Cacheable<String>{
+public class Instance implements Cacheable<String> {
 
 	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
 
@@ -28,12 +27,11 @@ public class Instance implements Cacheable<String>{
 	public String getKey() {
 		return instanceId;
 	}
-	
-	
-	public OpenStack getEndPoint(){
+
+	public OpenStack getEndPoint() {
 		return endPoint;
 	}
-	
+
 	public static Instance unmarshall(Node aNode, OpenStack anEndPoint) {
 		Instance i = new Instance(anEndPoint);
 		XMLUtil r = new XMLUtil(aNode);
@@ -68,15 +66,48 @@ public class Instance implements Cacheable<String>{
 		return builder.toString();
 	}
 
-	public Instance reboot(){
-		new RebootInstancesCommand(endPoint, this).execute();
+	public Instance reboot() {
+		endPoint.rebootInstance(this);
+		return this;
+	}
+
+	public ConsoleOutput getConsoleOutput() {
+		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
+	}
+
+	public Instance terminate() {
+		endPoint.terminateInstance(this);
+		return this;
+	}
+
+	public Instance waitUntilRunning() throws InterruptedException {
+		if (instanceState.equals("running")) {
+			return this;
+		}
+		Thread.sleep(1000);
 		endPoint.getInstances();
+		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning();
+	}
+	
+	public Instance waitUntilTerminated() throws InterruptedException {
+		Thread.sleep(1000);
+		endPoint.getInstances();
+		if(endPoint.getInstanceCache().get(getKey()) != null){
+			endPoint.getInstanceCache().get(getKey()).waitUntilTerminated();
+		}
+		return this;
+	}
+
+	public Instance associateAddress(IPAddress anAddress){
+		endPoint.associateAddress(this, anAddress);
 		return this;
 	}
 	
-	public ConsoleOutput getConsoleOutput(){
-		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
+	public Instance disassociateAddress(){
+		endPoint.disassociateAddress(getIpAddress());
+		return this;
 	}
+	
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -125,8 +156,8 @@ public class Instance implements Cacheable<String>{
 		return ramdiskId;
 	}
 
-	public String getIpAddress() {
-		return ipAddress;
+	public IPAddress getIpAddress() {
+		return endPoint.getIPAddressCache().get(ipAddress);
 	}
 
 	public String getInstanceType() {
@@ -137,4 +168,8 @@ public class Instance implements Cacheable<String>{
 		return privateIpAddress;
 	}
 
+	public Instance setIPAddress(String anAddress){
+		ipAddress = anAddress;
+		return this;
+	}
 }

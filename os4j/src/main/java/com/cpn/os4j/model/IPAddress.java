@@ -14,9 +14,12 @@ import com.cpn.os4j.util.XMLUtil;
 @Immutable
 public class IPAddress implements Cacheable<String> {
 
-
 	private String ipAddress;
 	private String instanceId;
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+
 	private OpenStack endPoint;
 
 	private IPAddress(OpenStack anEndPoint) {
@@ -38,6 +41,20 @@ public class IPAddress implements Cacheable<String> {
 
 	public Instance getInstance() {
 		return endPoint.getInstanceCache().get(instanceId);
+	}
+
+	public OpenStack release() {
+		return endPoint.releaseAddress(this);
+	}
+
+	public IPAddress associateWithInstance(Instance anInstance) {
+		endPoint.associateAddress(anInstance, this);
+		return this;
+	}
+	
+	public IPAddress disassociate(){
+		getInstance().disassociateAddress();
+		return this;
 	}
 
 	@Override

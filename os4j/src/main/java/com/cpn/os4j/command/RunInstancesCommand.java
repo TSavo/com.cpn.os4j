@@ -5,10 +5,11 @@ import java.util.List;
 
 import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.model.Image;
+import com.cpn.os4j.model.Instance;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.SecurityGroup;
 
-public class RunInstancesCommand extends AbstractOpenStackCommand<Object> {
+public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 
 	private String addressingType;
 	public String getAddressingType() {
@@ -91,16 +92,16 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Object> {
 	}
 	
 	@Override
-	public Class<Object> getUnmarshallingClass() {
-		return null;
+	public Class<Instance> getUnmarshallingClass() {
+		return Instance.class;
 	}
 	
 	public String getUnmarshallingXPath() {
-		return null;
+		return "//instancesSet/item";
 	};
 	
 	@Override
-	public List<Object> execute() {
+	public List<Instance> execute() {
 		queryString.put("AddressingType", addressingType);
 		queryString.put("ImageId", imageId);
 		queryString.put("InstanceType", instanceType);
