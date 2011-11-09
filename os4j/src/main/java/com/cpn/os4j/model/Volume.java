@@ -46,6 +46,11 @@ public class Volume implements Cacheable<String> {
 		}
 		return this;
 	}
+	
+	public Snapshot createSnapshot(){
+		return endPoint.createSnapshotFromVolume(this);
+	}
+	
 	@Override
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this);

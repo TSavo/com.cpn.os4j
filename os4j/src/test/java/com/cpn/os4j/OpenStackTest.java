@@ -11,13 +11,12 @@ import java.util.TreeMap;
 
 import org.junit.Test;
 
-import com.cpn.os4j.command.AllocateAddressCommand;
-import com.cpn.os4j.command.CreateVolumeCommand;
+import com.cpn.os4j.command.DescribeSnapshotsCommand;
 import com.cpn.os4j.command.OpenStackCommand;
-import com.cpn.os4j.command.RunInstancesCommand;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.SecurityGroup;
+import com.cpn.os4j.model.Volume;
 
 public class OpenStackTest {
 
@@ -134,5 +133,16 @@ public class OpenStackTest {
 	@Test
 	public void testCreateVolume() throws Exception {
 		ep.createVolume("nova", 18).waitUntilAvailable().delete().waitUntilDeleted();
+	}
+	
+	@Test
+	public void testDescribeSnapshots() throws Exception{
+		System.out.println(ep.getSnapshots());
+	}
+	
+	@Test
+	public void testSnapshotFromImage() throws Exception{
+		Volume v= ep.getVolumes().get(0);
+		v.createSnapshot().waitUntilAvailable().delete();
 	}
 }

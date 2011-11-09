@@ -14,9 +14,19 @@ import com.cpn.os4j.util.XMLUtil;
 @Immutable
 public class Snapshot implements Cacheable<String> {
 	private String status, displayName, description, volumeId, displayDescription, volumeSize, progress, startTime, ownerId, snapshotId;
-	@SuppressWarnings("unused")
+
 	private OpenStack endPoint;
 
+	
+	public Volume createVolume(String anAvailabilityZone){
+		return endPoint.createVolumeFromSnapshot(this, anAvailabilityZone);
+	}
+	
+	public Snapshot delete(){
+		endPoint.deleteSnapshot(this);
+		return this;
+	}
+	
 	public String getStatus() {
 		return status;
 	}
@@ -92,6 +102,15 @@ public class Snapshot implements Cacheable<String> {
 		builder.append("status", status).append("displayName", displayName).append("description", description).append("volumeId", volumeId).append("displayDescription", displayDescription).append("volumeSize", volumeSize).append("progress", progress)
 				.append("startTime", startTime).append("ownerId", ownerId).append("snapshotId", snapshotId);
 		return builder.toString();
+	}
+
+	public Snapshot waitUntilAvailable() throws InterruptedException {
+		if(!status.contains("available")){
+			Thread.sleep(1000);
+			endPoint.getSnapshots();
+			return endPoint.getSnapshotCache().get(getKey());
+		}
+		return this;
 	}
 
 }

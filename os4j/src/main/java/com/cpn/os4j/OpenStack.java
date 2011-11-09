@@ -20,7 +20,9 @@ import org.w3c.dom.Node;
 
 import com.cpn.os4j.command.AllocateAddressCommand;
 import com.cpn.os4j.command.AssociateAddressCommand;
+import com.cpn.os4j.command.CreateSnapshotCommand;
 import com.cpn.os4j.command.CreateVolumeCommand;
+import com.cpn.os4j.command.DeleteSnapshot;
 import com.cpn.os4j.command.DeleteVolumeCommand;
 import com.cpn.os4j.command.DescribeAddressesCommand;
 import com.cpn.os4j.command.DescribeImagesCommand;
@@ -28,6 +30,7 @@ import com.cpn.os4j.command.DescribeInstancesCommand;
 import com.cpn.os4j.command.DescribeKeyPairsCommand;
 import com.cpn.os4j.command.DescribeRegionsCommand;
 import com.cpn.os4j.command.DescribeSecurityGroupsCommand;
+import com.cpn.os4j.command.DescribeSnapshotsCommand;
 import com.cpn.os4j.command.DescribeVolumesCommand;
 import com.cpn.os4j.command.DisassociateAddressCommand;
 import com.cpn.os4j.command.RebootInstancesCommand;
@@ -40,6 +43,7 @@ import com.cpn.os4j.model.Instance;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.Region;
 import com.cpn.os4j.model.SecurityGroup;
+import com.cpn.os4j.model.Snapshot;
 import com.cpn.os4j.model.Volume;
 import com.cpn.os4j.model.cache.CacheWrapper;
 import com.cpn.os4j.model.cache.EhcacheWrapper;
@@ -60,14 +64,14 @@ public class OpenStack {
 	private CacheWrapper<String, SecurityGroup> securityGroupCache = new EhcacheWrapper<>("securityGroups", cacheManager);
 	private CacheWrapper<String, Image> imagesCache = new EhcacheWrapper<>("imagesCache", cacheManager);
 	private CacheWrapper<String, KeyPair> keyPairsCache = new EhcacheWrapper<>("keyPairsCache", cacheManager);
-
+	private CacheWrapper<String, Snapshot> snapshotsCache = new EhcacheWrapper<>("snapshotsCache", cacheManager);
 	public OpenStack(URI aUrl, OpenStackCredentials aCreds) {
 		uri = aUrl;
 		credentials = aCreds;
 		populateCaches();
 	}
 
-	public CacheWrapper<String, KeyPair> getKeyPairsCache() {
+	public CacheWrapper<String, KeyPair> getKeyPairCache() {
 		return keyPairsCache;
 	}
 
@@ -75,7 +79,7 @@ public class OpenStack {
 		return securityGroupCache;
 	}
 
-	public CacheWrapper<String, Image> getImagesCache() {
+	public CacheWrapper<String, Image> getImagsCache() {
 		return imagesCache;
 	}
 
@@ -93,6 +97,10 @@ public class OpenStack {
 
 	public CacheWrapper<String, Volume> getVolumeCache() {
 		return volumeCache;
+	}
+	
+	public CacheWrapper<String, Snapshot> getSnapshotCache(){
+		return snapshotsCache;
 	}
 
 	public URI getURI() {
@@ -162,6 +170,11 @@ public class OpenStack {
 		return results;
 	}
 
+	public List<Snapshot> getSnapshots() {
+		List<Snapshot> results = new DescribeSnapshotsCommand(this).execute();
+		snapshotsCache.removeAll().putAll(results);
+		return results;
+	}
 	public IPAddress allocateIPAddress() {
 		List<IPAddress> results = new AllocateAddressCommand(this).execute();
 		ipAddessCache.put(results.get(0).getKey(), results.get(0));
@@ -212,18 +225,35 @@ public class OpenStack {
 		getIPAddresses();
 		return this;
 	}
-	
-	public Volume createVolume(String anAvailabilityZone, int aSize){
+
+	public Volume createVolume(String anAvailabilityZone, int aSize) {
 		Volume v = new CreateVolumeCommand(this, anAvailabilityZone, aSize).execute().get(0);
 		getVolumes();
 		return v;
 	}
-	
-	public OpenStack deleteVolume(Volume aVolume){
+
+	public OpenStack deleteVolume(Volume aVolume) {
 		new DeleteVolumeCommand(this, aVolume).execute();
 		return this;
 	}
 
+	public Volume createVolumeFromSnapshot(Snapshot aSnapshot, String anAvailabilityZone) {
+		Volume v = new CreateVolumeCommand(this, anAvailabilityZone, Integer.parseInt(aSnapshot.getVolumeSize()), aSnapshot).execute().get(0);
+		getVolumes();
+		return v;
+	}
+	
+	public Snapshot createSnapshotFromVolume(Volume aVolume){
+		Snapshot s = new CreateSnapshotCommand(this, aVolume).execute().get(0);
+		getSnapshots();
+		return s;
+	}
+	
+	
+	public OpenStack deleteSnapshot(Snapshot snapshot) {
+		new DeleteSnapshot(this, snapshot).execute();
+		return this;
+	}
 	public OpenStack populateCaches() {
 		getInstances();
 		getIPAddresses();
@@ -232,6 +262,7 @@ public class OpenStack {
 		getSecurityGroups();
 		getImages();
 		getKeyPairs();
+		getSnapshots();
 		return this;
 	}
 
@@ -254,5 +285,7 @@ public class OpenStack {
 		}
 		return list;
 	}
+
+
 
 }

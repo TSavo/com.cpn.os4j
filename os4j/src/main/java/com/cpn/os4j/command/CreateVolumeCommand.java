@@ -1,6 +1,7 @@
 package com.cpn.os4j.command;
 
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.Snapshot;
 import com.cpn.os4j.model.Volume;
 
 public class CreateVolumeCommand extends AbstractOpenStackCommand<Volume> {
@@ -23,6 +24,13 @@ public class CreateVolumeCommand extends AbstractOpenStackCommand<Volume> {
 		super(anEndPoint);
 		put("AvailabilityZone", anAvailabilityZone);
 		put("Size", new Integer(size).toString());
+	}
+
+	public CreateVolumeCommand(OpenStack anEndPoint, String anAvailabilityZone, int size, Snapshot aSnapshot) {
+		super(anEndPoint);
+		put("AvailabilityZone", anAvailabilityZone);
+		put("Size", new Integer(size).toString());
+		put("SnapshotId", aSnapshot.getSnapshotId());
 	}
 
 }
