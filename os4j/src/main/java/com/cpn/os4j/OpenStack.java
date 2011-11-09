@@ -1,9 +1,7 @@
 package com.cpn.os4j;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.ehcache.CacheManager;
@@ -16,10 +14,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.w3c.dom.Node;
 
 import com.cpn.os4j.command.AllocateAddressCommand;
 import com.cpn.os4j.command.AssociateAddressCommand;
+import com.cpn.os4j.command.AttachVolumeCommand;
 import com.cpn.os4j.command.CreateSnapshotCommand;
 import com.cpn.os4j.command.CreateVolumeCommand;
 import com.cpn.os4j.command.DeleteSnapshot;
@@ -32,6 +30,7 @@ import com.cpn.os4j.command.DescribeRegionsCommand;
 import com.cpn.os4j.command.DescribeSecurityGroupsCommand;
 import com.cpn.os4j.command.DescribeSnapshotsCommand;
 import com.cpn.os4j.command.DescribeVolumesCommand;
+import com.cpn.os4j.command.DetachVolumeCommand;
 import com.cpn.os4j.command.DisassociateAddressCommand;
 import com.cpn.os4j.command.RebootInstancesCommand;
 import com.cpn.os4j.command.ReleaseAddressCommand;
@@ -45,6 +44,7 @@ import com.cpn.os4j.model.Region;
 import com.cpn.os4j.model.SecurityGroup;
 import com.cpn.os4j.model.Snapshot;
 import com.cpn.os4j.model.Volume;
+import com.cpn.os4j.model.Volume.VolumeAttachment;
 import com.cpn.os4j.model.cache.CacheWrapper;
 import com.cpn.os4j.model.cache.EhcacheWrapper;
 
@@ -65,6 +65,7 @@ public class OpenStack {
 	private CacheWrapper<String, Image> imagesCache = new EhcacheWrapper<>("imagesCache", cacheManager);
 	private CacheWrapper<String, KeyPair> keyPairsCache = new EhcacheWrapper<>("keyPairsCache", cacheManager);
 	private CacheWrapper<String, Snapshot> snapshotsCache = new EhcacheWrapper<>("snapshotsCache", cacheManager);
+
 	public OpenStack(URI aUrl, OpenStackCredentials aCreds) {
 		uri = aUrl;
 		credentials = aCreds;
@@ -98,8 +99,8 @@ public class OpenStack {
 	public CacheWrapper<String, Volume> getVolumeCache() {
 		return volumeCache;
 	}
-	
-	public CacheWrapper<String, Snapshot> getSnapshotCache(){
+
+	public CacheWrapper<String, Snapshot> getSnapshotCache() {
 		return snapshotsCache;
 	}
 
@@ -175,6 +176,7 @@ public class OpenStack {
 		snapshotsCache.removeAll().putAll(results);
 		return results;
 	}
+
 	public IPAddress allocateIPAddress() {
 		List<IPAddress> results = new AllocateAddressCommand(this).execute();
 		ipAddessCache.put(results.get(0).getKey(), results.get(0));
@@ -242,18 +244,36 @@ public class OpenStack {
 		getVolumes();
 		return v;
 	}
-	
-	public Snapshot createSnapshotFromVolume(Volume aVolume){
+
+	public Snapshot createSnapshotFromVolume(Volume aVolume) {
 		Snapshot s = new CreateSnapshotCommand(this, aVolume).execute().get(0);
 		getSnapshots();
 		return s;
 	}
-	
-	
+
 	public OpenStack deleteSnapshot(Snapshot snapshot) {
 		new DeleteSnapshot(this, snapshot).execute();
 		return this;
 	}
+
+	public VolumeAttachment attachVolumeToInstance(Volume aVolume, Instance anInstance, String aDevice) {
+		VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
+		getVolumes();
+		return v;
+	}
+
+	public OpenStack detachVolume(Volume aVolume) {
+		new DetachVolumeCommand(this, aVolume).execute();
+		getVolumes();
+		return this;
+	}
+
+	public OpenStack forceDetachVolume(Volume aVolume) {
+		new DetachVolumeCommand(this, aVolume, true).execute();
+		getVolumes();
+		return this;
+	}
+	
 	public OpenStack populateCaches() {
 		getInstances();
 		getIPAddresses();
@@ -273,19 +293,6 @@ public class OpenStack {
 		return builder.toString();
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> List<T> unmarshall(List<Node> aList, Class<T> anUnmarshaller) {
-		ArrayList<T> list = new ArrayList<T>();
-		for (Node n : aList) {
-			try {
-				list.add((T) anUnmarshaller.getDeclaredMethod("unmarshall", Node.class, OpenStack.class).invoke(null, n, this));
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				throw new RuntimeException(e.getMessage(), e);
-			}
-		}
-		return list;
-	}
-
-
+	
 
 }

@@ -1,3 +1,4 @@
+<xml>
 <item>
 	<displayName />
 	<description />
@@ -53,4 +54,4 @@
 	<rootDeviceName>/dev/sda1</rootDeviceName>
 	<imageType>kernel</imageType>
 </item>
-<
+</xml>

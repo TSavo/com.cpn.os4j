@@ -2,6 +2,7 @@ package com.cpn.os4j.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -14,6 +15,14 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -98,7 +107,7 @@ public class XMLUtil {
 	}
 
 	public static final List<String> toStringList(NodeList aList) {
-		return toStringList(XMLUtil.<Node>toList(aList));
+		return toStringList(XMLUtil.<Node> toList(aList));
 	}
 
 	public static final List<Node> xPathList(Node aNode, String anXPath) throws XPathExpressionException {
@@ -123,5 +132,23 @@ public class XMLUtil {
 		} catch (SAXException | IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+
+	public static final String prettyPrint(Node aNode) {
+		Transformer transformer;
+		try {
+			transformer = TransformerFactory.newInstance().newTransformer();
+		} catch (TransformerConfigurationException | TransformerFactoryConfigurationError e1) {
+			throw new RuntimeException(e1.getMessage(), e1);
+		}
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		StreamResult result = new StreamResult(new StringWriter());
+		DOMSource source = new DOMSource(aNode);
+		try {
+			transformer.transform(source, result);
+		} catch (TransformerException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		return result.getWriter().toString();
 	}
 }

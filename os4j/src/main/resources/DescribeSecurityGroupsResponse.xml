@@ -1,4 +1,4 @@
- <?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <DescribeSecurityGroupsResponse
 	xmlns="http://ec2.amazonaws.com/doc/2010-08-31/">
 	<requestId>56ec0ddb-6785-4ed7-a4f9-328f1117b0ef</requestId>

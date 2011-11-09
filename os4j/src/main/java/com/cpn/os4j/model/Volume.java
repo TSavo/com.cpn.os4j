@@ -24,33 +24,33 @@ public class Volume implements Cacheable<String> {
 	private Volume(OpenStack anEndPoint) {
 		endPoint = anEndPoint;
 	}
-	
-	public Volume delete(){
+
+	public Volume delete() {
 		endPoint.deleteVolume(this);
 		return this;
 	}
-	
-	public Volume waitUntilAvailable() throws InterruptedException{
-		if(status.contains("available")){
+
+	public Volume waitUntilAvailable() throws InterruptedException {
+		if (status.contains("available")) {
 			return this;
 		}
 		Thread.sleep(1000);
 		endPoint.getVolumes();
 		return endPoint.getVolumeCache().get(getKey()).waitUntilAvailable();
 	}
-	
+
 	public Volume waitUntilDeleted() throws InterruptedException {
-		while(endPoint.getVolumeCache().get(getKey()) != null){
+		while (endPoint.getVolumeCache().get(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getVolumes();
 		}
 		return this;
 	}
-	
-	public Snapshot createSnapshot(){
+
+	public Snapshot createSnapshot() {
 		return endPoint.createSnapshotFromVolume(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this);
@@ -80,8 +80,6 @@ public class Volume implements Cacheable<String> {
 		return v;
 	}
 
-
-	
 	public String getStatus() {
 		return status;
 	}
@@ -118,6 +116,28 @@ public class Volume implements Cacheable<String> {
 		return volumeAttachments;
 	}
 
+	public Volume attachToInstance(Instance anInstance, String aDevice) {
+		endPoint.attachVolumeToInstance(this, anInstance, aDevice);
+		return this;
+	}
+
+	public Volume detach() {
+		endPoint.detachVolume(this);
+		return this;
+	}
+	
+	public Volume forceDetach(){
+		endPoint.forceDetachVolume(this);
+		return this;
+	}
+
+	public Volume addVolumeAttachment(VolumeAttachment anAttachment) {
+		if (anAttachment.status != null && anAttachment.status.contains("attached")) {
+			volumeAttachments.add(anAttachment);
+		}
+		return this;
+	}
+
 	@Override
 	public String getKey() {
 		return volumeId;
@@ -127,7 +147,6 @@ public class Volume implements Cacheable<String> {
 	public static class VolumeAttachment {
 		private String status, instanceId, volumeId, deleteOnTermination, device, attachTime;
 		private OpenStack endPoint;
-
 
 		private VolumeAttachment(OpenStack anEndPoint) {
 			endPoint = anEndPoint;
@@ -156,8 +175,11 @@ public class Volume implements Cacheable<String> {
 			return builder.toString();
 		}
 
-		
-		
+		public VolumeAttachment addToVolume(Volume aVolume) {
+			aVolume.addVolumeAttachment(this);
+			return this;
+		}
+
 		public String getStatus() {
 			return status;
 		}
@@ -177,8 +199,8 @@ public class Volume implements Cacheable<String> {
 		public String getVolumeId() {
 			return volumeId;
 		}
-		
-		public Volume getVolume(){
+
+		public Volume getVolume() {
 			return endPoint.getVolumeCache().get(volumeId);
 		}
 

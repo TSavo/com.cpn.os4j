@@ -1,5 +1,7 @@
 package com.cpn.os4j.model;
 
+import java.util.List;
+
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -8,6 +10,7 @@ import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.command.GetConsoleOutputCommand;
+import com.cpn.os4j.model.Volume.VolumeAttachment;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
@@ -89,11 +92,36 @@ public class Instance implements Cacheable<String> {
 		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning();
 	}
 	
-	public Instance waitUntilTerminated() throws InterruptedException {
+	public Instance waitUntilRunning(long maxTimeToWait) throws InterruptedException {
+		if (instanceState.equals("running")) {
+			return this;
+		}
+		if(maxTimeToWait < 0){
+			return this;
+		}
 		Thread.sleep(1000);
 		endPoint.getInstances();
+		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning(maxTimeToWait - 1000);
+	}
+	
+	public Instance waitUntilTerminated() throws InterruptedException {
+		endPoint.getInstances();
 		if(endPoint.getInstanceCache().get(getKey()) != null){
-			endPoint.getInstanceCache().get(getKey()).waitUntilTerminated();
+			Thread.sleep(1000);
+			endPoint.getInstances();
+		}
+		return this;
+	}
+	
+	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException {
+		endPoint.getInstances();
+		while(endPoint.getInstanceCache().get(getKey()) != null){
+			Thread.sleep(1000);
+			endPoint.getInstances();
+			maxTimeToWait -= 1000;
+			if(maxTimeToWait < 0){
+				return this;
+			}
 		}
 		return this;
 	}
@@ -106,6 +134,31 @@ public class Instance implements Cacheable<String> {
 	public Instance disassociateAddress(){
 		endPoint.disassociateAddress(getIpAddress());
 		return this;
+	}
+	
+	public Instance attachVolume(Volume aVolume, String aDevice){
+		endPoint.attachVolumeToInstance(aVolume, this, aDevice);
+		return this;
+	}
+	
+	public Instance detachVolume(){
+		Volume v = getVolume();
+		if(v != null){
+			endPoint.detachVolume(v);
+		}
+		return this;
+	}
+	
+	public Volume getVolume(){
+		List<Volume> vols = endPoint.getVolumes();
+		for(Volume v : vols){
+			for(VolumeAttachment a : v.getVolumeAttachments()){
+				if(getInstanceId().equals(a.getInstanceId())){
+					return v;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public String getDisplayName() {

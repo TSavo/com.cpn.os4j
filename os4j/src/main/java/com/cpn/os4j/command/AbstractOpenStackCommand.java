@@ -2,20 +2,15 @@ package com.cpn.os4j.command;
 
 import static com.cpn.os4j.util.XMLUtil.toXML;
 
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -62,11 +57,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		return queryString;
 	}
 
-	public OpenStackCommand<T> put(String aKey, String aValue){
-		queryString.put(aKey,  aValue);
+	public OpenStackCommand<T> put(String aKey, String aValue) {
+		queryString.put(aKey, aValue);
 		return this;
 	}
-	
+
 	@Override
 	public String getVerb() {
 		return "GET";
@@ -76,19 +71,26 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 
 	public abstract String getUnmarshallingXPath();
 
+	@SuppressWarnings("unchecked")
+	public List<T> unmarshall(List<Node> aList, Class<T> anUnmarshaller) {
+		ArrayList<T> list = new ArrayList<T>();
+		for (Node n : aList) {
+			try {
+				list.add((T) anUnmarshaller.getDeclaredMethod("unmarshall", Node.class, OpenStack.class).invoke(null, n, endPoint));
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		}
+		return list;
+	}
+
 	public List<T> unmarshall(Node aDocument) {
 		try {
 			if (getUnmarshallingClass() != null && getUnmarshallingXPath() != null) {
-				return (List<T>) endPoint.unmarshall(XMLUtil.xPathList(aDocument, getUnmarshallingXPath()), getUnmarshallingClass());
+				return unmarshall(XMLUtil.xPathList(aDocument, getUnmarshallingXPath()), getUnmarshallingClass());
 			} else {
-		  	Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		  	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		  	StreamResult result = new StreamResult(new StringWriter());
-		  	DOMSource source = new DOMSource(aDocument);
-		  	transformer.transform(source, result);
-		  	String xmlString = result.getWriter().toString();
-		  	LoggerFactory.getLogger(AbstractOpenStackCommand.class).warn(xmlString);
-		  	return null;
+				LoggerFactory.getLogger(AbstractOpenStackCommand.class).warn(XMLUtil.prettyPrint(aDocument));
+				return null;
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
@@ -127,6 +129,5 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
-	
 
 }
