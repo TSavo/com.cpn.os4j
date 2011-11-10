@@ -1,5 +1,6 @@
 package com.cpn.os4j.command;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +102,7 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 	};
 	
 	@Override
-	public List<Instance> execute() throws ServerErrorExecption{
+	public List<Instance> execute() throws ServerErrorExeception, IOException{
 		queryString.put("AddressingType", addressingType);
 		queryString.put("ImageId", imageId);
 		queryString.put("InstanceType", instanceType);

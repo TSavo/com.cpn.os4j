@@ -1,5 +1,6 @@
 package com.cpn.os4j.command;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.cpn.os4j.OpenStack;
@@ -25,7 +26,7 @@ public class ReleaseAddressCommand extends AbstractOpenStackCommand<Object> {
 	}
 	
 	@Override
-	public List<Object> execute() throws ServerErrorExecption{
+	public List<Object> execute() throws ServerErrorExeception, IOException{
 		put("PublicIp", ipAddress.getIpAddress());
 		return super.execute();
 	}

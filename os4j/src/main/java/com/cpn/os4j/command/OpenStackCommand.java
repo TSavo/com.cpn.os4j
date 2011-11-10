@@ -1,5 +1,6 @@
 package com.cpn.os4j.command;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -13,8 +14,7 @@ public interface OpenStackCommand<T> {
 	public abstract TreeMap<String, String> getQueryString();
 	public abstract OpenStack getEndPoint();
 	public abstract String getAction();
-	public abstract List<T> execute() throws ServerErrorExecption;
+	public abstract List<T> execute() throws ServerErrorExeception, IOException;
 	public abstract UnmarshallerHelper<T> getUnmarshallerHelper();
-	public abstract void setServerErrorException(ServerErrorExecption anExecption);
 
 }

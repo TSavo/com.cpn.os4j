@@ -1,5 +1,6 @@
 package com.cpn.os4j.command;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class RebootInstancesCommand extends AbstractOpenStackCommand<Object> {
 	}
 	
 	@Override
-	public List<Object> execute() throws ServerErrorExecption{
+	public List<Object> execute() throws ServerErrorExeception, IOException{
 		int counter = 1;
 		for(Instance i : instances){
 			queryString.put("InstanceId." + (counter < 10 ? "0" : "") + counter, i.getInstanceId());

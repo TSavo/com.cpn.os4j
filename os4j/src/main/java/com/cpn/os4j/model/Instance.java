@@ -1,5 +1,6 @@
 package com.cpn.os4j.model;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -10,7 +11,7 @@ import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.command.GetConsoleOutputCommand;
-import com.cpn.os4j.command.ServerErrorExecption;
+import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
@@ -70,21 +71,21 @@ public class Instance implements Cacheable<String> {
 		return builder.toString();
 	}
 
-	public Instance reboot() throws ServerErrorExecption {
+	public Instance reboot() throws ServerErrorExeception, IOException {
 		endPoint.rebootInstance(this);
 		return this;
 	}
 
-	public ConsoleOutput getConsoleOutput() throws ServerErrorExecption {
+	public ConsoleOutput getConsoleOutput() throws ServerErrorExeception, IOException {
 		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
 	}
 
-	public Instance terminate() throws ServerErrorExecption  {
+	public Instance terminate() throws ServerErrorExeception, IOException {
 		endPoint.terminateInstance(this);
 		return this;
 	}
 
-	public Instance waitUntilRunning() throws InterruptedException, ServerErrorExecption  {
+	public Instance waitUntilRunning() throws InterruptedException, ServerErrorExeception, IOException {
 		if (instanceState.equals("running")) {
 			return this;
 		}
@@ -92,76 +93,76 @@ public class Instance implements Cacheable<String> {
 		endPoint.getInstances();
 		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning();
 	}
-	
-	public Instance waitUntilRunning(long maxTimeToWait) throws InterruptedException, ServerErrorExecption  {
+
+	public Instance waitUntilRunning(long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
 		if (instanceState.equals("running")) {
 			return this;
 		}
-		if(maxTimeToWait < 0){
+		if (maxTimeToWait < 0) {
 			return this;
 		}
 		Thread.sleep(1000);
 		endPoint.getInstances();
 		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning(maxTimeToWait - 1000);
 	}
-	
-	public Instance waitUntilTerminated() throws InterruptedException, ServerErrorExecption  {
+
+	public Instance waitUntilTerminated() throws InterruptedException, ServerErrorExeception, IOException {
 		endPoint.getInstances();
-		if(endPoint.getInstanceCache().get(getKey()) != null){
+		if (endPoint.getInstanceCache().get(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getInstances();
 		}
 		return this;
 	}
-	
-	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException, ServerErrorExecption  {
+
+	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
 		endPoint.getInstances();
-		while(endPoint.getInstanceCache().get(getKey()) != null){
+		while (endPoint.getInstanceCache().get(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getInstances();
 			maxTimeToWait -= 1000;
-			if(maxTimeToWait < 0){
+			if (maxTimeToWait < 0) {
 				return this;
 			}
 		}
 		return this;
 	}
 
-	public Instance associateAddress(IPAddress anAddress) throws ServerErrorExecption {
+	public Instance associateAddress(IPAddress anAddress) throws ServerErrorExeception, IOException {
 		endPoint.associateAddress(this, anAddress);
 		return this;
 	}
-	
-	public Instance disassociateAddress() throws ServerErrorExecption {
+
+	public Instance disassociateAddress() throws ServerErrorExeception, IOException {
 		endPoint.disassociateAddress(getIpAddress());
 		return this;
 	}
-	
-	public Instance attachVolume(Volume aVolume, String aDevice) throws ServerErrorExecption {
+
+	public Instance attachVolume(Volume aVolume, String aDevice) throws ServerErrorExeception, IOException {
 		endPoint.attachVolumeToInstance(aVolume, this, aDevice);
 		return this;
 	}
-	
-	public Instance detachVolume() throws ServerErrorExecption{
+
+	public Instance detachVolume() throws ServerErrorExeception, IOException {
 		Volume v = getVolume();
-		if(v != null){
+		if (v != null) {
 			endPoint.detachVolume(v);
 		}
 		return this;
 	}
-	
-	public Volume getVolume() throws ServerErrorExecption {
+
+	public Volume getVolume() throws ServerErrorExeception, IOException {
 		List<Volume> vols = endPoint.getVolumes();
-		for(Volume v : vols){
-			for(VolumeAttachment a : v.getVolumeAttachments()){
-				if(getInstanceId().equals(a.getInstanceId())){
+		for (Volume v : vols) {
+			for (VolumeAttachment a : v.getVolumeAttachments()) {
+				if (getInstanceId().equals(a.getInstanceId())) {
 					return v;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -222,7 +223,7 @@ public class Instance implements Cacheable<String> {
 		return privateIpAddress;
 	}
 
-	public Instance setIPAddress(String anAddress){
+	public Instance setIPAddress(String anAddress) {
 		ipAddress = anAddress;
 		return this;
 	}

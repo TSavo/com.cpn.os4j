@@ -17,6 +17,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -39,7 +40,6 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 
 	private OpenStack endPoint;
 	protected TreeMap<String, String> queryString = new TreeMap<String, String>();
-	private ServerErrorExecption exception = null;
 
 	private static final String CHAR_ENCODING = Charset.forName("UTF-8").name();
 
@@ -56,10 +56,6 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-	}
-	
-	public void setServerErrorException(ServerErrorExecption e){
-		exception = e;
 	}
 
 	@Override
@@ -120,7 +116,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	}
 
 	@Override
-	public List<T> execute() throws ServerErrorExecption {
+	public List<T> execute() throws ServerErrorExeception, IOException {
 
 		HttpClient client = new DefaultHttpClient();
 
@@ -132,77 +128,71 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 			sb.append(s + "=" + queryString.get(s));
 		}
 
-			String signature;
+		String signature;
+		try {
+			signature = URLEncoder.encode(endPoint.getSignatureStrategy().getSignature(this), CHAR_ENCODING);
+		} catch (UnsupportedEncodingException e1) {
+			throw new RuntimeException(e1.getMessage(), e1);
+		}
+		sb.append("&Signature=" + signature);
+
+		HttpRequestBase request;
+		if (getVerb() == "GET") {
+			request = new HttpGet(endPoint.getURI() + "?" + sb.toString());
+		} else {
+			StringEntity entity;
 			try {
-				signature = URLEncoder.encode(endPoint.getSignatureStrategy().getSignature(this), CHAR_ENCODING);
-			} catch (UnsupportedEncodingException e1) {
-				throw new RuntimeException(e1.getMessage(), e1);
-			}
-			sb.append("&Signature=" + signature);
-
-			HttpRequestBase request;
-			if (getVerb() == "GET") {
-				request = new HttpGet(endPoint.getURI() + "?" + sb.toString());
-			} else {
-				StringEntity entity;
-				try {
-					entity = new StringEntity(sb.toString());
-				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeException(e.getMessage(), e);
-				}
-				entity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
-				HttpPost post = new HttpPost(endPoint.getURI());
-				post.setEntity(entity);
-				request = post;
-			}
-			final OpenStackCommand<T> ref = this;
-			try {
-				List<T> result = unmarshall(toXML(client.execute(request, new ResponseHandler<String>() {
-					/**
-					 * Returns the response body as a String if the response was successful
-					 * (a 2xx status code). If no response body exists, this returns null.
-					 * If the response was unsuccessful (>= 300 status code), throws an
-					 * {@link HttpResponseException}.
-					 */
-					public String handleResponse(final HttpResponse response) throws HttpResponseException, IOException {
-						StatusLine statusLine = response.getStatusLine();
-						HttpEntity entity = response.getEntity();
-						if (statusLine.getStatusCode() >= 300) {
-							if (entity != null) {
-								String body = EntityUtils.toString(entity);
-								Document doc = toXML(body);
-
-								List<ServerError> errors = AbstractOpenStackCommand.unmarshall(doc, new UnmarshallerHelper<ServerError>() {
-									@Override
-									public Class<ServerError> getUnmarshallingClass() {
-										return ServerError.class;
-									}
-
-									@Override
-									public String getUnmarshallingXPath() {
-										// TODO Auto-generated method stub
-										return "//Response/Errors/Error";
-									}
-								}, endPoint);
-								ref.setServerErrorException(new ServerErrorExecption(statusLine.getStatusCode(), errors, body, ref));
-							} else {
-								throw new HttpResponseException(statusLine.getStatusCode(),  statusLine.getReasonPhrase());
-							}
-						}
-
-						return entity == null ? null : EntityUtils.toString(entity);
-					}
-				})), this, endPoint);
-				if(exception != null){
-					throw exception;
-				}else{
-					return result;
-				}
-			} catch (IOException e) {
+				entity = new StringEntity(sb.toString());
+			} catch (UnsupportedEncodingException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
-		
-			
+			entity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
+			HttpPost post = new HttpPost(endPoint.getURI());
+			post.setEntity(entity);
+			request = post;
+		}
+		final OpenStackCommand<T> ref = this;
+		try {
+			return unmarshall(toXML(client.execute(request, new ResponseHandler<String>() {
+				/**
+				 * Returns the response body as a String if the response was successful (a
+				 * 2xx status code). If no response body exists, this returns null. If the
+				 * response was unsuccessful (>= 300 status code), throws an
+				 * {@link HttpResponseException}.
+				 */
+				public String handleResponse(final HttpResponse response) throws HttpResponseException, IOException {
+					StatusLine statusLine = response.getStatusLine();
+					HttpEntity entity = response.getEntity();
+					if (statusLine.getStatusCode() >= 300) {
+						if (entity != null) {
+							String body = EntityUtils.toString(entity);
+							Document doc = toXML(body);
+
+							List<ServerError> errors = AbstractOpenStackCommand.unmarshall(doc, new UnmarshallerHelper<ServerError>() {
+								@Override
+								public Class<ServerError> getUnmarshallingClass() {
+									return ServerError.class;
+								}
+
+								@Override
+								public String getUnmarshallingXPath() {
+									// TODO Auto-generated method stub
+									return "//Response/Errors/Error";
+								}
+							}, endPoint);
+							throw new ServerErrorExeception(statusLine.getStatusCode(), errors, body, ref);
+						} else {
+							throw new HttpResponseException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+						}
+					}
+
+					return entity == null ? null : EntityUtils.toString(entity);
+				}
+			})), this, endPoint);
+		} catch (ClientProtocolException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+
 	}
 
 }

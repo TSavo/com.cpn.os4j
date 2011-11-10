@@ -1,5 +1,7 @@
 package com.cpn.os4j.model;
 
+import java.io.IOException;
+
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -7,7 +9,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
-import com.cpn.os4j.command.ServerErrorExecption;
+import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
@@ -73,7 +75,7 @@ public class Image implements Cacheable<String> {
 		return getImageId();
 	}
 
-	public Instance runInstance(KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, SecurityGroup... groups) throws ServerErrorExecption{
+	public Instance runInstance(KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, SecurityGroup... groups) throws ServerErrorExeception, IOException{
 		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, groups);
 	}
 	

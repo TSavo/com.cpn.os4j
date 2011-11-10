@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.TreeMap;
 import org.junit.Test;
 
 import com.cpn.os4j.command.OpenStackCommand;
-import com.cpn.os4j.command.ServerErrorExecption;
+import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.SecurityGroup;
@@ -38,7 +39,9 @@ public class OpenStackTest {
 			});
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e.getMessage(), e);
-		} catch (ServerErrorExecption e) {
+		} catch (ServerErrorExeception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
@@ -129,12 +132,12 @@ public class OpenStackTest {
 
 	@Test
 	public void testReleaseAndAllocateAddress() throws Exception {
-		ep.allocateIPAddress().associateWithInstance(ep.getInstances().get(0)).disassociate().release();
+		System.out.println(ep.allocateIPAddress().release());
 	}
 
 	@Test
 	public void testCreateVolume() throws Exception {
-		ep.createVolume("nova", 18).waitUntilAvailable().delete().waitUntilDeleted();
+		System.out.println(ep.createVolume("nova", 18).waitUntilAvailable().delete().waitUntilDeleted());
 	}
 
 	@Test
@@ -145,7 +148,7 @@ public class OpenStackTest {
 	@Test
 	public void testSnapshotFromImage() throws Exception {
 		Volume v = ep.getVolumes().get(0);
-		v.createSnapshot().waitUntilAvailable().delete();
+		System.out.println(v.createSnapshot().waitUntilAvailable().delete());
 	}
 
 }

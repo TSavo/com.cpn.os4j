@@ -1,5 +1,7 @@
 package com.cpn.os4j.model;
 
+import java.io.IOException;
+
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -7,7 +9,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
-import com.cpn.os4j.command.ServerErrorExecption;
+import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
@@ -44,17 +46,17 @@ public class IPAddress implements Cacheable<String> {
 		return endPoint.getInstanceCache().get(instanceId);
 	}
 
-	public OpenStack release() throws ServerErrorExecption {
+	public OpenStack release() throws ServerErrorExeception, IOException {
 		return endPoint.releaseAddress(this);
 	}
 
-	public IPAddress associateWithInstance(Instance anInstance) throws ServerErrorExecption {
+	public IPAddress associateWithInstance(Instance anInstance) throws ServerErrorExeception, IOException {
 		endPoint.associateAddress(anInstance, this);
 		return this;
 	}
 	
-	public IPAddress disassociate()throws ServerErrorExecption {
-		getInstance().disassociateAddress();
+	public IPAddress disassociate()throws ServerErrorExeception, IOException {
+		endPoint.disassociateAddress(this);
 		return this;
 	}
 

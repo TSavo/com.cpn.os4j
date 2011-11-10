@@ -1,5 +1,6 @@
 package com.cpn.os4j.command;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.cpn.os4j.OpenStack;
@@ -16,7 +17,7 @@ public class GetConsoleOutputCommand extends AbstractOpenStackCommand<ConsoleOut
 	}
 	
 	@Override
-	public List<ConsoleOutput> execute() throws ServerErrorExecption {
+	public List<ConsoleOutput> execute() throws ServerErrorExeception, IOException {
 		queryString.put("InstanceId", instance.getInstanceId());
 		return super.execute();
 	}

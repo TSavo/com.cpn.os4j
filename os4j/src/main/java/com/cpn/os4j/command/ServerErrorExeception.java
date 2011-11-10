@@ -4,18 +4,20 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
+import org.apache.http.client.HttpResponseException;
 
 import com.cpn.os4j.model.ServerError;
 
 @SuppressWarnings("serial")
 @Immutable
-public class ServerErrorExecption extends Exception {
+public class ServerErrorExeception extends HttpResponseException {
 	private List<ServerError> errors;
 	private int statusCode;
 	private String rawBody;
 	private OpenStackCommand<?> command;
 
-	public ServerErrorExecption(int statusCode, List<ServerError> errors, String rawBody, OpenStackCommand<?> command) {
+	public ServerErrorExeception(int statusCode, List<ServerError> errors, String rawBody, OpenStackCommand<?> command) {
+		super(statusCode, rawBody);
 		this.errors = errors;
 		this.statusCode = statusCode;
 		this.rawBody = rawBody;

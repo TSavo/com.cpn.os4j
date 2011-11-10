@@ -1,5 +1,6 @@
 package com.cpn.os4j.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
-import com.cpn.os4j.command.ServerErrorExecption;
+import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
@@ -26,12 +27,12 @@ public class Volume implements Cacheable<String> {
 		endPoint = anEndPoint;
 	}
 
-	public Volume delete() throws ServerErrorExecption  {
+	public Volume delete() throws ServerErrorExeception, IOException  {
 		endPoint.deleteVolume(this);
 		return this;
 	}
 
-	public Volume waitUntilAvailable() throws InterruptedException, ServerErrorExecption  {
+	public Volume waitUntilAvailable() throws InterruptedException, ServerErrorExeception, IOException  {
 		if (status.contains("available")) {
 			return this;
 		}
@@ -40,7 +41,7 @@ public class Volume implements Cacheable<String> {
 		return endPoint.getVolumeCache().get(getKey()).waitUntilAvailable();
 	}
 
-	public Volume waitUntilDeleted() throws InterruptedException, ServerErrorExecption  {
+	public Volume waitUntilDeleted() throws InterruptedException, ServerErrorExeception, IOException  {
 		while (endPoint.getVolumeCache().get(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getVolumes();
@@ -48,7 +49,7 @@ public class Volume implements Cacheable<String> {
 		return this;
 	}
 
-	public Snapshot createSnapshot() throws ServerErrorExecption  {
+	public Snapshot createSnapshot() throws ServerErrorExeception, IOException  {
 		return endPoint.createSnapshotFromVolume(this);
 	}
 
@@ -117,17 +118,17 @@ public class Volume implements Cacheable<String> {
 		return volumeAttachments;
 	}
 
-	public Volume attachToInstance(Instance anInstance, String aDevice) throws ServerErrorExecption  {
+	public Volume attachToInstance(Instance anInstance, String aDevice) throws ServerErrorExeception, IOException  {
 		endPoint.attachVolumeToInstance(this, anInstance, aDevice);
 		return this;
 	}
 
-	public Volume detach() throws ServerErrorExecption  {
+	public Volume detach() throws ServerErrorExeception, IOException  {
 		endPoint.detachVolume(this);
 		return this;
 	}
 	
-	public Volume forceDetach() throws ServerErrorExecption {
+	public Volume forceDetach() throws ServerErrorExeception, IOException {
 		endPoint.forceDetachVolume(this);
 		return this;
 	}
