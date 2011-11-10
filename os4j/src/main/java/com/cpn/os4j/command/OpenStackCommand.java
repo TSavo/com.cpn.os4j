@@ -15,6 +15,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.xml.sax.SAXException;
 
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.model.UnmarshallerHelper;
 
 public interface OpenStackCommand<T> {
 
@@ -24,5 +25,6 @@ public interface OpenStackCommand<T> {
 	public abstract OpenStack getEndPoint();
 	public abstract String getAction();
 	public abstract List<T> execute() throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException, ClientProtocolException, IOException, ParserConfigurationException, URISyntaxException, SAXException, XPathExpressionException;
+	public abstract UnmarshallerHelper<T> getUnmarshallerHelper();
 
 }
