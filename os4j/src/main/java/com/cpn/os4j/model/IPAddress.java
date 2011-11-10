@@ -7,6 +7,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.command.ServerErrorExecption;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
@@ -43,16 +44,16 @@ public class IPAddress implements Cacheable<String> {
 		return endPoint.getInstanceCache().get(instanceId);
 	}
 
-	public OpenStack release() {
+	public OpenStack release() throws ServerErrorExecption {
 		return endPoint.releaseAddress(this);
 	}
 
-	public IPAddress associateWithInstance(Instance anInstance) {
+	public IPAddress associateWithInstance(Instance anInstance) throws ServerErrorExecption {
 		endPoint.associateAddress(anInstance, this);
 		return this;
 	}
 	
-	public IPAddress disassociate(){
+	public IPAddress disassociate()throws ServerErrorExecption {
 		getInstance().disassociateAddress();
 		return this;
 	}

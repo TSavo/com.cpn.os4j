@@ -7,6 +7,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.command.ServerErrorExecption;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
@@ -18,11 +19,11 @@ public class Snapshot implements Cacheable<String> {
 	private OpenStack endPoint;
 
 	
-	public Volume createVolume(String anAvailabilityZone){
+	public Volume createVolume(String anAvailabilityZone)throws ServerErrorExecption {
 		return endPoint.createVolumeFromSnapshot(this, anAvailabilityZone);
 	}
 	
-	public Snapshot delete(){
+	public Snapshot delete()throws ServerErrorExecption {
 		endPoint.deleteSnapshot(this);
 		return this;
 	}
@@ -104,7 +105,7 @@ public class Snapshot implements Cacheable<String> {
 		return builder.toString();
 	}
 
-	public Snapshot waitUntilAvailable() throws InterruptedException {
+	public Snapshot waitUntilAvailable() throws InterruptedException, ServerErrorExecption {
 		if(!status.contains("available")){
 			Thread.sleep(1000);
 			endPoint.getSnapshots();

@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import org.junit.Test;
 
 import com.cpn.os4j.command.OpenStackCommand;
+import com.cpn.os4j.command.ServerErrorExecption;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.SecurityGroup;
@@ -36,6 +37,8 @@ public class OpenStackTest {
 				}
 			});
 		} catch (URISyntaxException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} catch (ServerErrorExecption e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}

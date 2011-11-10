@@ -10,6 +10,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.command.ServerErrorExecption;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
 
@@ -25,12 +26,12 @@ public class Volume implements Cacheable<String> {
 		endPoint = anEndPoint;
 	}
 
-	public Volume delete() {
+	public Volume delete() throws ServerErrorExecption  {
 		endPoint.deleteVolume(this);
 		return this;
 	}
 
-	public Volume waitUntilAvailable() throws InterruptedException {
+	public Volume waitUntilAvailable() throws InterruptedException, ServerErrorExecption  {
 		if (status.contains("available")) {
 			return this;
 		}
@@ -39,7 +40,7 @@ public class Volume implements Cacheable<String> {
 		return endPoint.getVolumeCache().get(getKey()).waitUntilAvailable();
 	}
 
-	public Volume waitUntilDeleted() throws InterruptedException {
+	public Volume waitUntilDeleted() throws InterruptedException, ServerErrorExecption  {
 		while (endPoint.getVolumeCache().get(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getVolumes();
@@ -47,7 +48,7 @@ public class Volume implements Cacheable<String> {
 		return this;
 	}
 
-	public Snapshot createSnapshot() {
+	public Snapshot createSnapshot() throws ServerErrorExecption  {
 		return endPoint.createSnapshotFromVolume(this);
 	}
 
@@ -116,17 +117,17 @@ public class Volume implements Cacheable<String> {
 		return volumeAttachments;
 	}
 
-	public Volume attachToInstance(Instance anInstance, String aDevice) {
+	public Volume attachToInstance(Instance anInstance, String aDevice) throws ServerErrorExecption  {
 		endPoint.attachVolumeToInstance(this, anInstance, aDevice);
 		return this;
 	}
 
-	public Volume detach() {
+	public Volume detach() throws ServerErrorExecption  {
 		endPoint.detachVolume(this);
 		return this;
 	}
 	
-	public Volume forceDetach(){
+	public Volume forceDetach() throws ServerErrorExecption {
 		endPoint.forceDetachVolume(this);
 		return this;
 	}

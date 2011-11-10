@@ -101,7 +101,7 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 	};
 	
 	@Override
-	public List<Instance> execute() {
+	public List<Instance> execute() throws ServerErrorExecption{
 		queryString.put("AddressingType", addressingType);
 		queryString.put("ImageId", imageId);
 		queryString.put("InstanceType", instanceType);

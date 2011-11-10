@@ -18,7 +18,7 @@ public class RebootInstancesCommand extends AbstractOpenStackCommand<Object> {
 	}
 	
 	@Override
-	public List<Object> execute() {
+	public List<Object> execute() throws ServerErrorExecption{
 		int counter = 1;
 		for(Instance i : instances){
 			queryString.put("InstanceId." + (counter < 10 ? "0" : "") + counter, i.getInstanceId());

@@ -9,7 +9,7 @@ import com.cpn.os4j.model.ServerError;
 
 @SuppressWarnings("serial")
 @Immutable
-public class ServerErrorExecption extends RuntimeException {
+public class ServerErrorExecption extends Exception {
 	private List<ServerError> errors;
 	private int statusCode;
 	private String rawBody;

@@ -10,6 +10,7 @@ import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.command.GetConsoleOutputCommand;
+import com.cpn.os4j.command.ServerErrorExecption;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
 import com.cpn.os4j.model.cache.Cacheable;
 import com.cpn.os4j.util.XMLUtil;
@@ -69,21 +70,21 @@ public class Instance implements Cacheable<String> {
 		return builder.toString();
 	}
 
-	public Instance reboot() {
+	public Instance reboot() throws ServerErrorExecption {
 		endPoint.rebootInstance(this);
 		return this;
 	}
 
-	public ConsoleOutput getConsoleOutput() {
+	public ConsoleOutput getConsoleOutput() throws ServerErrorExecption {
 		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
 	}
 
-	public Instance terminate() {
+	public Instance terminate() throws ServerErrorExecption  {
 		endPoint.terminateInstance(this);
 		return this;
 	}
 
-	public Instance waitUntilRunning() throws InterruptedException {
+	public Instance waitUntilRunning() throws InterruptedException, ServerErrorExecption  {
 		if (instanceState.equals("running")) {
 			return this;
 		}
@@ -92,7 +93,7 @@ public class Instance implements Cacheable<String> {
 		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning();
 	}
 	
-	public Instance waitUntilRunning(long maxTimeToWait) throws InterruptedException {
+	public Instance waitUntilRunning(long maxTimeToWait) throws InterruptedException, ServerErrorExecption  {
 		if (instanceState.equals("running")) {
 			return this;
 		}
@@ -104,7 +105,7 @@ public class Instance implements Cacheable<String> {
 		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning(maxTimeToWait - 1000);
 	}
 	
-	public Instance waitUntilTerminated() throws InterruptedException {
+	public Instance waitUntilTerminated() throws InterruptedException, ServerErrorExecption  {
 		endPoint.getInstances();
 		if(endPoint.getInstanceCache().get(getKey()) != null){
 			Thread.sleep(1000);
@@ -113,7 +114,7 @@ public class Instance implements Cacheable<String> {
 		return this;
 	}
 	
-	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException {
+	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException, ServerErrorExecption  {
 		endPoint.getInstances();
 		while(endPoint.getInstanceCache().get(getKey()) != null){
 			Thread.sleep(1000);
@@ -126,22 +127,22 @@ public class Instance implements Cacheable<String> {
 		return this;
 	}
 
-	public Instance associateAddress(IPAddress anAddress){
+	public Instance associateAddress(IPAddress anAddress) throws ServerErrorExecption {
 		endPoint.associateAddress(this, anAddress);
 		return this;
 	}
 	
-	public Instance disassociateAddress(){
+	public Instance disassociateAddress() throws ServerErrorExecption {
 		endPoint.disassociateAddress(getIpAddress());
 		return this;
 	}
 	
-	public Instance attachVolume(Volume aVolume, String aDevice){
+	public Instance attachVolume(Volume aVolume, String aDevice) throws ServerErrorExecption {
 		endPoint.attachVolumeToInstance(aVolume, this, aDevice);
 		return this;
 	}
 	
-	public Instance detachVolume(){
+	public Instance detachVolume() throws ServerErrorExecption{
 		Volume v = getVolume();
 		if(v != null){
 			endPoint.detachVolume(v);
@@ -149,7 +150,7 @@ public class Instance implements Cacheable<String> {
 		return this;
 	}
 	
-	public Volume getVolume(){
+	public Volume getVolume() throws ServerErrorExecption {
 		List<Volume> vols = endPoint.getVolumes();
 		for(Volume v : vols){
 			for(VolumeAttachment a : v.getVolumeAttachments()){

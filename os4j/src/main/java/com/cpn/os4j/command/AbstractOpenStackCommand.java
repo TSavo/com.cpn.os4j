@@ -17,7 +17,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -40,6 +39,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 
 	private OpenStack endPoint;
 	protected TreeMap<String, String> queryString = new TreeMap<String, String>();
+	private ServerErrorExecption exception = null;
 
 	private static final String CHAR_ENCODING = Charset.forName("UTF-8").name();
 
@@ -56,6 +56,10 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+	
+	public void setServerErrorException(ServerErrorExecption e){
+		exception = e;
 	}
 
 	@Override
@@ -116,7 +120,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	}
 
 	@Override
-	public List<T> execute() {
+	public List<T> execute() throws ServerErrorExecption {
 
 		HttpClient client = new DefaultHttpClient();
 
@@ -153,7 +157,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 			}
 			final OpenStackCommand<T> ref = this;
 			try {
-				return unmarshall(toXML(client.execute(request, new ResponseHandler<String>() {
+				List<T> result = unmarshall(toXML(client.execute(request, new ResponseHandler<String>() {
 					/**
 					 * Returns the response body as a String if the response was successful
 					 * (a 2xx status code). If no response body exists, this returns null.
@@ -180,7 +184,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 										return "//Response/Errors/Error";
 									}
 								}, endPoint);
-								throw new ServerErrorExecption(statusLine.getStatusCode(), errors, body, ref);
+								ref.setServerErrorException(new ServerErrorExecption(statusLine.getStatusCode(), errors, body, ref));
 							} else {
 								throw new HttpResponseException(statusLine.getStatusCode(),  statusLine.getReasonPhrase());
 							}
@@ -189,6 +193,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 						return entity == null ? null : EntityUtils.toString(entity);
 					}
 				})), this, endPoint);
+				if(exception != null){
+					throw exception;
+				}else{
+					return result;
+				}
 			} catch (IOException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
