@@ -6,6 +6,13 @@ import com.cpn.os4j.model.Volume;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
 
 public class AttachVolumeCommand extends AbstractOpenStackCommand<Volume.VolumeAttachment> {
+	public AttachVolumeCommand(final OpenStack anEndPoint, final Volume aVolume, final Instance anInstance, final String aDevice) {
+		super(anEndPoint);
+		put("VolumeId", aVolume.getVolumeId());
+		put("InstanceId", anInstance.getInstanceId());
+		put("Device", aDevice);
+	}
+
 	@Override
 	public String getAction() {
 		return "AttachVolume";
@@ -19,13 +26,6 @@ public class AttachVolumeCommand extends AbstractOpenStackCommand<Volume.VolumeA
 	@Override
 	public String getUnmarshallingXPath() {
 		return "//AttachVolumeResponse";
-	}
-
-	public AttachVolumeCommand(OpenStack anEndPoint, Volume aVolume, Instance anInstance, String aDevice) {
-		super(anEndPoint);
-		put("VolumeId", aVolume.getVolumeId());
-		put("InstanceId", anInstance.getInstanceId());
-		put("Device", aDevice);
 	}
 
 }

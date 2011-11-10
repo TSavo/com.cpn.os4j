@@ -51,164 +51,35 @@ import com.cpn.os4j.model.cache.EhcacheWrapper;
 
 public class OpenStack {
 
-	private URI uri;
+	private final CacheManager cacheManager = CacheManager.create();
 
-	private OpenStackCredentials credentials;
+	private final OpenStackCredentials credentials;
 
-	private SignatureStrategy signatureStrategy = new HmacSHA256SignatureStrategy();
+	private final CacheWrapper<String, Image> imagesCache = new EhcacheWrapper<>("imagesCache", cacheManager);
 
-	private CacheManager cacheManager = CacheManager.create();
-	private CacheWrapper<String, Instance> instanceCache = new EhcacheWrapper<>("instances", cacheManager);
-	private CacheWrapper<String, IPAddress> ipAddessCache = new EhcacheWrapper<>("ipAddresses", cacheManager);
-	private CacheWrapper<String, Region> regionCache = new EhcacheWrapper<>("regions", cacheManager);
-	private CacheWrapper<String, Volume> volumeCache = new EhcacheWrapper<>("volumes", cacheManager);
-	private CacheWrapper<String, SecurityGroup> securityGroupCache = new EhcacheWrapper<>("securityGroups", cacheManager);
-	private CacheWrapper<String, Image> imagesCache = new EhcacheWrapper<>("imagesCache", cacheManager);
-	private CacheWrapper<String, KeyPair> keyPairsCache = new EhcacheWrapper<>("keyPairsCache", cacheManager);
-	private CacheWrapper<String, Snapshot> snapshotsCache = new EhcacheWrapper<>("snapshotsCache", cacheManager);
+	private final CacheWrapper<String, Instance> instanceCache = new EhcacheWrapper<>("instances", cacheManager);
+	private final CacheWrapper<String, IPAddress> ipAddessCache = new EhcacheWrapper<>("ipAddresses", cacheManager);
+	private final CacheWrapper<String, KeyPair> keyPairsCache = new EhcacheWrapper<>("keyPairsCache", cacheManager);
+	private final CacheWrapper<String, Region> regionCache = new EhcacheWrapper<>("regions", cacheManager);
+	private final CacheWrapper<String, SecurityGroup> securityGroupCache = new EhcacheWrapper<>("securityGroups", cacheManager);
+	private final SignatureStrategy signatureStrategy = new HmacSHA256SignatureStrategy();
+	private final CacheWrapper<String, Snapshot> snapshotsCache = new EhcacheWrapper<>("snapshotsCache", cacheManager);
+	private final URI uri;
+	private final CacheWrapper<String, Volume> volumeCache = new EhcacheWrapper<>("volumes", cacheManager);
 
-	public OpenStack(URI aUrl, OpenStackCredentials aCreds) throws ServerErrorExeception, IOException {
+	public OpenStack(final URI aUrl, final OpenStackCredentials aCreds) throws ServerErrorExeception, IOException {
 		uri = aUrl;
 		credentials = aCreds;
 		populateCaches();
 	}
 
-	public CacheWrapper<String, KeyPair> getKeyPairCache() {
-		return keyPairsCache;
-	}
-
-	public CacheWrapper<String, SecurityGroup> getSecurityGroupCache() {
-		return securityGroupCache;
-	}
-
-	public CacheWrapper<String, Image> getImagsCache() {
-		return imagesCache;
-	}
-
-	public CacheWrapper<String, Region> getRegionCache() {
-		return regionCache;
-	}
-
-	public CacheWrapper<String, Instance> getInstanceCache() {
-		return instanceCache;
-	}
-
-	public CacheWrapper<String, IPAddress> getIPAddressCache() {
-		return ipAddessCache;
-	}
-
-	public CacheWrapper<String, Volume> getVolumeCache() {
-		return volumeCache;
-	}
-
-	public CacheWrapper<String, Snapshot> getSnapshotCache() {
-		return snapshotsCache;
-	}
-
-	public URI getURI() {
-		return uri;
-	}
-
-	public OpenStackCredentials getCredentials() {
-		return credentials;
-	}
-
-	public SignatureStrategy getSignatureStrategy() {
-		return signatureStrategy;
-	}
-
-	public String post(String anAction, String aMessage) throws ClientProtocolException, IOException {
-		HttpClient client = new DefaultHttpClient();
-
-		HttpPost post = new HttpPost(uri);
-		StringEntity entity = new StringEntity(aMessage);
-		entity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-		post.setEntity(entity);
-		String responseBody = client.execute(post, responseHandler);
-		return responseBody;
-
-	}
-
-	public List<Region> getRegions() throws ServerErrorExeception, IOException, IOException {
-		List<Region> results = new DescribeRegionsCommand(this).execute();
-		getRegionCache().removeAll().putAll(results);
-		return results;
-	}
-
-	public List<Instance> getInstances() throws ServerErrorExeception, IOException, IOException {
-		List<Instance> results = new DescribeInstancesCommand(this).execute();
-		getInstanceCache().removeAll().putAll(results);
-		return results;
-	}
-
-	public List<IPAddress> getIPAddresses() throws ServerErrorExeception, IOException, IOException {
-		List<IPAddress> results = new DescribeAddressesCommand(this).execute();
-		getIPAddressCache().removeAll().putAll(results);
-		return results;
-	}
-
-	public List<Volume> getVolumes() throws ServerErrorExeception, IOException, IOException {
-		List<Volume> results = new DescribeVolumesCommand(this).execute();
-		getVolumeCache().removeAll().putAll(results);
-		return results;
-	}
-
-	public List<Image> getImages() throws ServerErrorExeception, IOException, IOException {
-		List<Image> results = new DescribeImagesCommand(this).execute();
-		imagesCache.removeAll().putAll(results);
-		return results;
-	}
-
-	public List<SecurityGroup> getSecurityGroups() throws ServerErrorExeception, IOException, IOException {
-		List<SecurityGroup> results = new DescribeSecurityGroupsCommand(this).execute();
-		securityGroupCache.removeAll().putAll(results);
-		return results;
-	}
-
-	public List<KeyPair> getKeyPairs() throws ServerErrorExeception, IOException, IOException {
-		List<KeyPair> results = new DescribeKeyPairsCommand(this).execute();
-		keyPairsCache.removeAll().putAll(results);
-		return results;
-	}
-
-	public List<Snapshot> getSnapshots() throws ServerErrorExeception, IOException, IOException {
-		List<Snapshot> results = new DescribeSnapshotsCommand(this).execute();
-		snapshotsCache.removeAll().putAll(results);
-		return results;
-	}
-
 	public IPAddress allocateIPAddress() throws ServerErrorExeception, IOException, IOException {
-		List<IPAddress> results = new AllocateAddressCommand(this).execute();
+		final List<IPAddress> results = new AllocateAddressCommand(this).execute();
 		ipAddessCache.put(results.get(0).getKey(), results.get(0));
 		return results.get(0);
 	}
 
-	public OpenStack releaseAddress(IPAddress ipAddress) throws ServerErrorExeception, IOException, IOException {
-		new ReleaseAddressCommand(this, ipAddress).execute();
-		getIPAddresses();
-		return this;
-	}
-
-	public Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, SecurityGroup... groups) throws ServerErrorExeception, IOException {
-		Instance i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, groups).execute().get(0);
-		instanceCache.put(i.getKey(), i);
-		return i;
-	}
-
-	public OpenStack rebootInstance(Instance instance) throws ServerErrorExeception, IOException {
-		new RebootInstancesCommand(this, instance).execute();
-		getInstances();
-		return this;
-	}
-
-	public OpenStack terminateInstance(Instance anInstance) throws ServerErrorExeception, IOException {
-		new TerminateInstancesCommand(this, anInstance).execute();
-		getInstances();
-		return this;
-	}
-
-	public OpenStack associateAddress(Instance anInstance, IPAddress anIPAddress) throws ServerErrorExeception, IOException {
+	public OpenStack associateAddress(final Instance anInstance, final IPAddress anIPAddress) throws ServerErrorExeception, IOException {
 		new AssociateAddressCommand(this, anInstance, anIPAddress).execute();
 		anInstance.setIPAddress(anIPAddress.getIpAddress());
 		anIPAddress.setInstanceId(anInstance.getInstanceId());
@@ -217,8 +88,48 @@ public class OpenStack {
 		return this;
 	}
 
-	public OpenStack disassociateAddress(IPAddress ipAddress) throws ServerErrorExeception, IOException  {
-		Instance i = ipAddress.getInstance();
+	public VolumeAttachment attachVolumeToInstance(final Volume aVolume, final Instance anInstance, final String aDevice) throws ServerErrorExeception, IOException {
+		final VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
+		getVolumes();
+		return v;
+	}
+
+	public Snapshot createSnapshotFromVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+		final Snapshot s = new CreateSnapshotCommand(this, aVolume).execute().get(0);
+		getSnapshots();
+		return s;
+	}
+
+	public Volume createVolume(final String anAvailabilityZone, final int aSize) throws ServerErrorExeception, IOException {
+		final Volume v = new CreateVolumeCommand(this, anAvailabilityZone, aSize).execute().get(0);
+		getVolumes();
+		return v;
+	}
+
+	public Volume createVolumeFromSnapshot(final Snapshot aSnapshot, final String anAvailabilityZone) throws ServerErrorExeception, IOException {
+		final Volume v = new CreateVolumeCommand(this, anAvailabilityZone, Integer.parseInt(aSnapshot.getVolumeSize()), aSnapshot).execute().get(0);
+		getVolumes();
+		return v;
+	}
+
+	public OpenStack deleteSnapshot(final Snapshot snapshot) throws ServerErrorExeception, IOException {
+		new DeleteSnapshot(this, snapshot).execute();
+		return this;
+	}
+
+	public OpenStack deleteVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+		new DeleteVolumeCommand(this, aVolume).execute();
+		return this;
+	}
+
+	public OpenStack detachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+		new DetachVolumeCommand(this, aVolume).execute();
+		getVolumes();
+		return this;
+	}
+
+	public OpenStack disassociateAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException {
+		final Instance i = ipAddress.getInstance();
 		if (i != null) {
 			i.setIPAddress(null);
 		}
@@ -229,52 +140,104 @@ public class OpenStack {
 		return this;
 	}
 
-	public Volume createVolume(String anAvailabilityZone, int aSize) throws ServerErrorExeception, IOException {
-		Volume v = new CreateVolumeCommand(this, anAvailabilityZone, aSize).execute().get(0);
-		getVolumes();
-		return v;
-	}
-
-	public OpenStack deleteVolume(Volume aVolume) throws ServerErrorExeception, IOException {
-		new DeleteVolumeCommand(this, aVolume).execute();
-		return this;
-	}
-
-	public Volume createVolumeFromSnapshot(Snapshot aSnapshot, String anAvailabilityZone) throws ServerErrorExeception, IOException {
-		Volume v = new CreateVolumeCommand(this, anAvailabilityZone, Integer.parseInt(aSnapshot.getVolumeSize()), aSnapshot).execute().get(0);
-		getVolumes();
-		return v;
-	}
-
-	public Snapshot createSnapshotFromVolume(Volume aVolume) throws ServerErrorExeception, IOException {
-		Snapshot s = new CreateSnapshotCommand(this, aVolume).execute().get(0);
-		getSnapshots();
-		return s;
-	}
-
-	public OpenStack deleteSnapshot(Snapshot snapshot) throws ServerErrorExeception, IOException {
-		new DeleteSnapshot(this, snapshot).execute();
-		return this;
-	}
-
-	public VolumeAttachment attachVolumeToInstance(Volume aVolume, Instance anInstance, String aDevice) throws ServerErrorExeception, IOException {
-		VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
-		getVolumes();
-		return v;
-	}
-
-	public OpenStack detachVolume(Volume aVolume) throws ServerErrorExeception, IOException{
-		new DetachVolumeCommand(this, aVolume).execute();
-		getVolumes();
-		return this;
-	}
-
-	public OpenStack forceDetachVolume(Volume aVolume) throws ServerErrorExeception, IOException {
+	public OpenStack forceDetachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
 		new DetachVolumeCommand(this, aVolume, true).execute();
 		getVolumes();
 		return this;
 	}
-	
+
+	public OpenStackCredentials getCredentials() {
+		return credentials;
+	}
+
+	public List<Image> getImages() throws ServerErrorExeception, IOException, IOException {
+		final List<Image> results = new DescribeImagesCommand(this).execute();
+		imagesCache.removeAll().putAll(results);
+		return results;
+	}
+
+	public CacheWrapper<String, Image> getImagsCache() {
+		return imagesCache;
+	}
+
+	public CacheWrapper<String, Instance> getInstanceCache() {
+		return instanceCache;
+	}
+
+	public List<Instance> getInstances() throws ServerErrorExeception, IOException, IOException {
+		final List<Instance> results = new DescribeInstancesCommand(this).execute();
+		getInstanceCache().removeAll().putAll(results);
+		return results;
+	}
+
+	public CacheWrapper<String, IPAddress> getIPAddressCache() {
+		return ipAddessCache;
+	}
+
+	public List<IPAddress> getIPAddresses() throws ServerErrorExeception, IOException, IOException {
+		final List<IPAddress> results = new DescribeAddressesCommand(this).execute();
+		getIPAddressCache().removeAll().putAll(results);
+		return results;
+	}
+
+	public CacheWrapper<String, KeyPair> getKeyPairCache() {
+		return keyPairsCache;
+	}
+
+	public List<KeyPair> getKeyPairs() throws ServerErrorExeception, IOException, IOException {
+		final List<KeyPair> results = new DescribeKeyPairsCommand(this).execute();
+		keyPairsCache.removeAll().putAll(results);
+		return results;
+	}
+
+	public CacheWrapper<String, Region> getRegionCache() {
+		return regionCache;
+	}
+
+	public List<Region> getRegions() throws ServerErrorExeception, IOException, IOException {
+		final List<Region> results = new DescribeRegionsCommand(this).execute();
+		getRegionCache().removeAll().putAll(results);
+		return results;
+	}
+
+	public CacheWrapper<String, SecurityGroup> getSecurityGroupCache() {
+		return securityGroupCache;
+	}
+
+	public List<SecurityGroup> getSecurityGroups() throws ServerErrorExeception, IOException, IOException {
+		final List<SecurityGroup> results = new DescribeSecurityGroupsCommand(this).execute();
+		securityGroupCache.removeAll().putAll(results);
+		return results;
+	}
+
+	public SignatureStrategy getSignatureStrategy() {
+		return signatureStrategy;
+	}
+
+	public CacheWrapper<String, Snapshot> getSnapshotCache() {
+		return snapshotsCache;
+	}
+
+	public List<Snapshot> getSnapshots() throws ServerErrorExeception, IOException, IOException {
+		final List<Snapshot> results = new DescribeSnapshotsCommand(this).execute();
+		snapshotsCache.removeAll().putAll(results);
+		return results;
+	}
+
+	public URI getURI() {
+		return uri;
+	}
+
+	public CacheWrapper<String, Volume> getVolumeCache() {
+		return volumeCache;
+	}
+
+	public List<Volume> getVolumes() throws ServerErrorExeception, IOException, IOException {
+		final List<Volume> results = new DescribeVolumesCommand(this).execute();
+		getVolumeCache().removeAll().putAll(results);
+		return results;
+	}
+
 	public OpenStack populateCaches() throws ServerErrorExeception, IOException {
 		getInstances();
 		getIPAddresses();
@@ -287,13 +250,48 @@ public class OpenStack {
 		return this;
 	}
 
+	public String post(final String anAction, final String aMessage) throws ClientProtocolException, IOException {
+		final HttpClient client = new DefaultHttpClient();
+
+		final HttpPost post = new HttpPost(uri);
+		final StringEntity entity = new StringEntity(aMessage);
+		entity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
+		final ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		post.setEntity(entity);
+		final String responseBody = client.execute(post, responseHandler);
+		return responseBody;
+
+	}
+
+	public OpenStack rebootInstance(final Instance instance) throws ServerErrorExeception, IOException {
+		new RebootInstancesCommand(this, instance).execute();
+		getInstances();
+		return this;
+	}
+
+	public OpenStack releaseAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException, IOException {
+		new ReleaseAddressCommand(this, ipAddress).execute();
+		getIPAddresses();
+		return this;
+	}
+
+	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+		final Instance i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, groups).execute().get(0);
+		instanceCache.put(i.getKey(), i);
+		return i;
+	}
+
+	public OpenStack terminateInstance(final Instance anInstance) throws ServerErrorExeception, IOException {
+		new TerminateInstancesCommand(this, anInstance).execute();
+		getInstances();
+		return this;
+	}
+
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("uri", uri).append("credentials", credentials).append("signatureStrategy", signatureStrategy);
 		return builder.toString();
 	}
-
-	
 
 }

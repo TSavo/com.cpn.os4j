@@ -40,101 +40,12 @@ public class XMLUtil {
 	static {
 		try {
 			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
-	private Node node;
-
-	public XMLUtil(Node aNode) {
-		node = aNode;
-	}
-
-	public String get(String anXPath) throws XPathExpressionException {
-		return xPathString(node, anXPath);
-	}
-
-	public Calendar getCalendar(String anXPath) throws XPathExpressionException {
-		Calendar c = new GregorianCalendar();
-		Date d;
-		try {
-			d = DateFormat.getDateInstance().parse((get(anXPath)));
-		} catch (ParseException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-		c.setTime(d);
-		return c;
-
-	}
-
-	public String getString(String anXPath) throws XPathExpressionException {
-		return get(anXPath);
-	}
-
-	public int getInteger(String anXPath) throws XPathExpressionException {
-		return xPathInteger(node, anXPath);
-	}
-
-	public List<Node> getList(String anXPath) throws XPathExpressionException {
-		return xPathList(node, anXPath);
-	}
-
-	public List<String> getStringList(String anXPath) throws XPathExpressionException {
-		return xPathStringList(node, anXPath);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static final <T> T xPath(Node aNode, String anXPath, QName aQName) throws XPathExpressionException {
-		return (T) xPath.compile(anXPath).evaluate(aNode, aQName);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static final <T> List<T> toList(NodeList aList) {
-		List<T> list = new ArrayList<T>();
-		for (int x = 0; x < aList.getLength(); ++x) {
-			list.add((T) aList.item(x));
-		}
-		return list;
-	}
-
-	public static final List<String> toStringList(List<Node> someNodes) {
-		List<String> list = new ArrayList<>();
-		for (Node n : someNodes) {
-			list.add(n.getNodeValue());
-		}
-		return list;
-	}
-
-	public static final List<String> toStringList(NodeList aList) {
-		return toStringList(XMLUtil.<Node> toList(aList));
-	}
-
-	public static final List<Node> xPathList(Node aNode, String anXPath) throws XPathExpressionException {
-		return toList(XMLUtil.<NodeList> xPath(aNode, anXPath, XPathConstants.NODESET));
-	}
-
-	public static final List<String> xPathStringList(Node aNode, String anXPath) throws XPathExpressionException {
-		return toStringList(XMLUtil.<NodeList> xPath(aNode, anXPath, XPathConstants.NODESET));
-	}
-
-	public static final String xPathString(Node aNode, String anXPath) throws XPathExpressionException {
-		return (String) xPath.compile(anXPath).evaluate(aNode, XPathConstants.STRING);
-	}
-
-	public static final int xPathInteger(Node aNode, String anXPath) throws XPathExpressionException {
-		return Integer.parseInt((String) xPath.compile(anXPath).evaluate(aNode, XPathConstants.STRING));
-	}
-
-	public static final Document toXML(String anXMLDoc) {
-		try {
-			return builder.parse(new ByteArrayInputStream(anXMLDoc.getBytes()));
-		} catch (SAXException | IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-	public static final String prettyPrint(Node aNode) {
+	public static final String prettyPrint(final Node aNode) {
 		Transformer transformer;
 		try {
 			transformer = TransformerFactory.newInstance().newTransformer();
@@ -142,13 +53,102 @@ public class XMLUtil {
 			throw new RuntimeException(e1.getMessage(), e1);
 		}
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		StreamResult result = new StreamResult(new StringWriter());
-		DOMSource source = new DOMSource(aNode);
+		final StreamResult result = new StreamResult(new StringWriter());
+		final DOMSource source = new DOMSource(aNode);
 		try {
 			transformer.transform(source, result);
-		} catch (TransformerException e) {
+		} catch (final TransformerException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 		return result.getWriter().toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <T> List<T> toList(final NodeList aList) {
+		final List<T> list = new ArrayList<T>();
+		for (int x = 0; x < aList.getLength(); ++x) {
+			list.add((T) aList.item(x));
+		}
+		return list;
+	}
+
+	public static final List<String> toStringList(final List<Node> someNodes) {
+		final List<String> list = new ArrayList<>();
+		for (final Node n : someNodes) {
+			list.add(n.getNodeValue());
+		}
+		return list;
+	}
+
+	public static final List<String> toStringList(final NodeList aList) {
+		return toStringList(XMLUtil.<Node> toList(aList));
+	}
+
+	public static final Document toXML(final String anXMLDoc) {
+		try {
+			return builder.parse(new ByteArrayInputStream(anXMLDoc.getBytes()));
+		} catch (SAXException | IOException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <T> T xPath(final Node aNode, final String anXPath, final QName aQName) throws XPathExpressionException {
+		return (T) xPath.compile(anXPath).evaluate(aNode, aQName);
+	}
+
+	public static final int xPathInteger(final Node aNode, final String anXPath) throws XPathExpressionException {
+		return Integer.parseInt((String) xPath.compile(anXPath).evaluate(aNode, XPathConstants.STRING));
+	}
+
+	public static final List<Node> xPathList(final Node aNode, final String anXPath) throws XPathExpressionException {
+		return toList(XMLUtil.<NodeList> xPath(aNode, anXPath, XPathConstants.NODESET));
+	}
+
+	public static final String xPathString(final Node aNode, final String anXPath) throws XPathExpressionException {
+		return (String) xPath.compile(anXPath).evaluate(aNode, XPathConstants.STRING);
+	}
+
+	public static final List<String> xPathStringList(final Node aNode, final String anXPath) throws XPathExpressionException {
+		return toStringList(XMLUtil.<NodeList> xPath(aNode, anXPath, XPathConstants.NODESET));
+	}
+
+	private final Node node;
+
+	public XMLUtil(final Node aNode) {
+		node = aNode;
+	}
+
+	public String get(final String anXPath) throws XPathExpressionException {
+		return xPathString(node, anXPath);
+	}
+
+	public Calendar getCalendar(final String anXPath) throws XPathExpressionException {
+		final Calendar c = new GregorianCalendar();
+		Date d;
+		try {
+			d = DateFormat.getDateInstance().parse((get(anXPath)));
+		} catch (final ParseException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		c.setTime(d);
+		return c;
+
+	}
+
+	public int getInteger(final String anXPath) throws XPathExpressionException {
+		return xPathInteger(node, anXPath);
+	}
+
+	public List<Node> getList(final String anXPath) throws XPathExpressionException {
+		return xPathList(node, anXPath);
+	}
+
+	public String getString(final String anXPath) throws XPathExpressionException {
+		return get(anXPath);
+	}
+
+	public List<String> getStringList(final String anXPath) throws XPathExpressionException {
+		return xPathStringList(node, anXPath);
 	}
 }

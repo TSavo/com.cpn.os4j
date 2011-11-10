@@ -16,33 +16,34 @@ import com.cpn.os4j.util.XMLUtil;
 @SuppressWarnings("serial")
 @Immutable
 public class Permission implements Serializable {
-	private int toPort;
-	private String ipProtocol;
-	private List<String> ipRanges = new ArrayList<>();
-	private int fromPort;
-
-	private Permission() {
-
-	}
-
-	public static Permission unmarshall(Node aNode, OpenStack anEndPoint) {
-		Permission p = new Permission();
-		XMLUtil n = new XMLUtil(aNode);
+	public static Permission unmarshall(final Node aNode, final OpenStack anEndPoint) {
+		final Permission p = new Permission();
+		final XMLUtil n = new XMLUtil(aNode);
 		try {
 			p.toPort = n.getInteger("toPort");
 
 			p.ipProtocol = n.get("ipProtocol");
 			p.fromPort = n.getInteger("fromPort");
 			p.ipRanges = n.getStringList("ipRanges/item/cidrIp/text()");
-		} catch (XPathExpressionException e) {
+		} catch (final XPathExpressionException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 		return p;
 	}
 
+	private int fromPort;
+	private String ipProtocol;
+	private List<String> ipRanges = new ArrayList<>();
+
+	private int toPort;
+
+	private Permission() {
+
+	}
+
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("toPort", toPort).append("ipProtocol", ipProtocol).append("ipRanges", ipRanges).append("fromPort", fromPort);
 		return builder.toString();
 	}

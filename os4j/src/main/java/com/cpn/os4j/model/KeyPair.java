@@ -12,11 +12,21 @@ import com.cpn.os4j.util.XMLUtil;
 @SuppressWarnings("serial")
 public class KeyPair implements Cacheable<String> {
 
-	private String name, fingerprint;
+	public static KeyPair unmarshall(final Node aNode, final OpenStack anOpenStack) {
+		final KeyPair p = new KeyPair();
+		final XMLUtil x = new XMLUtil(aNode);
 
-	public String getName() {
-		return name;
+		try {
+			p.name = x.get("keyName");
+			p.fingerprint = x.get("keyFingerprint");
+		} catch (final XPathExpressionException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		return p;
+
 	}
+
+	private String name, fingerprint;
 
 	public String getFingerprint() {
 		return fingerprint;
@@ -27,24 +37,14 @@ public class KeyPair implements Cacheable<String> {
 		return getName();
 	}
 
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("name", name).append("fingerprint", fingerprint);
-		return builder.toString();
+	public String getName() {
+		return name;
 	}
 
-	public static KeyPair unmarshall(Node aNode, OpenStack anOpenStack) {
-		KeyPair p = new KeyPair();
-		XMLUtil x = new XMLUtil(aNode);
-
-		try {
-			p.name = x.get("keyName");
-			p.fingerprint = x.get("keyFingerprint");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-		return p;
-
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("name", name).append("fingerprint", fingerprint);
+		return builder.toString();
 	}
 }

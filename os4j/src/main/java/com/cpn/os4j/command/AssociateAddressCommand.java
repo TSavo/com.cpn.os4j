@@ -5,6 +5,12 @@ import com.cpn.os4j.model.IPAddress;
 import com.cpn.os4j.model.Instance;
 
 public class AssociateAddressCommand extends AbstractOpenStackCommand<Object> {
+	public AssociateAddressCommand(final OpenStack anEndPoint, final Instance anInstance, final IPAddress anIpAddress) {
+		super(anEndPoint);
+		put("InstanceId", anInstance.getInstanceId());
+		put("PublicIp", anIpAddress.getIpAddress());
+	}
+
 	@Override
 	public String getAction() {
 		return "AssociateAddress";
@@ -15,16 +21,10 @@ public class AssociateAddressCommand extends AbstractOpenStackCommand<Object> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public String getUnmarshallingXPath() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	public AssociateAddressCommand(OpenStack anEndPoint, Instance anInstance, IPAddress anIpAddress) {
-		super(anEndPoint);
-		put("InstanceId", anInstance.getInstanceId());
-		put("PublicIp", anIpAddress.getIpAddress());
 	}
 }

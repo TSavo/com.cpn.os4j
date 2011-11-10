@@ -11,27 +11,27 @@ public class RebootInstancesCommand extends AbstractOpenStackCommand<Object> {
 
 	public List<Instance> instances = new ArrayList<>();
 
-	public RebootInstancesCommand(OpenStack anEndPoint, Instance... i) {
+	public RebootInstancesCommand(final OpenStack anEndPoint, final Instance... i) {
 		super(anEndPoint);
-		for (Instance in : i) {
+		for (final Instance in : i) {
 			instances.add(in);
 		}
 	}
-	
-	@Override
-	public List<Object> execute() throws ServerErrorExeception, IOException{
-		int counter = 1;
-		for(Instance i : instances){
-			queryString.put("InstanceId." + (counter < 10 ? "0" : "") + counter, i.getInstanceId());
-		}
-		return super.execute();
-	}
 
-	public RebootInstancesCommand addInstance(Instance... i) {
-		for (Instance in : i) {
+	public RebootInstancesCommand addInstance(final Instance... i) {
+		for (final Instance in : i) {
 			instances.add(in);
 		}
 		return this;
+	}
+
+	@Override
+	public List<Object> execute() throws ServerErrorExeception, IOException {
+		int counter = 1;
+		for (final Instance i : instances) {
+			queryString.put("InstanceId." + (counter < 10 ? "0" : "") + (counter++), i.getInstanceId());
+		}
+		return super.execute();
 	}
 
 	@Override

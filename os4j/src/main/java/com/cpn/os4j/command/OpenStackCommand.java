@@ -9,12 +9,16 @@ import com.cpn.os4j.model.UnmarshallerHelper;
 
 public interface OpenStackCommand<T> {
 
-	
-	public abstract String getVerb();
-	public abstract TreeMap<String, String> getQueryString();
-	public abstract OpenStack getEndPoint();
-	public abstract String getAction();
 	public abstract List<T> execute() throws ServerErrorExeception, IOException;
+
+	public abstract String getAction();
+
+	public abstract OpenStack getEndPoint();
+
+	public abstract TreeMap<String, String> getQueryString();
+
 	public abstract UnmarshallerHelper<T> getUnmarshallerHelper();
+
+	public abstract String getVerb();
 
 }

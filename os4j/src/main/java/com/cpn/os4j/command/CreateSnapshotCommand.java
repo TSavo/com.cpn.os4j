@@ -5,6 +5,11 @@ import com.cpn.os4j.model.Snapshot;
 import com.cpn.os4j.model.Volume;
 
 public class CreateSnapshotCommand extends AbstractOpenStackCommand<Snapshot> {
+	public CreateSnapshotCommand(final OpenStack anEndPoint, final Volume aVolume) {
+		super(anEndPoint);
+		put("VolumeId", aVolume.getVolumeId());
+	}
+
 	@Override
 	public String getAction() {
 		return "CreateSnapshot";
@@ -18,10 +23,5 @@ public class CreateSnapshotCommand extends AbstractOpenStackCommand<Snapshot> {
 	@Override
 	public String getUnmarshallingXPath() {
 		return "//CreateSnapshotResponse";
-	}
-
-	public CreateSnapshotCommand(OpenStack anEndPoint, Volume aVolume) {
-		super(anEndPoint);
-		put("VolumeId", aVolume.getVolumeId());
 	}
 }

@@ -38,61 +38,12 @@ import com.cpn.os4j.util.XMLUtil;
 
 public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>, UnmarshallerHelper<T> {
 
-	private OpenStack endPoint;
-	protected TreeMap<String, String> queryString = new TreeMap<String, String>();
-
 	private static final String CHAR_ENCODING = Charset.forName("UTF-8").name();
 
-	public AbstractOpenStackCommand(OpenStack anEndPoint) {
-		endPoint = anEndPoint;
-		queryString.put("AWSAccessKeyId", endPoint.getCredentials().getAccessKey());
-		queryString.put("SignatureMethod", endPoint.getSignatureStrategy().getSignatureMethod());
-		queryString.put("SignatureVersion", new Integer(endPoint.getSignatureStrategy().getSignatureVersion()).toString());
-		queryString.put("Action", getAction());
-		queryString.put("Version", "2010-08-31");
-		try {
-			queryString.put("Timestamp", URLEncoder.encode(new Date().toString(), CHAR_ENCODING).replaceAll("\\+", "%20"));
-			queryString.put("GUID", URLEncoder.encode(UUID.randomUUID().toString(), CHAR_ENCODING));
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-	@Override
-	public OpenStack getEndPoint() {
-		return endPoint;
-	}
-
-	@Override
-	public TreeMap<String, String> getQueryString() {
-		return queryString;
-	}
-
-	public OpenStackCommand<T> put(String aKey, String aValue) {
-		queryString.put(aKey, aValue);
-		return this;
-	}
-
-	@Override
-	public String getVerb() {
-		return "GET";
-	}
-
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("action", getAction()).append("verb", getVerb()).append("queryString", queryString);
-		return builder.toString();
-	}
-
-	public UnmarshallerHelper<T> getUnmarshallerHelper() {
-		return this;
-	}
-
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> unmarshall(List<Node> aList, Class<T> anUnmarshaller, OpenStack anEndPoint) {
-		ArrayList<T> list = new ArrayList<T>();
-		for (Node n : aList) {
+	public static <T> List<T> unmarshall(final List<Node> aList, final Class<T> anUnmarshaller, final OpenStack anEndPoint) {
+		final ArrayList<T> list = new ArrayList<T>();
+		for (final Node n : aList) {
 			try {
 				list.add((T) anUnmarshaller.getDeclaredMethod("unmarshall", Node.class, OpenStack.class).invoke(null, n, anEndPoint));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -102,15 +53,34 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		return list;
 	}
 
-	public static <T> List<T> unmarshall(Node aDocument, UnmarshallerHelper<T> aHelper, OpenStack anEndPoint) {
+	public static <T> List<T> unmarshall(final Node aDocument, final UnmarshallerHelper<T> aHelper, final OpenStack anEndPoint) {
 		try {
-			if (aHelper != null && aHelper.getUnmarshallingClass() != null && aHelper.getUnmarshallingXPath() != null) {
+			if ((aHelper != null) && (aHelper.getUnmarshallingClass() != null) && (aHelper.getUnmarshallingXPath() != null)) {
 				return unmarshall(XMLUtil.xPathList(aDocument, aHelper.getUnmarshallingXPath()), aHelper.getUnmarshallingClass(), anEndPoint);
 			} else {
 				LoggerFactory.getLogger(AbstractOpenStackCommand.class).warn("I don't have a way to unmarshall the following XML: " + XMLUtil.prettyPrint(aDocument));
 				return null;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
+	private final OpenStack endPoint;
+
+	protected TreeMap<String, String> queryString = new TreeMap<String, String>();
+
+	public AbstractOpenStackCommand(final OpenStack anEndPoint) {
+		endPoint = anEndPoint;
+		queryString.put("AWSAccessKeyId", endPoint.getCredentials().getAccessKey());
+		queryString.put("SignatureMethod", endPoint.getSignatureStrategy().getSignatureMethod());
+		queryString.put("SignatureVersion", new Integer(endPoint.getSignatureStrategy().getSignatureVersion()).toString());
+		queryString.put("Action", getAction());
+		queryString.put("Version", "2010-08-31");
+		try {
+			queryString.put("Timestamp", URLEncoder.encode(new Date().toString(), CHAR_ENCODING).replaceAll("\\+", "%20"));
+			queryString.put("GUID", URLEncoder.encode(UUID.randomUUID().toString(), CHAR_ENCODING));
+		} catch (final UnsupportedEncodingException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
@@ -118,10 +88,10 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	@Override
 	public List<T> execute() throws ServerErrorExeception, IOException {
 
-		HttpClient client = new DefaultHttpClient();
+		final HttpClient client = new DefaultHttpClient();
 
-		StringBuffer sb = new StringBuffer();
-		for (String s : queryString.keySet()) {
+		final StringBuffer sb = new StringBuffer();
+		for (final String s : queryString.keySet()) {
 			if (sb.length() > 0) {
 				sb.append("&");
 			}
@@ -131,7 +101,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		String signature;
 		try {
 			signature = URLEncoder.encode(endPoint.getSignatureStrategy().getSignature(this), CHAR_ENCODING);
-		} catch (UnsupportedEncodingException e1) {
+		} catch (final UnsupportedEncodingException e1) {
 			throw new RuntimeException(e1.getMessage(), e1);
 		}
 		sb.append("&Signature=" + signature);
@@ -143,11 +113,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 			StringEntity entity;
 			try {
 				entity = new StringEntity(sb.toString());
-			} catch (UnsupportedEncodingException e) {
+			} catch (final UnsupportedEncodingException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
 			entity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
-			HttpPost post = new HttpPost(endPoint.getURI());
+			final HttpPost post = new HttpPost(endPoint.getURI());
 			post.setEntity(entity);
 			request = post;
 		}
@@ -155,20 +125,21 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		try {
 			return unmarshall(toXML(client.execute(request, new ResponseHandler<String>() {
 				/**
-				 * Returns the response body as a String if the response was successful (a
-				 * 2xx status code). If no response body exists, this returns null. If the
-				 * response was unsuccessful (>= 300 status code), throws an
+				 * Returns the response body as a String if the response was successful
+				 * (a 2xx status code). If no response body exists, this returns null.
+				 * If the response was unsuccessful (>= 300 status code), throws an
 				 * {@link HttpResponseException}.
 				 */
+				@Override
 				public String handleResponse(final HttpResponse response) throws HttpResponseException, IOException {
-					StatusLine statusLine = response.getStatusLine();
-					HttpEntity entity = response.getEntity();
+					final StatusLine statusLine = response.getStatusLine();
+					final HttpEntity entity = response.getEntity();
 					if (statusLine.getStatusCode() >= 300) {
 						if (entity != null) {
-							String body = EntityUtils.toString(entity);
-							Document doc = toXML(body);
+							final String body = EntityUtils.toString(entity);
+							final Document doc = toXML(body);
 
-							List<ServerError> errors = AbstractOpenStackCommand.unmarshall(doc, new UnmarshallerHelper<ServerError>() {
+							final List<ServerError> errors = AbstractOpenStackCommand.unmarshall(doc, new UnmarshallerHelper<ServerError>() {
 								@Override
 								public Class<ServerError> getUnmarshallingClass() {
 									return ServerError.class;
@@ -189,10 +160,42 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 					return entity == null ? null : EntityUtils.toString(entity);
 				}
 			})), this, endPoint);
-		} catch (ClientProtocolException e) {
+		} catch (final ClientProtocolException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public OpenStack getEndPoint() {
+		return endPoint;
+	}
+
+	@Override
+	public TreeMap<String, String> getQueryString() {
+		return queryString;
+	}
+
+	@Override
+	public UnmarshallerHelper<T> getUnmarshallerHelper() {
+		return this;
+	}
+
+	@Override
+	public String getVerb() {
+		return "GET";
+	}
+
+	public OpenStackCommand<T> put(final String aKey, final String aValue) {
+		queryString.put(aKey, aValue);
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("action", getAction()).append("verb", getVerb()).append("queryString", queryString);
+		return builder.toString();
 	}
 
 }

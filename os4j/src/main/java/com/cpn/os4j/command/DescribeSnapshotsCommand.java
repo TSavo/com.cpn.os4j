@@ -4,6 +4,10 @@ import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.model.Snapshot;
 
 public class DescribeSnapshotsCommand extends AbstractOpenStackCommand<Snapshot> {
+	public DescribeSnapshotsCommand(final OpenStack anEndPoint) {
+		super(anEndPoint);
+	}
+
 	@Override
 	public String getAction() {
 		return "DescribeSnapshots";
@@ -17,9 +21,5 @@ public class DescribeSnapshotsCommand extends AbstractOpenStackCommand<Snapshot>
 	@Override
 	public String getUnmarshallingXPath() {
 		return "//snapshotSet/item";
-	}
-
-	public DescribeSnapshotsCommand(OpenStack anEndPoint) {
-		super(anEndPoint);
 	}
 }

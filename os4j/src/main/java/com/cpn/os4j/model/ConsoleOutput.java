@@ -16,9 +16,35 @@ import com.cpn.os4j.util.XMLUtil;
 @Immutable
 public class ConsoleOutput implements Serializable {
 
+	public static ConsoleOutput unmarshall(final Node aNode, final OpenStack anEndPoint) {
+		final ConsoleOutput o = new ConsoleOutput(anEndPoint);
+		final XMLUtil x = new XMLUtil(aNode);
+		try {
+			o.output = new String(Base64.decodeBase64(x.get("output")));
+			o.timestamp = x.get("timestamp");
+			o.instanceId = x.get("instanceId");
+		} catch (final XPathExpressionException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		return o;
+	}
+
+	private final OpenStack endPoint;
+
 	private String output, timestamp, instanceId;
-	private OpenStack endPoint;
-	
+
+	private ConsoleOutput(final OpenStack anEndPoint) {
+		endPoint = anEndPoint;
+	}
+
+	public Instance getInstance() {
+		return endPoint.getInstanceCache().get(getInstanceId());
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
 	public String getOutput() {
 		return output;
 	}
@@ -27,36 +53,11 @@ public class ConsoleOutput implements Serializable {
 		return timestamp;
 	}
 
-	public String getInstanceId() {
-		return instanceId;
-	}
-	
-	public Instance getInstance(){
-		return endPoint.getInstanceCache().get(getInstanceId());
-	}
-
-	private ConsoleOutput(OpenStack anEndPoint) {
-		endPoint = anEndPoint;
-	}
-
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("output", output).append("timestamp", timestamp).append("instanceId", instanceId);
 		return builder.toString();
-	}
-
-	public static ConsoleOutput unmarshall(Node aNode, OpenStack anEndPoint) {
-		ConsoleOutput o = new ConsoleOutput(anEndPoint);
-		XMLUtil x = new XMLUtil(aNode);
-		try {
-			o.output = new String(Base64.decodeBase64(x.get("output")));
-			o.timestamp = x.get("timestamp");
-			o.instanceId = x.get("instanceId");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-		return o;
 	}
 
 }

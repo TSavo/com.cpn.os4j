@@ -8,21 +8,19 @@ import com.cpn.os4j.model.ConsoleOutput;
 import com.cpn.os4j.model.Instance;
 
 public class GetConsoleOutputCommand extends AbstractOpenStackCommand<ConsoleOutput> {
-	public Instance instance; 
-	
+	public final Instance instance;
 
-	public GetConsoleOutputCommand(OpenStack anEndPoint, Instance anInstance) {
+	public GetConsoleOutputCommand(final OpenStack anEndPoint, final Instance anInstance) {
 		super(anEndPoint);
 		instance = anInstance;
 	}
-	
+
 	@Override
 	public List<ConsoleOutput> execute() throws ServerErrorExeception, IOException {
 		queryString.put("InstanceId", instance.getInstanceId());
 		return super.execute();
 	}
 
-	
 	@Override
 	public String getAction() {
 		return "GetConsoleOutput";
@@ -37,6 +35,5 @@ public class GetConsoleOutputCommand extends AbstractOpenStackCommand<ConsoleOut
 	public String getUnmarshallingXPath() {
 		return "/GetConsoleOutputResponse";
 	}
-	
-	
+
 }

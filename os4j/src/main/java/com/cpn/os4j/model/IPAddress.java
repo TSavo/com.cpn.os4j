@@ -17,16 +17,47 @@ import com.cpn.os4j.util.XMLUtil;
 @Immutable
 public class IPAddress implements Cacheable<String> {
 
-	private String ipAddress;
-	private String instanceId;
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
+	public static IPAddress unmarshall(final Node aNode, final OpenStack anEndPoint) {
+		final IPAddress ip = new IPAddress(anEndPoint);
+		final XMLUtil n = new XMLUtil(aNode);
+		try {
+			ip.ipAddress = n.get("publicIp");
+			ip.instanceId = n.get("instanceId").replaceAll(" \\(vsp\\)", "");
+		} catch (final XPathExpressionException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		return ip;
 	}
 
-	private OpenStack endPoint;
+	private final OpenStack endPoint;
+	private String instanceId;
 
-	private IPAddress(OpenStack anEndPoint) {
+	private String ipAddress;
+
+	private IPAddress(final OpenStack anEndPoint) {
 		endPoint = anEndPoint;
+	}
+
+	public IPAddress associateWithInstance(final Instance anInstance) throws ServerErrorExeception, IOException {
+		endPoint.associateAddress(anInstance, this);
+		return this;
+	}
+
+	public IPAddress disassociate() throws ServerErrorExeception, IOException {
+		endPoint.disassociateAddress(this);
+		return this;
+	}
+
+	public Instance getInstance() {
+		return endPoint.getInstanceCache().get(instanceId);
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
 	}
 
 	@Override
@@ -34,48 +65,18 @@ public class IPAddress implements Cacheable<String> {
 		return getIpAddress();
 	}
 
-	public String getIpAddress() {
-		return ipAddress;
-	}
-
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public Instance getInstance() {
-		return endPoint.getInstanceCache().get(instanceId);
-	}
-
 	public OpenStack release() throws ServerErrorExeception, IOException {
 		return endPoint.releaseAddress(this);
 	}
 
-	public IPAddress associateWithInstance(Instance anInstance) throws ServerErrorExeception, IOException {
-		endPoint.associateAddress(anInstance, this);
-		return this;
-	}
-	
-	public IPAddress disassociate()throws ServerErrorExeception, IOException {
-		endPoint.disassociateAddress(this);
-		return this;
+	public void setInstanceId(final String instanceId) {
+		this.instanceId = instanceId;
 	}
 
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("ipAddress", ipAddress).append("instanceId", instanceId);
 		return builder.toString();
-	}
-
-	public static IPAddress unmarshall(Node aNode, OpenStack anEndPoint) {
-		IPAddress ip = new IPAddress(anEndPoint);
-		XMLUtil n = new XMLUtil(aNode);
-		try {
-			ip.ipAddress = n.get("publicIp");
-			ip.instanceId = n.get("instanceId").replaceAll(" \\(vsp\\)", "");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-		return ip;
 	}
 }

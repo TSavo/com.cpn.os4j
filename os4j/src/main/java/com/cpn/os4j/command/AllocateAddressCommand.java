@@ -5,7 +5,7 @@ import com.cpn.os4j.model.IPAddress;
 
 public class AllocateAddressCommand extends AbstractOpenStackCommand<IPAddress> {
 
-	public AllocateAddressCommand(OpenStack anEndPoint) {
+	public AllocateAddressCommand(final OpenStack anEndPoint) {
 		super(anEndPoint);
 	}
 

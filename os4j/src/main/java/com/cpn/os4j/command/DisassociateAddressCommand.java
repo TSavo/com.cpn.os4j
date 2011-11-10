@@ -4,6 +4,11 @@ import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.model.IPAddress;
 
 public class DisassociateAddressCommand extends AbstractOpenStackCommand<Object> {
+	public DisassociateAddressCommand(final OpenStack anEndPoint, final IPAddress anAddress) {
+		super(anEndPoint);
+		put("PublicIp", anAddress.getIpAddress());
+	}
+
 	@Override
 	public String getAction() {
 		return "DisassociateAddress";
@@ -17,10 +22,5 @@ public class DisassociateAddressCommand extends AbstractOpenStackCommand<Object>
 	@Override
 	public String getUnmarshallingXPath() {
 		return null;
-	}
-
-	public DisassociateAddressCommand(OpenStack anEndPoint, IPAddress anAddress) {
-		super(anEndPoint);
-		put("PublicIp", anAddress.getIpAddress());
 	}
 }

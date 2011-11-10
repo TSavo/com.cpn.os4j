@@ -11,12 +11,12 @@ import com.cpn.os4j.model.ServerError;
 @SuppressWarnings("serial")
 @Immutable
 public class ServerErrorExeception extends HttpResponseException {
-	private List<ServerError> errors;
-	private int statusCode;
-	private String rawBody;
-	private OpenStackCommand<?> command;
+	private final OpenStackCommand<?> command;
+	private final List<ServerError> errors;
+	private final String rawBody;
+	private final int statusCode;
 
-	public ServerErrorExeception(int statusCode, List<ServerError> errors, String rawBody, OpenStackCommand<?> command) {
+	public ServerErrorExeception(final int statusCode, final List<ServerError> errors, final String rawBody, final OpenStackCommand<?> command) {
 		super(statusCode, rawBody);
 		this.errors = errors;
 		this.statusCode = statusCode;
@@ -24,26 +24,27 @@ public class ServerErrorExeception extends HttpResponseException {
 		this.command = command;
 	}
 
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("errors", errors).append("statusCode", statusCode).append("command", command);
-		return builder.toString();
+	public OpenStackCommand<?> getCommand() {
+		return command;
 	}
 
 	public List<ServerError> getErrors() {
 		return errors;
 	}
 
-	public int getStatusCode() {
-		return statusCode;
-	}
-
 	public String getRawBody() {
 		return rawBody;
 	}
 
-	public OpenStackCommand<?> getCommand() {
-		return command;
+	@Override
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("errors", errors).append("statusCode", statusCode).append("command", command);
+		return builder.toString();
 	}
 }

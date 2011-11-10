@@ -4,25 +4,24 @@ import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.model.Image;
 
 public class DescribeImagesCommand extends AbstractOpenStackCommand<Image> {
-	
-	public DescribeImagesCommand(OpenStack anEndPoint) {
+
+	public DescribeImagesCommand(final OpenStack anEndPoint) {
 		super(anEndPoint);
 	}
-	
+
 	@Override
 	public String getAction() {
 		return "DescribeImages";
 	}
-	 
+
 	@Override
 	public Class<Image> getUnmarshallingClass() {
 		return Image.class;
 	}
-	 
+
 	@Override
 	public String getUnmarshallingXPath() {
 		return "//imagesSet/item";
 	}
-	
-	
+
 }

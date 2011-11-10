@@ -20,26 +20,9 @@ import com.cpn.os4j.util.XMLUtil;
 @Immutable
 public class Instance implements Cacheable<String> {
 
-	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
-
-	private OpenStack endPoint;
-
-	private Instance(OpenStack anEndPoint) {
-		endPoint = anEndPoint;
-	}
-
-	@Override
-	public String getKey() {
-		return instanceId;
-	}
-
-	public OpenStack getEndPoint() {
-		return endPoint;
-	}
-
-	public static Instance unmarshall(Node aNode, OpenStack anEndPoint) {
-		Instance i = new Instance(anEndPoint);
-		XMLUtil r = new XMLUtil(aNode);
+	public static Instance unmarshall(final Node aNode, final OpenStack anEndPoint) {
+		final Instance i = new Instance(anEndPoint);
+		final XMLUtil r = new XMLUtil(aNode);
 		try {
 			i.displayName = r.get("displayName");
 			i.rootDeviceType = r.get("rootDeviceType");
@@ -56,19 +39,126 @@ public class Instance implements Cacheable<String> {
 			i.ipAddress = r.get("ipAddress");
 			i.instanceType = r.get("instanceType");
 			i.privateIpAddress = r.get("privateIpAddress");
-		} catch (XPathExpressionException e) {
+		} catch (final XPathExpressionException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 		return i;
 	}
 
+	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
+
+	private final OpenStack endPoint;
+
+	private Instance(final OpenStack anEndPoint) {
+		endPoint = anEndPoint;
+	}
+
+	public Instance associateAddress(final IPAddress anAddress) throws ServerErrorExeception, IOException {
+		endPoint.associateAddress(this, anAddress);
+		return this;
+	}
+
+	public Instance attachVolume(final Volume aVolume, final String aDevice) throws ServerErrorExeception, IOException {
+		endPoint.attachVolumeToInstance(aVolume, this, aDevice);
+		return this;
+	}
+
+	public Instance detachVolume() throws ServerErrorExeception, IOException {
+		final Volume v = getVolume();
+		if (v != null) {
+			endPoint.detachVolume(v);
+		}
+		return this;
+	}
+
+	public Instance disassociateAddress() throws ServerErrorExeception, IOException {
+		endPoint.disassociateAddress(getIpAddress());
+		return this;
+	}
+
+	public String getAmiLaunchIndex() {
+		return amiLaunchIndex;
+	}
+
+	public ConsoleOutput getConsoleOutput() throws ServerErrorExeception, IOException {
+		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public OpenStack getEndPoint() {
+		return endPoint;
+	}
+
+	public String getImageId() {
+		return imageId;
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public String getInstanceState() {
+		return instanceState;
+	}
+
+	public String getInstanceType() {
+		return instanceType;
+	}
+
+	public IPAddress getIpAddress() {
+		return endPoint.getIPAddressCache().get(ipAddress);
+	}
+
 	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("displayName", displayName).append("rootDeviceType", rootDeviceType).append("keyName", keyName).append("instanceId", instanceId).append("instanceState", instanceState).append("publicDnsName", publicDnsName).append("imageId", imageId)
-				.append("privateDnsName", privateDnsName).append("launchTime", launchTime).append("amiLaunchIndex", amiLaunchIndex).append("rootDeviceName", rootDeviceName).append("ramdiskId", ramdiskId).append("ipAddress", ipAddress)
-				.append("instanceType", instanceType).append("privateIpAddress", privateIpAddress);
-		return builder.toString();
+	public String getKey() {
+		return instanceId;
+	}
+
+	public String getKeyName() {
+		return keyName;
+	}
+
+	public String getLaunchTime() {
+		return launchTime;
+	}
+
+	public String getPrivateDnsName() {
+		return privateDnsName;
+	}
+
+	public String getPrivateIpAddress() {
+		return privateIpAddress;
+	}
+
+	public String getPublicDnsName() {
+		return publicDnsName;
+	}
+
+	public String getRamdiskId() {
+		return ramdiskId;
+	}
+
+	public String getRootDeviceName() {
+		return rootDeviceName;
+	}
+
+	public String getRootDeviceType() {
+		return rootDeviceType;
+	}
+
+	public Volume getVolume() throws ServerErrorExeception, IOException {
+		final List<Volume> vols = endPoint.getVolumes();
+		for (final Volume v : vols) {
+			for (final VolumeAttachment a : v.getVolumeAttachments()) {
+				if (getInstanceId().equals(a.getInstanceId())) {
+					return v;
+				}
+			}
+		}
+		return null;
 	}
 
 	public Instance reboot() throws ServerErrorExeception, IOException {
@@ -76,13 +166,23 @@ public class Instance implements Cacheable<String> {
 		return this;
 	}
 
-	public ConsoleOutput getConsoleOutput() throws ServerErrorExeception, IOException {
-		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
+	public Instance setIPAddress(final String anAddress) {
+		ipAddress = anAddress;
+		return this;
 	}
 
 	public Instance terminate() throws ServerErrorExeception, IOException {
 		endPoint.terminateInstance(this);
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("displayName", displayName).append("rootDeviceType", rootDeviceType).append("keyName", keyName).append("instanceId", instanceId).append("instanceState", instanceState).append("publicDnsName", publicDnsName).append("imageId", imageId)
+				.append("privateDnsName", privateDnsName).append("launchTime", launchTime).append("amiLaunchIndex", amiLaunchIndex).append("rootDeviceName", rootDeviceName).append("ramdiskId", ramdiskId).append("ipAddress", ipAddress)
+				.append("instanceType", instanceType).append("privateIpAddress", privateIpAddress);
+		return builder.toString();
 	}
 
 	public Instance waitUntilRunning() throws InterruptedException, ServerErrorExeception, IOException {
@@ -94,7 +194,7 @@ public class Instance implements Cacheable<String> {
 		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning();
 	}
 
-	public Instance waitUntilRunning(long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
+	public Instance waitUntilRunning(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
 		if (instanceState.equals("running")) {
 			return this;
 		}
@@ -125,106 +225,6 @@ public class Instance implements Cacheable<String> {
 				return this;
 			}
 		}
-		return this;
-	}
-
-	public Instance associateAddress(IPAddress anAddress) throws ServerErrorExeception, IOException {
-		endPoint.associateAddress(this, anAddress);
-		return this;
-	}
-
-	public Instance disassociateAddress() throws ServerErrorExeception, IOException {
-		endPoint.disassociateAddress(getIpAddress());
-		return this;
-	}
-
-	public Instance attachVolume(Volume aVolume, String aDevice) throws ServerErrorExeception, IOException {
-		endPoint.attachVolumeToInstance(aVolume, this, aDevice);
-		return this;
-	}
-
-	public Instance detachVolume() throws ServerErrorExeception, IOException {
-		Volume v = getVolume();
-		if (v != null) {
-			endPoint.detachVolume(v);
-		}
-		return this;
-	}
-
-	public Volume getVolume() throws ServerErrorExeception, IOException {
-		List<Volume> vols = endPoint.getVolumes();
-		for (Volume v : vols) {
-			for (VolumeAttachment a : v.getVolumeAttachments()) {
-				if (getInstanceId().equals(a.getInstanceId())) {
-					return v;
-				}
-			}
-		}
-		return null;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public String getRootDeviceType() {
-		return rootDeviceType;
-	}
-
-	public String getKeyName() {
-		return keyName;
-	}
-
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public String getInstanceState() {
-		return instanceState;
-	}
-
-	public String getPublicDnsName() {
-		return publicDnsName;
-	}
-
-	public String getImageId() {
-		return imageId;
-	}
-
-	public String getPrivateDnsName() {
-		return privateDnsName;
-	}
-
-	public String getLaunchTime() {
-		return launchTime;
-	}
-
-	public String getAmiLaunchIndex() {
-		return amiLaunchIndex;
-	}
-
-	public String getRootDeviceName() {
-		return rootDeviceName;
-	}
-
-	public String getRamdiskId() {
-		return ramdiskId;
-	}
-
-	public IPAddress getIpAddress() {
-		return endPoint.getIPAddressCache().get(ipAddress);
-	}
-
-	public String getInstanceType() {
-		return instanceType;
-	}
-
-	public String getPrivateIpAddress() {
-		return privateIpAddress;
-	}
-
-	public Instance setIPAddress(String anAddress) {
-		ipAddress = anAddress;
 		return this;
 	}
 }

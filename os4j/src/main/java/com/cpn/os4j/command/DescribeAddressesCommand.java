@@ -5,7 +5,7 @@ import com.cpn.os4j.model.IPAddress;
 
 public class DescribeAddressesCommand extends AbstractOpenStackCommand<IPAddress> {
 
-	public DescribeAddressesCommand(OpenStack anEndPoint) {
+	public DescribeAddressesCommand(final OpenStack anEndPoint) {
 		super(anEndPoint);
 	}
 
@@ -24,5 +24,4 @@ public class DescribeAddressesCommand extends AbstractOpenStackCommand<IPAddress
 		return "//addressesSet/item";
 	}
 
-	
 }

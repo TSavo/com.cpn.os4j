@@ -15,24 +15,7 @@ public class HmacSHA256SignatureStrategy implements SignatureStrategy {
 	private static final String CARRIGE_RETURN = "\n";
 
 	@Override
-	public String getSignatureMethod() {
-		return "HmacSHA256";
-	}
-
-	@Override
-	public int getSignatureVersion() {
-		return 2;
-	}
-
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("getSignatureMethod()", getSignatureMethod()).append("getSignatureVersion()", getSignatureVersion());
-		return builder.toString();
-	}
-
-	@Override
-	public String getSignature(OpenStackCommand<?> aCommand) {
+	public String getSignature(final OpenStackCommand<?> aCommand) {
 		Mac mac;
 		try {
 			mac = Mac.getInstance("HmacSHA256");
@@ -48,8 +31,8 @@ public class HmacSHA256SignatureStrategy implements SignatureStrategy {
 		mac.update(CARRIGE_RETURN.getBytes());
 		mac.update(aCommand.getEndPoint().getURI().getPath().getBytes());
 		mac.update(CARRIGE_RETURN.getBytes());
-		StringBuffer sb = new StringBuffer();
-		for (String s : aCommand.getQueryString().keySet()) {
+		final StringBuffer sb = new StringBuffer();
+		for (final String s : aCommand.getQueryString().keySet()) {
 			if (sb.length() > 0) {
 				sb.append("&");
 			}
@@ -58,6 +41,23 @@ public class HmacSHA256SignatureStrategy implements SignatureStrategy {
 		mac.update(sb.toString().getBytes());
 
 		return Base64.encodeBase64String(mac.doFinal()).trim();
+	}
+
+	@Override
+	public String getSignatureMethod() {
+		return "HmacSHA256";
+	}
+
+	@Override
+	public int getSignatureVersion() {
+		return 2;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("getSignatureMethod()", getSignatureMethod()).append("getSignatureVersion()", getSignatureVersion());
+		return builder.toString();
 	}
 
 }

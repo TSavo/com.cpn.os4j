@@ -17,80 +17,9 @@ import com.cpn.os4j.util.XMLUtil;
 @Immutable
 public class Image implements Cacheable<String> {
 
-	private String displayName, description, imageOwnerId, imageId, imageState, architecture, imageLocation, rootDeviceType, rootDeviceName, imageType;
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getImageOwnerId() {
-		return imageOwnerId;
-	}
-
-	public String getImageId() {
-		return imageId;
-	}
-
-	public String getImageState() {
-		return imageState;
-	}
-
-	public String getArchitecture() {
-		return architecture;
-	}
-
-	public String getImageLocation() {
-		return imageLocation;
-	}
-
-	public String getRootDeviceType() {
-		return rootDeviceType;
-	}
-
-	public String getRootDeviceName() {
-		return rootDeviceName;
-	}
-
-	public String getImageType() {
-		return imageType;
-	}
-
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-
-	private OpenStack endPoint;
-	private boolean isPublic;
-
-	private Image(OpenStack anEndPoint) {
-		endPoint = anEndPoint;
-	}
-
-	@Override
-	public String getKey() {
-		return getImageId();
-	}
-
-	public Instance runInstance(KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, SecurityGroup... groups) throws ServerErrorExeception, IOException{
-		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, groups);
-	}
-	
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("displayName", displayName).append("description", description).append("imageOwnerId", imageOwnerId).append("isPublic", isPublic).append("imageId", imageId).append("imageState", imageState).append("architecture", architecture)
-				.append("imageLocation", imageLocation).append("rootDeviceType", rootDeviceType).append("rootDeviceName", rootDeviceName).append("imageType", imageType);
-		return builder.toString();
-	}
-	
-
-	public static Image unmarshall(Node aNode, OpenStack anEndPoint) {
-		Image i = new Image(anEndPoint);
-		XMLUtil n = new XMLUtil(aNode);
+	public static Image unmarshall(final Node aNode, final OpenStack anEndPoint) {
+		final Image i = new Image(anEndPoint);
+		final XMLUtil n = new XMLUtil(aNode);
 		try {
 			i.displayName = n.get("displayName");
 			i.description = n.get("description");
@@ -103,9 +32,80 @@ public class Image implements Cacheable<String> {
 			i.rootDeviceType = n.get("rootDeviceType");
 			i.rootDeviceName = n.get("rootDeviceName");
 			i.imageType = n.get("imageType");
-		} catch (XPathExpressionException e) {
+		} catch (final XPathExpressionException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 		return i;
+	}
+
+	private String displayName, description, imageOwnerId, imageId, imageState, architecture, imageLocation, rootDeviceType, rootDeviceName, imageType;
+
+	private final OpenStack endPoint;
+
+	private boolean isPublic;
+
+	private Image(final OpenStack anEndPoint) {
+		endPoint = anEndPoint;
+	}
+
+	public String getArchitecture() {
+		return architecture;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public String getImageId() {
+		return imageId;
+	}
+
+	public String getImageLocation() {
+		return imageLocation;
+	}
+
+	public String getImageOwnerId() {
+		return imageOwnerId;
+	}
+
+	public String getImageState() {
+		return imageState;
+	}
+
+	public String getImageType() {
+		return imageType;
+	}
+
+	@Override
+	public String getKey() {
+		return getImageId();
+	}
+
+	public String getRootDeviceName() {
+		return rootDeviceName;
+	}
+
+	public String getRootDeviceType() {
+		return rootDeviceType;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public Instance runInstance(final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, groups);
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("displayName", displayName).append("description", description).append("imageOwnerId", imageOwnerId).append("isPublic", isPublic).append("imageId", imageId).append("imageState", imageState).append("architecture", architecture)
+				.append("imageLocation", imageLocation).append("rootDeviceType", rootDeviceType).append("rootDeviceName", rootDeviceName).append("imageType", imageType);
+		return builder.toString();
 	}
 }

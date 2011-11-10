@@ -5,6 +5,11 @@ import com.cpn.os4j.model.Snapshot;
 
 public class DeleteSnapshot extends AbstractOpenStackCommand<Object> {
 
+	public DeleteSnapshot(final OpenStack anEndPoint, final Snapshot aSnapshot) {
+		super(anEndPoint);
+		put("SnapshotId", aSnapshot.getSnapshotId());
+	}
+
 	@Override
 	public String getAction() {
 		return "DeleteSnapshot";
@@ -18,10 +23,5 @@ public class DeleteSnapshot extends AbstractOpenStackCommand<Object> {
 	@Override
 	public String getUnmarshallingXPath() {
 		return null;
-	}
-
-	public DeleteSnapshot(OpenStack anEndPoint, Snapshot aSnapshot) {
-		super(anEndPoint);
-		put("SnapshotId", aSnapshot.getSnapshotId());
 	}
 }

@@ -12,9 +12,88 @@ import com.cpn.os4j.model.SecurityGroup;
 
 public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 
-	private String addressingType;
+	private final String addressingType;
+	private String availabilityZone;
+
+	private final String imageId;
+
+	private final String instanceType;
+
+	private String kernelId;
+
+	private final String keyName;
+
+	private final String maxCount;
+
+	private final String minCount;
+
+	private String ramdiskId;
+
+	private final List<SecurityGroup> securityGroups = new ArrayList<>();
+
+	public RunInstancesCommand(final OpenStack anEndPoint, final Image anImage, final KeyPair keyPair, /*
+																																																			 * String
+																																																			 * kernelId
+																																																			 * ,
+																																																			 */final String instanceType, final String addressingType, final String minCount, final String maxCount, /*
+																																																																																																								 * String
+																																																																																																								 * ramdiskId
+																																																																																																								 * ,
+																																																																																																								 * String
+																																																																																																								 * availabilityZone
+																																																																																																								 * ,
+																																																																																																								 */final SecurityGroup... groups) {
+		super(anEndPoint);
+		imageId = anImage.getImageId();
+		// this.kernelId = kernelId;
+		this.instanceType = instanceType;
+		this.addressingType = addressingType;
+		this.minCount = minCount;
+		this.maxCount = maxCount;
+		// this.ramdiskId = ramdiskId;
+		// this.availabilityZone = availabilityZone;
+		keyName = keyPair.getName();
+		for (final SecurityGroup sg : groups) {
+			securityGroups.add(sg);
+		}
+	}
+
+	public RunInstancesCommand addSecurityGroup(final SecurityGroup... groups) {
+		for (final SecurityGroup sg : groups) {
+			securityGroups.add(sg);
+		}
+		return this;
+	}
+
+	@Override
+	public List<Instance> execute() throws ServerErrorExeception, IOException {
+		queryString.put("AddressingType", addressingType);
+		queryString.put("ImageId", imageId);
+		queryString.put("InstanceType", instanceType);
+		// queryString.put("KernelId", kernelId);
+		queryString.put("KeyName", keyName);
+		queryString.put("MaxCount", maxCount);
+		queryString.put("MinCount", minCount);
+		// queryString.put("Placement.AvailabilityZone", availabilityZone);
+		// queryString.put("RamdiskId", ramdiskId);
+		int counter = 1;
+		for (final SecurityGroup sg : securityGroups) {
+			queryString.put("SecurityGroup." + (counter < 10 ? "0" : "") + counter++, sg.getKey());
+		}
+		return super.execute();
+	}
+
+	@Override
+	public String getAction() {
+		return "RunInstances";
+	}
+
 	public String getAddressingType() {
 		return addressingType;
+	}
+
+	public String getAvailabilityZone() {
+		return availabilityZone;
 	}
 
 	public String getImageId() {
@@ -41,10 +120,6 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		return minCount;
 	}
 
-	public String getAvailabilityZone() {
-		return availabilityZone;
-	}
-
 	public String getRamdiskId() {
 		return ramdiskId;
 	}
@@ -53,69 +128,13 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		return securityGroups;
 	}
 
-	private String imageId;
-	private String instanceType;
-	private String kernelId;
-	private String keyName;
-	private String maxCount;
-	private String minCount;
-	private String availabilityZone;
-	private String ramdiskId;
-	private List<SecurityGroup> securityGroups = new ArrayList<>();
-
-	
-	public RunInstancesCommand(OpenStack anEndPoint, Image anImage, KeyPair keyPair, /*String kernelId, */String instanceType, String addressingType, String minCount, String maxCount, /*String ramdiskId, String availabilityZone, */ SecurityGroup... groups) {
-		super(anEndPoint);
-		this.imageId = anImage.getImageId();
-		//this.kernelId = kernelId;
-		this.instanceType = instanceType;
-		this.addressingType = addressingType;
-		this.minCount = minCount;
-		this.maxCount = maxCount;
-		//this.ramdiskId = ramdiskId;
-		//this.availabilityZone = availabilityZone;
-		this.keyName = keyPair.getName();
-		for(SecurityGroup sg : groups){
-			securityGroups.add(sg);
-		}
-	}
-	
-	public RunInstancesCommand addSecurityGroup(SecurityGroup... groups){
-		for(SecurityGroup sg : groups){
-			securityGroups.add(sg);
-		}
-		return this;
-	}
-
-	@Override
-	public String getAction() {
-		return "RunInstances";
-	}
-	
 	@Override
 	public Class<Instance> getUnmarshallingClass() {
 		return Instance.class;
-	}
-	
+	};
+
+	@Override
 	public String getUnmarshallingXPath() {
 		return "//instancesSet/item";
-	};
-	
-	@Override
-	public List<Instance> execute() throws ServerErrorExeception, IOException{
-		queryString.put("AddressingType", addressingType);
-		queryString.put("ImageId", imageId);
-		queryString.put("InstanceType", instanceType);
-		//queryString.put("KernelId", kernelId);
-		queryString.put("KeyName", keyName);
-		queryString.put("MaxCount", maxCount);
-		queryString.put("MinCount", minCount);
-		//queryString.put("Placement.AvailabilityZone", availabilityZone);
-		//queryString.put("RamdiskId", ramdiskId);
-		int counter = 1;
-		for(SecurityGroup sg : securityGroups){
-			queryString.put("SecurityGroup." + (counter < 10 ? "0" : "") + counter++, sg.getKey());
-		}
-		return super.execute();
 	}
 }

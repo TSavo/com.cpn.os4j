@@ -5,7 +5,7 @@ import com.cpn.os4j.model.KeyPair;
 
 public class DescribeKeyPairsCommand extends AbstractOpenStackCommand<KeyPair> {
 
-	public DescribeKeyPairsCommand(OpenStack anEndPoint) {
+	public DescribeKeyPairsCommand(final OpenStack anEndPoint) {
 		super(anEndPoint);
 	}
 

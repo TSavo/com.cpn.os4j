@@ -5,6 +5,11 @@ import com.cpn.os4j.model.Volume;
 
 public class DeleteVolumeCommand extends AbstractOpenStackCommand<Object> {
 
+	public DeleteVolumeCommand(final OpenStack anEndPoint, final Volume aVolume) {
+		super(anEndPoint);
+		put("VolumeId", aVolume.getVolumeId());
+	}
+
 	@Override
 	public String getAction() {
 		return "DeleteVolume";
@@ -18,10 +23,5 @@ public class DeleteVolumeCommand extends AbstractOpenStackCommand<Object> {
 	@Override
 	public String getUnmarshallingXPath() {
 		return null;
-	}
-
-	public DeleteVolumeCommand(OpenStack anEndPoint, Volume aVolume) {
-		super(anEndPoint);
-		put("VolumeId", aVolume.getVolumeId());
 	}
 }

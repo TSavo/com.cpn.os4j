@@ -8,8 +8,19 @@ import com.cpn.os4j.model.IPAddress;
 
 public class ReleaseAddressCommand extends AbstractOpenStackCommand<Object> {
 
-	private IPAddress ipAddress;
-	
+	private final IPAddress ipAddress;
+
+	public ReleaseAddressCommand(final OpenStack anEndPoint, final IPAddress anAddress) {
+		super(anEndPoint);
+		ipAddress = anAddress;
+	}
+
+	@Override
+	public List<Object> execute() throws ServerErrorExeception, IOException {
+		put("PublicIp", ipAddress.getIpAddress());
+		return super.execute();
+	}
+
 	@Override
 	public String getAction() {
 		return "ReleaseAddress";
@@ -23,16 +34,5 @@ public class ReleaseAddressCommand extends AbstractOpenStackCommand<Object> {
 	@Override
 	public String getUnmarshallingXPath() {
 		return null;
-	}
-	
-	@Override
-	public List<Object> execute() throws ServerErrorExeception, IOException{
-		put("PublicIp", ipAddress.getIpAddress());
-		return super.execute();
-	}
-
-	public ReleaseAddressCommand(OpenStack anEndPoint, IPAddress anAddress) {
-		super(anEndPoint);
-		ipAddress = anAddress;
 	}
 }
