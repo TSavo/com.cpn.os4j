@@ -1,6 +1,6 @@
 package com.cpn.os4j.command;
 
-import static com.cpn.os4j.util.XMLUtil.toXML;
+import static com.cpn.xml.XMLUtil.toXML;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -34,7 +34,7 @@ import org.w3c.dom.Node;
 import com.cpn.os4j.OpenStack;
 import com.cpn.os4j.model.ServerError;
 import com.cpn.os4j.model.UnmarshallerHelper;
-import com.cpn.os4j.util.XMLUtil;
+import com.cpn.xml.XMLUtil;
 
 public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>, UnmarshallerHelper<T> {
 

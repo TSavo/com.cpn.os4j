@@ -15,6 +15,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.cpn.cache.CacheWrapper;
+import com.cpn.cache.EhcacheWrapper;
 import com.cpn.os4j.command.AllocateAddressCommand;
 import com.cpn.os4j.command.AssociateAddressCommand;
 import com.cpn.os4j.command.AttachVolumeCommand;
@@ -46,8 +48,6 @@ import com.cpn.os4j.model.SecurityGroup;
 import com.cpn.os4j.model.Snapshot;
 import com.cpn.os4j.model.Volume;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
-import com.cpn.os4j.model.cache.CacheWrapper;
-import com.cpn.os4j.model.cache.EhcacheWrapper;
 
 public class OpenStack {
 

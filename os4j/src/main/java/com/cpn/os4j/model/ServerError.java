@@ -9,7 +9,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.OpenStack;
-import com.cpn.os4j.util.XMLUtil;
+import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable

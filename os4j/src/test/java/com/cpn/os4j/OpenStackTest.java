@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.TreeMap;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cpn.os4j.command.OpenStackCommand;
@@ -136,6 +137,7 @@ public class OpenStackTest {
 	}
 
 	@Test
+	@Ignore /* Snapshots break volumes... */
 	public void testSnapshotFromImage() throws Exception {
 		final Volume v = ep.getVolumes().get(0);
 		System.out.println(v.createSnapshot().waitUntilAvailable().delete());
