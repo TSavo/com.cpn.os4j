@@ -29,20 +29,11 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 
 	private String ramdiskId;
 
+	private String userData = null;
+	
 	private final List<SecurityGroup> securityGroups = new ArrayList<>();
 
-	public RunInstancesCommand(final OpenStack anEndPoint, final Image anImage, final KeyPair keyPair, /*
-																																																			 * String
-																																																			 * kernelId
-																																																			 * ,
-																																																			 */final String instanceType, final String addressingType, final String minCount, final String maxCount, /*
-																																																																																																								 * String
-																																																																																																								 * ramdiskId
-																																																																																																								 * ,
-																																																																																																								 * String
-																																																																																																								 * availabilityZone
-																																																																																																								 * ,
-																																																																																																								 */final SecurityGroup... groups) {
+	public RunInstancesCommand(final OpenStack anEndPoint, final Image anImage, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) {
 		super(anEndPoint);
 		imageId = anImage.getImageId();
 		// this.kernelId = kernelId;
@@ -65,6 +56,11 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		return this;
 	}
 
+	public RunInstancesCommand setUserData(final String aUserData){
+		userData = aUserData;
+		return this;
+	}
+	
 	@Override
 	public List<Instance> execute() throws ServerErrorExeception, IOException {
 		queryString.put("AddressingType", addressingType);
@@ -74,6 +70,9 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		queryString.put("KeyName", keyName);
 		queryString.put("MaxCount", maxCount);
 		queryString.put("MinCount", minCount);
+		if(userData != null){
+			queryString.put("UserData", userData);
+		}
 		// queryString.put("Placement.AvailabilityZone", availabilityZone);
 		// queryString.put("RamdiskId", ramdiskId);
 		int counter = 1;
