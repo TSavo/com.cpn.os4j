@@ -7,13 +7,6 @@ import java.util.List;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.cpn.cache.CacheWrapper;
 import com.cpn.cache.EhcacheWrapper;
@@ -49,7 +42,7 @@ import com.cpn.os4j.model.Snapshot;
 import com.cpn.os4j.model.Volume;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
 
-public class OpenStack {
+public class OpenStackEndPoint implements EndPoint {
 
 	private final CacheManager cacheManager = CacheManager.create();
 
@@ -67,19 +60,27 @@ public class OpenStack {
 	private final URI uri;
 	private final CacheWrapper<String, Volume> volumeCache = new EhcacheWrapper<>("volumes", cacheManager);
 
-	public OpenStack(final URI aUrl, final OpenStackCredentials aCreds) throws ServerErrorExeception, IOException {
+	public OpenStackEndPoint(final URI aUrl, final OpenStackCredentials aCreds) throws ServerErrorExeception, IOException {
 		uri = aUrl;
 		credentials = aCreds;
 		populateCaches();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#allocateIPAddress()
+	 */
+	@Override
 	public IPAddress allocateIPAddress() throws ServerErrorExeception, IOException, IOException {
 		final List<IPAddress> results = new AllocateAddressCommand(this).execute();
 		ipAddessCache.put(results.get(0).getKey(), results.get(0));
 		return results.get(0);
 	}
 
-	public OpenStack associateAddress(final Instance anInstance, final IPAddress anIPAddress) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#associateAddress(com.cpn.os4j.model.Instance, com.cpn.os4j.model.IPAddress)
+	 */
+	@Override
+	public EndPoint associateAddress(final Instance anInstance, final IPAddress anIPAddress) throws ServerErrorExeception, IOException {
 		new AssociateAddressCommand(this, anInstance, anIPAddress).execute();
 		anInstance.setIPAddress(anIPAddress.getIpAddress());
 		anIPAddress.setInstanceId(anInstance.getInstanceId());
@@ -88,47 +89,79 @@ public class OpenStack {
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#attachVolumeToInstance(com.cpn.os4j.model.Volume, com.cpn.os4j.model.Instance, java.lang.String)
+	 */
+	@Override
 	public VolumeAttachment attachVolumeToInstance(final Volume aVolume, final Instance anInstance, final String aDevice) throws ServerErrorExeception, IOException {
 		final VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
 		getVolumes();
 		return v;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#createSnapshotFromVolume(com.cpn.os4j.model.Volume)
+	 */
+	@Override
 	public Snapshot createSnapshotFromVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
 		final Snapshot s = new CreateSnapshotCommand(this, aVolume).execute().get(0);
 		getSnapshots();
 		return s;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#createVolume(java.lang.String, int)
+	 */
+	@Override
 	public Volume createVolume(final String anAvailabilityZone, final int aSize) throws ServerErrorExeception, IOException {
 		final Volume v = new CreateVolumeCommand(this, anAvailabilityZone, aSize).execute().get(0);
 		getVolumes();
 		return v;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#createVolumeFromSnapshot(com.cpn.os4j.model.Snapshot, java.lang.String)
+	 */
+	@Override
 	public Volume createVolumeFromSnapshot(final Snapshot aSnapshot, final String anAvailabilityZone) throws ServerErrorExeception, IOException {
 		final Volume v = new CreateVolumeCommand(this, anAvailabilityZone, Integer.parseInt(aSnapshot.getVolumeSize()), aSnapshot).execute().get(0);
 		getVolumes();
 		return v;
 	}
 
-	public OpenStack deleteSnapshot(final Snapshot snapshot) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#deleteSnapshot(com.cpn.os4j.model.Snapshot)
+	 */
+	@Override
+	public EndPoint deleteSnapshot(final Snapshot snapshot) throws ServerErrorExeception, IOException {
 		new DeleteSnapshot(this, snapshot).execute();
 		return this;
 	}
 
-	public OpenStack deleteVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#deleteVolume(com.cpn.os4j.model.Volume)
+	 */
+	@Override
+	public EndPoint deleteVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
 		new DeleteVolumeCommand(this, aVolume).execute();
 		return this;
 	}
 
-	public OpenStack detachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#detachVolume(com.cpn.os4j.model.Volume)
+	 */
+	@Override
+	public EndPoint detachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
 		new DetachVolumeCommand(this, aVolume).execute();
 		getVolumes();
 		return this;
 	}
 
-	public OpenStack disassociateAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#disassociateAddress(com.cpn.os4j.model.IPAddress)
+	 */
+	@Override
+	public EndPoint disassociateAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException {
 		final Instance i = ipAddress.getInstance();
 		if (i != null) {
 			i.setIPAddress(null);
@@ -140,105 +173,189 @@ public class OpenStack {
 		return this;
 	}
 
-	public OpenStack forceDetachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#forceDetachVolume(com.cpn.os4j.model.Volume)
+	 */
+	@Override
+	public EndPoint forceDetachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
 		new DetachVolumeCommand(this, aVolume, true).execute();
 		getVolumes();
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getCredentials()
+	 */
+	@Override
 	public OpenStackCredentials getCredentials() {
 		return credentials;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getImages()
+	 */
+	@Override
 	public List<Image> getImages() throws ServerErrorExeception, IOException, IOException {
 		final List<Image> results = new DescribeImagesCommand(this).execute();
 		imagesCache.removeAll().putAll(results);
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getImagsCache()
+	 */
+	@Override
 	public CacheWrapper<String, Image> getImagsCache() {
 		return imagesCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getInstanceCache()
+	 */
+	@Override
 	public CacheWrapper<String, Instance> getInstanceCache() {
 		return instanceCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getInstances()
+	 */
+	@Override
 	public List<Instance> getInstances() throws ServerErrorExeception, IOException, IOException {
 		final List<Instance> results = new DescribeInstancesCommand(this).execute();
 		getInstanceCache().removeAll().putAll(results);
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getIPAddressCache()
+	 */
+	@Override
 	public CacheWrapper<String, IPAddress> getIPAddressCache() {
 		return ipAddessCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getIPAddresses()
+	 */
+	@Override
 	public List<IPAddress> getIPAddresses() throws ServerErrorExeception, IOException, IOException {
 		final List<IPAddress> results = new DescribeAddressesCommand(this).execute();
 		getIPAddressCache().removeAll().putAll(results);
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getKeyPairCache()
+	 */
+	@Override
 	public CacheWrapper<String, KeyPair> getKeyPairCache() {
 		return keyPairsCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getKeyPairs()
+	 */
+	@Override
 	public List<KeyPair> getKeyPairs() throws ServerErrorExeception, IOException, IOException {
 		final List<KeyPair> results = new DescribeKeyPairsCommand(this).execute();
 		keyPairsCache.removeAll().putAll(results);
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getRegionCache()
+	 */
+	@Override
 	public CacheWrapper<String, Region> getRegionCache() {
 		return regionCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getRegions()
+	 */
+	@Override
 	public List<Region> getRegions() throws ServerErrorExeception, IOException, IOException {
 		final List<Region> results = new DescribeRegionsCommand(this).execute();
 		getRegionCache().removeAll().putAll(results);
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getSecurityGroupCache()
+	 */
+	@Override
 	public CacheWrapper<String, SecurityGroup> getSecurityGroupCache() {
 		return securityGroupCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getSecurityGroups()
+	 */
+	@Override
 	public List<SecurityGroup> getSecurityGroups() throws ServerErrorExeception, IOException, IOException {
 		final List<SecurityGroup> results = new DescribeSecurityGroupsCommand(this).execute();
 		securityGroupCache.removeAll().putAll(results);
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getSignatureStrategy()
+	 */
+	@Override
 	public SignatureStrategy getSignatureStrategy() {
 		return signatureStrategy;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getSnapshotCache()
+	 */
+	@Override
 	public CacheWrapper<String, Snapshot> getSnapshotCache() {
 		return snapshotsCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getSnapshots()
+	 */
+	@Override
 	public List<Snapshot> getSnapshots() throws ServerErrorExeception, IOException, IOException {
 		final List<Snapshot> results = new DescribeSnapshotsCommand(this).execute();
 		snapshotsCache.removeAll().putAll(results);
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getURI()
+	 */
+	@Override
 	public URI getURI() {
 		return uri;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getVolumeCache()
+	 */
+	@Override
 	public CacheWrapper<String, Volume> getVolumeCache() {
 		return volumeCache;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#getVolumes()
+	 */
+	@Override
 	public List<Volume> getVolumes() throws ServerErrorExeception, IOException, IOException {
 		final List<Volume> results = new DescribeVolumesCommand(this).execute();
 		getVolumeCache().removeAll().putAll(results);
 		return results;
 	}
 
-	public OpenStack populateCaches() throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#populateCaches()
+	 */
+	@Override
+	public EndPoint populateCaches() throws ServerErrorExeception, IOException {
 		getInstances();
 		getIPAddresses();
 		getRegions();
@@ -250,43 +367,49 @@ public class OpenStack {
 		return this;
 	}
 
-	public String post(final String anAction, final String aMessage) throws ClientProtocolException, IOException {
-		final HttpClient client = new DefaultHttpClient();
-
-		final HttpPost post = new HttpPost(uri);
-		final StringEntity entity = new StringEntity(aMessage);
-		entity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
-		final ResponseHandler<String> responseHandler = new BasicResponseHandler();
-		post.setEntity(entity);
-		final String responseBody = client.execute(post, responseHandler);
-		return responseBody;
-
-	}
-
-	public OpenStack rebootInstance(final Instance instance) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#rebootInstance(com.cpn.os4j.model.Instance)
+	 */
+	@Override
+	public EndPoint rebootInstance(final Instance instance) throws ServerErrorExeception, IOException {
 		new RebootInstancesCommand(this, instance).execute();
 		getInstances();
 		return this;
 	}
 
-	public OpenStack releaseAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#releaseAddress(com.cpn.os4j.model.IPAddress)
+	 */
+	@Override
+	public EndPoint releaseAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException, IOException {
 		new ReleaseAddressCommand(this, ipAddress).execute();
 		getIPAddresses();
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#runInstance(com.cpn.os4j.model.Image, com.cpn.os4j.model.KeyPair, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.cpn.os4j.model.SecurityGroup)
+	 */
+	@Override
 	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
 		final Instance i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, groups).execute().get(0);
 		instanceCache.put(i.getKey(), i);
 		return i;
 	}
 
-	public OpenStack terminateInstance(final Instance anInstance) throws ServerErrorExeception, IOException {
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#terminateInstance(com.cpn.os4j.model.Instance)
+	 */
+	@Override
+	public EndPoint terminateInstance(final Instance anInstance) throws ServerErrorExeception, IOException {
 		new TerminateInstancesCommand(this, anInstance).execute();
 		getInstances();
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cpn.os4j.EndPoint#toString()
+	 */
 	@Override
 	public String toString() {
 		final ToStringBuilder builder = new ToStringBuilder(this);
