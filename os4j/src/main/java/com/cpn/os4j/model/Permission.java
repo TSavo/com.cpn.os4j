@@ -10,13 +10,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable
 public class Permission implements Serializable {
-	public static Permission unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static Permission unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final Permission p = new Permission();
 		final XMLUtil n = new XMLUtil(aNode);
 		try {

@@ -1,11 +1,11 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.Snapshot;
 
 public class DeleteSnapshot extends AbstractOpenStackCommand<Object> {
 
-	public DeleteSnapshot(final OpenStack anEndPoint, final Snapshot aSnapshot) {
+	public DeleteSnapshot(final EndPoint anEndPoint, final Snapshot aSnapshot) {
 		super(anEndPoint);
 		put("SnapshotId", aSnapshot.getSnapshotId());
 	}

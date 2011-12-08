@@ -11,7 +11,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
@@ -19,7 +19,7 @@ public class SecurityGroup implements Cacheable<String> {
 
 	@Immutable
 	public static class Permission implements Serializable {
-		public static Permission unmarshall(final Node aNode, final OpenStack anEndPoint) {
+		public static Permission unmarshall(final Node aNode, final EndPoint anEndPoint) {
 			final Permission p = new Permission();
 			final XMLUtil n = new XMLUtil(aNode);
 			try {
@@ -53,7 +53,7 @@ public class SecurityGroup implements Cacheable<String> {
 
 	}
 
-	public static SecurityGroup unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static SecurityGroup unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final SecurityGroup sg = new SecurityGroup();
 		final XMLUtil x = new XMLUtil(aNode);
 		try {

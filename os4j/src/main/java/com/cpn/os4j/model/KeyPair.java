@@ -6,13 +6,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 public class KeyPair implements Cacheable<String> {
 
-	public static KeyPair unmarshall(final Node aNode, final OpenStack anOpenStack) {
+	public static KeyPair unmarshall(final Node aNode, final EndPoint anOpenStack) {
 		final KeyPair p = new KeyPair();
 		final XMLUtil x = new XMLUtil(aNode);
 

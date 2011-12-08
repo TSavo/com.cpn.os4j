@@ -3,14 +3,14 @@ package com.cpn.os4j.command;
 import java.io.IOException;
 import java.util.List;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.IPAddress;
 
 public class ReleaseAddressCommand extends AbstractOpenStackCommand<Object> {
 
 	private final IPAddress ipAddress;
 
-	public ReleaseAddressCommand(final OpenStack anEndPoint, final IPAddress anAddress) {
+	public ReleaseAddressCommand(final EndPoint anEndPoint, final IPAddress anAddress) {
 		super(anEndPoint);
 		ipAddress = anAddress;
 	}

@@ -9,7 +9,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.xml.XMLUtil;
 
@@ -17,7 +17,7 @@ import com.cpn.xml.XMLUtil;
 @Immutable
 public class IPAddress implements Cacheable<String> {
 
-	public static IPAddress unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static IPAddress unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final IPAddress ip = new IPAddress(anEndPoint);
 		final XMLUtil n = new XMLUtil(aNode);
 		try {
@@ -29,12 +29,12 @@ public class IPAddress implements Cacheable<String> {
 		return ip;
 	}
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 	private String instanceId;
 
 	private String ipAddress;
 
-	private IPAddress(final OpenStack anEndPoint) {
+	private IPAddress(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
 
@@ -65,7 +65,7 @@ public class IPAddress implements Cacheable<String> {
 		return getIpAddress();
 	}
 
-	public OpenStack release() throws ServerErrorExeception, IOException {
+	public EndPoint release() throws ServerErrorExeception, IOException {
 		return endPoint.releaseAddress(this);
 	}
 

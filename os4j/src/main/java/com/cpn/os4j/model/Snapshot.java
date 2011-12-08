@@ -9,14 +9,14 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable
 public class Snapshot implements Cacheable<String> {
-	public static Snapshot unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static Snapshot unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final Snapshot s = new Snapshot(anEndPoint);
 		final XMLUtil x = new XMLUtil(aNode);
 		try {
@@ -36,11 +36,11 @@ public class Snapshot implements Cacheable<String> {
 		return s;
 	}
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
 	private String status, displayName, description, volumeId, displayDescription, volumeSize, progress, startTime, ownerId, snapshotId;
 
-	private Snapshot(final OpenStack anEndPoint) {
+	private Snapshot(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
 

@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
+import com.cpn.os4j.OpenStackEndPoint;
 import com.cpn.os4j.model.ServerError;
 import com.cpn.os4j.model.UnmarshallerHelper;
 import com.cpn.xml.XMLUtil;
@@ -41,11 +42,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	private static final String CHAR_ENCODING = Charset.forName("UTF-8").name();
 
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> unmarshall(final List<Node> aList, final Class<T> anUnmarshaller, final OpenStack anEndPoint) {
+	public static <T> List<T> unmarshall(final List<Node> aList, final Class<T> anUnmarshaller, final EndPoint anEndPoint) {
 		final ArrayList<T> list = new ArrayList<T>();
 		for (final Node n : aList) {
 			try {
-				list.add((T) anUnmarshaller.getDeclaredMethod("unmarshall", Node.class, OpenStack.class).invoke(null, n, anEndPoint));
+				list.add((T) anUnmarshaller.getDeclaredMethod("unmarshall", Node.class, EndPoint.class).invoke(null, n, anEndPoint));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
@@ -53,7 +54,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		return list;
 	}
 
-	public static <T> List<T> unmarshall(final Node aDocument, final UnmarshallerHelper<T> aHelper, final OpenStack anEndPoint) {
+	public static <T> List<T> unmarshall(final Node aDocument, final UnmarshallerHelper<T> aHelper, final EndPoint anEndPoint) {
 		try {
 			if ((aHelper != null) && (aHelper.getUnmarshallingClass() != null) && (aHelper.getUnmarshallingXPath() != null)) {
 				return unmarshall(XMLUtil.xPathList(aDocument, aHelper.getUnmarshallingXPath()), aHelper.getUnmarshallingClass(), anEndPoint);
@@ -66,11 +67,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		}
 	}
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
 	protected TreeMap<String, String> queryString = new TreeMap<String, String>();
 
-	public AbstractOpenStackCommand(final OpenStack anEndPoint) {
+	public AbstractOpenStackCommand(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 		queryString.put("AWSAccessKeyId", endPoint.getCredentials().getAccessKey());
 		queryString.put("SignatureMethod", endPoint.getSignatureStrategy().getSignatureMethod());
@@ -104,6 +105,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		} catch (final UnsupportedEncodingException e1) {
 			throw new RuntimeException(e1.getMessage(), e1);
 		}
+
 		sb.append("&Signature=" + signature);
 
 		HttpRequestBase request;
@@ -167,7 +169,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	}
 
 	@Override
-	public OpenStack getEndPoint() {
+	public EndPoint getEndPoint() {
 		return endPoint;
 	}
 

@@ -1,11 +1,11 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.IPAddress;
 
 public class AllocateAddressCommand extends AbstractOpenStackCommand<IPAddress> {
 
-	public AllocateAddressCommand(final OpenStack anEndPoint) {
+	public AllocateAddressCommand(final EndPoint anEndPoint) {
 		super(anEndPoint);
 	}
 

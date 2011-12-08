@@ -8,14 +8,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable
 public class ServerError implements Serializable {
 
-	public static ServerError unmarshall(final Node aNode, final OpenStack anOpenStack) {
+	public static ServerError unmarshall(final Node aNode, final EndPoint anOpenStack) {
 		final XMLUtil x = new XMLUtil(aNode);
 		try {
 			return new ServerError(anOpenStack, x.get("Code"), x.get("Message"));
@@ -26,11 +26,11 @@ public class ServerError implements Serializable {
 
 	private final String code;
 	@SuppressWarnings("unused")
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
 	private final String message;
 
-	public ServerError(final OpenStack anEndPoint, final String code, final String message) {
+	public ServerError(final EndPoint anEndPoint, final String code, final String message) {
 		endPoint = anEndPoint;
 		this.code = code;
 		this.message = message;

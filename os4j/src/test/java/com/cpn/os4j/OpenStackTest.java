@@ -22,20 +22,20 @@ import com.cpn.os4j.model.Volume;
 
 public class OpenStackTest {
 
-	private static OpenStack ep;
+	private static EndPoint ep;
 
 	static {
 		try {
-			ep = new OpenStack(new URI("http://10.1.10.249:8773/services/Cloud/"), new OpenStackCredentials() {
+			ep = new OpenStackEndPoint(new URI("http://10.101.100.100:8773/services/Cloud"), new OpenStackCredentials() {
 
 				@Override
 				public String getAccessKey() {
-					return "ed391003-88b9-4408-9e87-1a87ba460121%3Avsp";
+					return "2c52532c-94b5-4298-89a5-002b4cc82a32%3Avsp";
 				}
 
 				@Override
 				public String getSecretKey() {
-					return "e23517e4-f511-47f3-8b93-3e595a0607ca";
+					return "70d45ff2-6958-4d25-96d0-1e79bd5a5dec";
 				}
 			});
 		} catch (final URISyntaxException e) {
@@ -103,7 +103,7 @@ public class OpenStackTest {
 		map.put("Timestamp", "2011-11-03T16%3A41%3A58");
 		map.put("Version", "2009-11-30");
 
-		final OpenStack os = mock(OpenStack.class);
+		final OpenStackEndPoint os = mock(OpenStackEndPoint.class);
 		final URI uri = new URI("http://10.1.10.249:8773/services/Cloud/");
 		final OpenStackCredentials creds = mock(OpenStackCredentials.class);
 

@@ -1,11 +1,11 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.Instance;
 
 public class DescribeInstancesCommand extends AbstractOpenStackCommand<Instance> {
 
-	public DescribeInstancesCommand(final OpenStack anEndPoint) {
+	public DescribeInstancesCommand(final EndPoint anEndPoint) {
 		super(anEndPoint);
 	}
 

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.UnmarshallerHelper;
 
 public interface OpenStackCommand<T> {
@@ -13,7 +13,7 @@ public interface OpenStackCommand<T> {
 
 	public abstract String getAction();
 
-	public abstract OpenStack getEndPoint();
+	public abstract EndPoint getEndPoint();
 
 	public abstract TreeMap<String, String> getQueryString();
 

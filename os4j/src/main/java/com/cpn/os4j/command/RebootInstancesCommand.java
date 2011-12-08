@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.Instance;
 
 public class RebootInstancesCommand extends AbstractOpenStackCommand<Object> {
 
 	public List<Instance> instances = new ArrayList<>();
 
-	public RebootInstancesCommand(final OpenStack anEndPoint, final Instance... i) {
+	public RebootInstancesCommand(final EndPoint anEndPoint, final Instance... i) {
 		super(anEndPoint);
 		for (final Instance in : i) {
 			instances.add(in);

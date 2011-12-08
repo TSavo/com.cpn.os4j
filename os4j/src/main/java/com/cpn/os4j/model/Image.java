@@ -9,7 +9,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.xml.XMLUtil;
 
@@ -17,7 +17,7 @@ import com.cpn.xml.XMLUtil;
 @Immutable
 public class Image implements Cacheable<String> {
 
-	public static Image unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static Image unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final Image i = new Image(anEndPoint);
 		final XMLUtil n = new XMLUtil(aNode);
 		try {
@@ -40,11 +40,11 @@ public class Image implements Cacheable<String> {
 
 	private String displayName, description, imageOwnerId, imageId, imageState, architecture, imageLocation, rootDeviceType, rootDeviceName, imageType;
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
 	private boolean isPublic;
 
-	private Image(final OpenStack anEndPoint) {
+	private Image(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
 

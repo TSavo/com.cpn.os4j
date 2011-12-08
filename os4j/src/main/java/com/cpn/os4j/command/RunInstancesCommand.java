@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.Instance;
 import com.cpn.os4j.model.KeyPair;
@@ -33,7 +33,7 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 	
 	private final List<SecurityGroup> securityGroups = new ArrayList<>();
 
-	public RunInstancesCommand(final OpenStack anEndPoint, final Image anImage, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) {
+	public RunInstancesCommand(final EndPoint anEndPoint, final Image anImage, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) {
 		super(anEndPoint);
 		imageId = anImage.getImageId();
 		// this.kernelId = kernelId;

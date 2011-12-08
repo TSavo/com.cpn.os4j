@@ -11,7 +11,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.xml.XMLUtil;
 
@@ -20,7 +20,7 @@ import com.cpn.xml.XMLUtil;
 public class Volume implements Cacheable<String> {
 	@Immutable
 	public static class VolumeAttachment {
-		public static VolumeAttachment unmarshall(final Node aNode, final OpenStack anEndPoint) {
+		public static VolumeAttachment unmarshall(final Node aNode, final EndPoint anEndPoint) {
 			final VolumeAttachment v = new VolumeAttachment(anEndPoint);
 			final XMLUtil x = new XMLUtil(aNode);
 			try {
@@ -36,11 +36,11 @@ public class Volume implements Cacheable<String> {
 			return v;
 		}
 
-		private final OpenStack endPoint;
+		private final EndPoint endPoint;
 
 		private String status, instanceId, volumeId, deleteOnTermination, device, attachTime;
 
-		private VolumeAttachment(final OpenStack anEndPoint) {
+		private VolumeAttachment(final EndPoint anEndPoint) {
 			endPoint = anEndPoint;
 		}
 
@@ -90,7 +90,7 @@ public class Volume implements Cacheable<String> {
 
 	}
 
-	public static Volume unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static Volume unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final Volume v = new Volume(anEndPoint);
 		final XMLUtil x = new XMLUtil(aNode);
 		try {
@@ -111,13 +111,13 @@ public class Volume implements Cacheable<String> {
 		return v;
 	}
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
 	private String status, availabilityZone, displayName, volumeId, displayDescription, snapshotId, size, createTime;
 
 	private final List<VolumeAttachment> volumeAttachments = new ArrayList<>();
 
-	private Volume(final OpenStack anEndPoint) {
+	private Volume(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
 
@@ -204,6 +204,9 @@ public class Volume implements Cacheable<String> {
 	public Volume waitUntilAvailable() throws InterruptedException, ServerErrorExeception, IOException {
 		if (status.contains("available")) {
 			return this;
+		}
+		if(status.contains("error")) {
+			throw new RuntimeException("While waiting for the volume " + volumeId + ", we got a status of " + status);
 		}
 		Thread.sleep(1000);
 		endPoint.getVolumes();

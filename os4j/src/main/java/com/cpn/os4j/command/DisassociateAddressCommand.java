@@ -1,10 +1,10 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.IPAddress;
 
 public class DisassociateAddressCommand extends AbstractOpenStackCommand<Object> {
-	public DisassociateAddressCommand(final OpenStack anEndPoint, final IPAddress anAddress) {
+	public DisassociateAddressCommand(final EndPoint anEndPoint, final IPAddress anAddress) {
 		super(anEndPoint);
 		put("PublicIp", anAddress.getIpAddress());
 	}

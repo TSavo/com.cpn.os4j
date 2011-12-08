@@ -7,14 +7,14 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable
 public class Region implements Cacheable<String> {
 
-	public static Region unmarshall(final Node node, final OpenStack anEndPoint) {
+	public static Region unmarshall(final Node node, final EndPoint anEndPoint) {
 		final Region r = new Region(anEndPoint);
 		final XMLUtil u = new XMLUtil(node);
 		try {
@@ -26,17 +26,17 @@ public class Region implements Cacheable<String> {
 		return r;
 	}
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
 	private String regionEndpoint;
 
 	private String regionName;
 
-	private Region(final OpenStack anEndPoint) {
+	private Region(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
 
-	public OpenStack getEndPoint() {
+	public EndPoint getEndPoint() {
 		return endPoint;
 	}
 

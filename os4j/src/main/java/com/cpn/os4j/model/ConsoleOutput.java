@@ -9,14 +9,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable
 public class ConsoleOutput implements Serializable {
 
-	public static ConsoleOutput unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static ConsoleOutput unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final ConsoleOutput o = new ConsoleOutput(anEndPoint);
 		final XMLUtil x = new XMLUtil(aNode);
 		try {
@@ -29,11 +29,11 @@ public class ConsoleOutput implements Serializable {
 		return o;
 	}
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
 	private String output, timestamp, instanceId;
 
-	private ConsoleOutput(final OpenStack anEndPoint) {
+	private ConsoleOutput(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
 

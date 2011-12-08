@@ -1,10 +1,10 @@
 package com.cpn.os4j.command;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.Snapshot;
 
 public class DescribeSnapshotsCommand extends AbstractOpenStackCommand<Snapshot> {
-	public DescribeSnapshotsCommand(final OpenStack anEndPoint) {
+	public DescribeSnapshotsCommand(final EndPoint anEndPoint) {
 		super(anEndPoint);
 	}
 

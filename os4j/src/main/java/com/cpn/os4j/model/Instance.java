@@ -10,7 +10,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.command.GetConsoleOutputCommand;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
@@ -20,7 +20,7 @@ import com.cpn.xml.XMLUtil;
 @Immutable
 public class Instance implements Cacheable<String> {
 
-	public static Instance unmarshall(final Node aNode, final OpenStack anEndPoint) {
+	public static Instance unmarshall(final Node aNode, final EndPoint anEndPoint) {
 		final Instance i = new Instance(anEndPoint);
 		final XMLUtil r = new XMLUtil(aNode);
 		try {
@@ -47,9 +47,9 @@ public class Instance implements Cacheable<String> {
 
 	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
 
-	private final OpenStack endPoint;
+	private final EndPoint endPoint;
 
-	private Instance(final OpenStack anEndPoint) {
+	private Instance(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
 
@@ -88,7 +88,7 @@ public class Instance implements Cacheable<String> {
 		return displayName;
 	}
 
-	public OpenStack getEndPoint() {
+	public EndPoint getEndPoint() {
 		return endPoint;
 	}
 

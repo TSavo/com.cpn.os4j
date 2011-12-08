@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cpn.os4j.OpenStack;
+import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.Instance;
 
 public class TerminateInstancesCommand extends AbstractOpenStackCommand<Object> {
 
 	private final List<Instance> instances = new ArrayList<>();
 
-	public TerminateInstancesCommand(final OpenStack anEndPoint, final Instance... instances) {
+	public TerminateInstancesCommand(final EndPoint anEndPoint, final Instance... instances) {
 		super(anEndPoint);
 		for (final Instance i : instances) {
 			this.instances.add(i);
