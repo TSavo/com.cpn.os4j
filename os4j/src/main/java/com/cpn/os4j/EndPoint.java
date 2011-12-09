@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
-
 import com.cpn.cache.CacheWrapper;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.IPAddress;
@@ -121,5 +119,7 @@ public interface EndPoint {
 			throws ServerErrorExeception, IOException;
 
 	public abstract String toString();
+
+	public abstract Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, String aUserData, SecurityGroup... groups) throws ServerErrorExeception, IOException;
 
 }

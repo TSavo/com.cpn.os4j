@@ -72,7 +72,9 @@ public class Instance implements Cacheable<String> {
 	}
 
 	public Instance disassociateAddress() throws ServerErrorExeception, IOException {
-		endPoint.disassociateAddress(getIpAddress());
+		if(getIpAddress() != null){
+			endPoint.disassociateAddress(getIpAddress());
+		}
 		return this;
 	}
 

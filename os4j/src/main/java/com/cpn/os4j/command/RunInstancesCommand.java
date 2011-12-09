@@ -1,6 +1,7 @@
 package com.cpn.os4j.command;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		queryString.put("MaxCount", maxCount);
 		queryString.put("MinCount", minCount);
 		if(userData != null){
-			queryString.put("UserData", userData);
+			queryString.put("UserData", URLEncoder.encode(userData, "utf-8"));
 		}
 		// queryString.put("Placement.AvailabilityZone", availabilityZone);
 		// queryString.put("RamdiskId", ramdiskId);

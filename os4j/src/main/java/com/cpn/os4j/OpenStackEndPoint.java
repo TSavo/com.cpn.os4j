@@ -396,6 +396,16 @@ public class OpenStackEndPoint implements EndPoint {
 		instanceCache.put(i.getKey(), i);
 		return i;
 	}
+	
+	@Override
+	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final String aUserData, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+		final RunInstancesCommand i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, groups);
+		i.setUserData(aUserData);
+		Instance instance = i.execute().get(0);
+
+		instanceCache.put(instance.getKey(), instance);
+		return instance;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.cpn.os4j.EndPoint#terminateInstance(com.cpn.os4j.model.Instance)
