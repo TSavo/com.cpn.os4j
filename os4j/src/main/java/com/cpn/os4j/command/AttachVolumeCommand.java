@@ -1,5 +1,8 @@
 package com.cpn.os4j.command;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.model.Instance;
 import com.cpn.os4j.model.Volume;
@@ -10,7 +13,11 @@ public class AttachVolumeCommand extends AbstractOpenStackCommand<Volume.VolumeA
 		super(anEndPoint);
 		put("VolumeId", aVolume.getVolumeId());
 		put("InstanceId", anInstance.getInstanceId());
-		put("Device", aDevice);
+		try {
+			put("Device", URLEncoder.encode(aDevice, "utf-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.cpn.os4j;
 
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
