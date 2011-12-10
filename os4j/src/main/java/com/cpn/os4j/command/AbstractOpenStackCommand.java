@@ -139,6 +139,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 					if (statusLine.getStatusCode() >= 300) {
 						if (entity != null) {
 							final String body = EntityUtils.toString(entity);
+							System.out.println(body);
 							final Document doc = toXML(body);
 
 							final List<ServerError> errors = AbstractOpenStackCommand.unmarshall(doc, new UnmarshallerHelper<ServerError>() {
