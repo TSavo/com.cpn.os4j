@@ -44,7 +44,7 @@ import com.cpn.os4j.model.Volume.VolumeAttachment;
 
 public class OpenStackEndPoint implements EndPoint {
 
-	private final CacheManager cacheManager = CacheManager.create();
+	private final CacheManager cacheManager = new CacheManager();
 
 	private final OpenStackCredentials credentials;
 
