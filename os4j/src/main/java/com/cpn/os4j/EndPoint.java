@@ -54,7 +54,7 @@ public interface EndPoint {
 	public abstract EndPoint forceDetachVolume(final Volume aVolume)
 			throws ServerErrorExeception, IOException;
 
-	public abstract OpenStackCredentials getCredentials();
+	public abstract Credentials getCredentials();
 
 	public abstract List<Image> getImages() throws ServerErrorExeception,
 			IOException, IOException;

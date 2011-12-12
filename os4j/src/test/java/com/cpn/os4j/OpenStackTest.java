@@ -26,7 +26,7 @@ public class OpenStackTest {
 
 	static {
 		try {
-			ep = new OpenStackEndPoint(new URI("http://10.101.100.100:8773/services/Cloud"), new OpenStackCredentials() {
+			ep = new OpenStackEndPoint(new URI("http://10.101.100.100:8773/services/Cloud"), new Credentials() {
 
 				@Override
 				public String getAccessKey() {
@@ -105,7 +105,7 @@ public class OpenStackTest {
 
 		final OpenStackEndPoint os = mock(OpenStackEndPoint.class);
 		final URI uri = new URI("http://10.1.10.249:8773/services/Cloud/");
-		final OpenStackCredentials creds = mock(OpenStackCredentials.class);
+		final Credentials creds = mock(Credentials.class);
 
 		when(os.getURI()).thenReturn(uri);
 		when(os.getCredentials()).thenReturn(creds);

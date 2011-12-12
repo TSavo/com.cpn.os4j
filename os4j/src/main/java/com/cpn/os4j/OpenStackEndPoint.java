@@ -46,7 +46,7 @@ public class OpenStackEndPoint implements EndPoint {
 
 	private final CacheManager cacheManager = new CacheManager();
 
-	private final OpenStackCredentials credentials;
+	private final Credentials credentials;
 
 	private final CacheWrapper<String, Image> imagesCache = new EhcacheWrapper<>("imagesCache", cacheManager);
 
@@ -60,7 +60,7 @@ public class OpenStackEndPoint implements EndPoint {
 	private final URI uri;
 	private final CacheWrapper<String, Volume> volumeCache = new EhcacheWrapper<>("volumes", cacheManager);
 
-	public OpenStackEndPoint(final URI aUrl, final OpenStackCredentials aCreds) throws ServerErrorExeception, IOException {
+	public OpenStackEndPoint(final URI aUrl, final Credentials aCreds) throws ServerErrorExeception, IOException {
 		uri = aUrl;
 		credentials = aCreds;
 		populateCaches();
@@ -187,7 +187,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getCredentials()
 	 */
 	@Override
-	public OpenStackCredentials getCredentials() {
+	public Credentials getCredentials() {
 		return credentials;
 	}
 

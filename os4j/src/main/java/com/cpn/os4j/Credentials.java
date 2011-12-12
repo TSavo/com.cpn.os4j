@@ -1,6 +1,6 @@
 package com.cpn.os4j;
 
-public interface OpenStackCredentials {
+public interface Credentials {
 
 	public String getAccessKey();
 
