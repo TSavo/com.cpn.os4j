@@ -8,6 +8,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
@@ -35,7 +36,7 @@ public class Volume implements Cacheable<String> {
 			}
 			return v;
 		}
-
+		@JsonIgnore
 		private final EndPoint endPoint;
 
 		private String status, instanceId, volumeId, deleteOnTermination, device, attachTime;
@@ -60,7 +61,7 @@ public class Volume implements Cacheable<String> {
 		public String getDevice() {
 			return device;
 		}
-
+		@JsonIgnore
 		public Instance getInstance() {
 			return endPoint.getInstanceCache().get(instanceId);
 		}
@@ -72,11 +73,7 @@ public class Volume implements Cacheable<String> {
 		public String getStatus() {
 			return status;
 		}
-
-		public Volume getVolume() {
-			return endPoint.getVolumeCache().get(volumeId);
-		}
-
+	
 		public String getVolumeId() {
 			return volumeId;
 		}
@@ -110,7 +107,7 @@ public class Volume implements Cacheable<String> {
 		}
 		return v;
 	}
-
+	@JsonIgnore
 	private final EndPoint endPoint;
 
 	private String status, availabilityZone, displayName, volumeId, displayDescription, snapshotId, size, createTime;

@@ -7,6 +7,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
@@ -46,7 +47,7 @@ public class Instance implements Cacheable<String> {
 	}
 
 	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
-
+	@JsonIgnore
 	private final EndPoint endPoint;
 
 	private Instance(final EndPoint anEndPoint) {
@@ -82,6 +83,7 @@ public class Instance implements Cacheable<String> {
 		return amiLaunchIndex;
 	}
 
+	@JsonIgnore
 	public ConsoleOutput getConsoleOutput() throws ServerErrorExeception, IOException {
 		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
 	}
@@ -90,6 +92,7 @@ public class Instance implements Cacheable<String> {
 		return displayName;
 	}
 
+	@JsonIgnore
 	public EndPoint getEndPoint() {
 		return endPoint;
 	}

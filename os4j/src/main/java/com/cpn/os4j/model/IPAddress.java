@@ -6,6 +6,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
@@ -48,6 +49,7 @@ public class IPAddress implements Cacheable<String> {
 		return this;
 	}
 
+	@JsonIgnore
 	public Instance getInstance() {
 		return endPoint.getInstanceCache().get(instanceId);
 	}

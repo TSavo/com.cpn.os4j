@@ -162,7 +162,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 */
 	@Override
 	public EndPoint disassociateAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException {
-		final Instance i = ipAddress.getInstance();
+		final Instance i = getInstanceCache().get(ipAddress.getInstanceId());
 		if (i != null) {
 			i.setIPAddress(null);
 		}
@@ -205,7 +205,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getImagsCache()
 	 */
 	@Override
-	public CacheWrapper<String, Image> getImagsCache() {
+	public CacheWrapper<String, Image> getImagesCache() {
 		return imagesCache;
 	}
 

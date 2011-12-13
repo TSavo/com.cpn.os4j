@@ -59,7 +59,7 @@ public interface EndPoint {
 	public abstract List<Image> getImages() throws ServerErrorExeception,
 			IOException, IOException;
 
-	public abstract CacheWrapper<String, Image> getImagsCache();
+	public abstract CacheWrapper<String, Image> getImagesCache();
 
 	public abstract CacheWrapper<String, Instance> getInstanceCache();
 
