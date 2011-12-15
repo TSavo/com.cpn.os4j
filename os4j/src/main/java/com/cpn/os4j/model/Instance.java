@@ -61,7 +61,7 @@ public class Instance implements Cacheable<String> {
 
 	public Instance attachVolume(final Volume aVolume, final String aDevice) throws ServerErrorExeception, IOException {
 		endPoint.attachVolumeToInstance(aVolume, this, aDevice);
-		return this;
+		return endPoint.getInstanceCache().get(getKey());
 	}
 
 	public Instance detachVolume() throws ServerErrorExeception, IOException {
@@ -168,6 +168,7 @@ public class Instance implements Cacheable<String> {
 
 	public Instance reboot() throws ServerErrorExeception, IOException {
 		endPoint.rebootInstance(this);
+		instanceState = "rebooting";
 		return this;
 	}
 
@@ -178,6 +179,7 @@ public class Instance implements Cacheable<String> {
 
 	public Instance terminate() throws ServerErrorExeception, IOException {
 		endPoint.terminateInstance(this);
+		instanceState = "terminating";
 		return this;
 	}
 
@@ -217,6 +219,7 @@ public class Instance implements Cacheable<String> {
 			Thread.sleep(1000);
 			endPoint.getInstances();
 		}
+		instanceState = "terminated";
 		return this;
 	}
 
@@ -230,6 +233,7 @@ public class Instance implements Cacheable<String> {
 				return this;
 			}
 		}
+		instanceState = "terminated";
 		return this;
 	}
 }

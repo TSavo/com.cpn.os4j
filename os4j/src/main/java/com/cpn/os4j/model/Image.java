@@ -97,8 +97,8 @@ public class Image implements Cacheable<String> {
 		return isPublic;
 	}
 
-	public Instance runInstance(final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
-		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, groups);
+	public Instance runInstance(final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, String aUserData, String anAvailabilityZone, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, aUserData, anAvailabilityZone, groups);
 	}
 
 	@Override

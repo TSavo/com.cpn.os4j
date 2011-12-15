@@ -32,7 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.EndPoint;
-import com.cpn.os4j.OpenStackEndPoint;
 import com.cpn.os4j.model.ServerError;
 import com.cpn.os4j.model.UnmarshallerHelper;
 import com.cpn.xml.XMLUtil;
@@ -40,6 +39,7 @@ import com.cpn.xml.XMLUtil;
 public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>, UnmarshallerHelper<T> {
 
 	private static final String CHAR_ENCODING = Charset.forName("UTF-8").name();
+	private int timeFailed = 0;
 
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> unmarshall(final List<Node> aList, final Class<T> anUnmarshaller, final EndPoint anEndPoint) {
@@ -125,7 +125,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		}
 		final OpenStackCommand<T> ref = this;
 		try {
-			return unmarshall(toXML(client.execute(request, new ResponseHandler<String>() {
+			String result = client.execute(request, new ResponseHandler<String>() {
 				/**
 				 * Returns the response body as a String if the response was successful
 				 * (a 2xx status code). If no response body exists, this returns null.
@@ -137,6 +137,9 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 					final StatusLine statusLine = response.getStatusLine();
 					final HttpEntity entity = response.getEntity();
 					if (statusLine.getStatusCode() >= 300) {
+						if(timeFailed++ < 10){
+							return "RETRY";
+						}
 						if (entity != null) {
 							final String body = EntityUtils.toString(entity);
 							System.out.println(body);
@@ -162,7 +165,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 
 					return entity == null ? null : EntityUtils.toString(entity);
 				}
-			})), this, endPoint);
+			});
+			if("RETRY".equals(result)){
+				return execute();
+			}
+			return unmarshall(toXML(result), this, endPoint);
 		} catch (final ClientProtocolException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

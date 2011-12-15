@@ -96,6 +96,7 @@ public class OpenStackEndPoint implements EndPoint {
 	public VolumeAttachment attachVolumeToInstance(final Volume aVolume, final Instance anInstance, final String aDevice) throws ServerErrorExeception, IOException {
 		final VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
 		getVolumes();
+		getInstances();
 		return v;
 	}
 
@@ -387,19 +388,10 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.cpn.os4j.EndPoint#runInstance(com.cpn.os4j.model.Image, com.cpn.os4j.model.KeyPair, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.cpn.os4j.model.SecurityGroup)
-	 */
+		
 	@Override
-	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
-		final Instance i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, groups).execute().get(0);
-		instanceCache.put(i.getKey(), i);
-		return i;
-	}
-	
-	@Override
-	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final String aUserData, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
-		final RunInstancesCommand i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, groups);
+	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final String aUserData, final String anAvailabilityZone, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+		final RunInstancesCommand i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, anAvailabilityZone, groups);
 		i.setUserData(aUserData);
 		Instance instance = i.execute().get(0);
 
@@ -426,5 +418,7 @@ public class OpenStackEndPoint implements EndPoint {
 		builder.append("uri", uri).append("credentials", credentials).append("signatureStrategy", signatureStrategy);
 		return builder.toString();
 	}
+
+
 
 }

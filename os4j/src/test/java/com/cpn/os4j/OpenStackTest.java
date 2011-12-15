@@ -149,7 +149,7 @@ public class OpenStackTest {
 		final KeyPair key = ep.getKeyPairs().get(0);
 		final SecurityGroup sg = ep.getSecurityGroups().get(0);
 		System.out.println("Starting: " + new Date());
-		image.runInstance(key, "m1.large", "public", "1", "1", sg).waitUntilRunning().terminate().waitUntilTerminated();
+		image.runInstance(key, "m1.large", "public", "1", "1", null, null, sg).waitUntilRunning().terminate().waitUntilTerminated();
 		System.out.println("Finished: " + new Date());
 	}
 

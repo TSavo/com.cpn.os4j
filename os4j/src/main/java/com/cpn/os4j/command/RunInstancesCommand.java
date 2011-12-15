@@ -14,7 +14,7 @@ import com.cpn.os4j.model.SecurityGroup;
 public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 
 	private final String addressingType;
-	private String availabilityZone;
+	private String availabilityZone = null;
 
 	private final String imageId;
 
@@ -34,7 +34,8 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 	
 	private final List<SecurityGroup> securityGroups = new ArrayList<>();
 
-	public RunInstancesCommand(final EndPoint anEndPoint, final Image anImage, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final SecurityGroup... groups) {
+
+	public RunInstancesCommand(final EndPoint anEndPoint, final Image anImage, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final String anAvailabilityZone, final SecurityGroup... groups) {
 		super(anEndPoint);
 		imageId = anImage.getImageId();
 		// this.kernelId = kernelId;
@@ -43,7 +44,7 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		this.minCount = minCount;
 		this.maxCount = maxCount;
 		// this.ramdiskId = ramdiskId;
-		// this.availabilityZone = availabilityZone;
+		this.availabilityZone = anAvailabilityZone;
 		keyName = keyPair.getName();
 		for (final SecurityGroup sg : groups) {
 			securityGroups.add(sg);
@@ -74,7 +75,9 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		if(userData != null){
 			queryString.put("UserData", URLEncoder.encode(userData, "utf-8"));
 		}
-		// queryString.put("Placement.AvailabilityZone", availabilityZone);
+		if(availabilityZone != null){
+			queryString.put("Placement.AvailabilityZone", availabilityZone);
+		}
 		// queryString.put("RamdiskId", ramdiskId);
 		int counter = 1;
 		for (final SecurityGroup sg : securityGroups) {

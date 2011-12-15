@@ -112,14 +112,12 @@ public interface EndPoint {
 	public abstract Instance runInstance(final Image image,
 			final KeyPair keyPair, final String instanceType,
 			final String addressingType, final String minCount,
-			final String maxCount, final SecurityGroup... groups)
+			final String maxCount, final String anAvailabilityZone, String aUserData, final SecurityGroup... groups)
 			throws ServerErrorExeception, IOException;
-
 	public abstract EndPoint terminateInstance(final Instance anInstance)
 			throws ServerErrorExeception, IOException;
 
 	public abstract String toString();
 
-	public abstract Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, String minCount, String maxCount, String aUserData, SecurityGroup... groups) throws ServerErrorExeception, IOException;
-
+	
 }
