@@ -167,10 +167,11 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 				}
 			});
 			if("RETRY".equals(result)){
+				Thread.sleep(250);
 				return execute();
 			}
 			return unmarshall(toXML(result), this, endPoint);
-		} catch (final ClientProtocolException e) {
+		} catch (final ClientProtocolException | InterruptedException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 
