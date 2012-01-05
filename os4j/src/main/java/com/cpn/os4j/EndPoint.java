@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.cpn.cache.CacheWrapper;
 import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.model.AvailabilityZone;
 import com.cpn.os4j.model.IPAddress;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.Instance;
@@ -34,6 +35,8 @@ public interface EndPoint {
 
 	public abstract Volume createVolume(final String anAvailabilityZone,
 			final int aSize) throws ServerErrorExeception, IOException;
+	public abstract Volume createVolume(final AvailabilityZone anAvailabilityZone,
+			final int aSize) throws ServerErrorExeception, IOException;
 
 	public abstract Volume createVolumeFromSnapshot(final Snapshot aSnapshot,
 			final String anAvailabilityZone) throws ServerErrorExeception,
@@ -58,6 +61,8 @@ public interface EndPoint {
 
 	public abstract List<Image> getImages() throws ServerErrorExeception,
 			IOException, IOException;
+	
+	public abstract List<AvailabilityZone> getAvailabilityZones() throws ServerErrorExeception, IOException;
 
 	public abstract CacheWrapper<String, Image> getImagesCache();
 
@@ -111,13 +116,22 @@ public interface EndPoint {
 
 	public abstract Instance runInstance(final Image image,
 			final KeyPair keyPair, final String instanceType,
-			final String addressingType, final String minCount,
-			final String maxCount, final String anAvailabilityZone, String aUserData, final SecurityGroup... groups)
+			final String addressingType, final int minCount,
+			final int maxCount, final String anAvailabilityZone, String aUserData, final SecurityGroup... groups)
 			throws ServerErrorExeception, IOException;
+	
+	public abstract Instance runInstance(final Image image,
+			final KeyPair keyPair, final String instanceType,
+			final String addressingType, final int minCount,
+			final int maxCount, final AvailabilityZone anAvailabilityZone, String aUserData, final SecurityGroup... groups)
+			throws ServerErrorExeception, IOException;
+	
 	public abstract EndPoint terminateInstance(final Instance anInstance)
 			throws ServerErrorExeception, IOException;
 
 	public abstract String toString();
+	
+	public abstract Image getImageByLocation(String anImageId) throws ServerErrorExeception, IOException;
 
 	
 }

@@ -1,6 +1,7 @@
 package com.cpn.os4j.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -60,8 +61,9 @@ public class Instance implements Cacheable<String> {
 	}
 
 	public Instance attachVolume(final Volume aVolume, final String aDevice) throws ServerErrorExeception, IOException {
-		endPoint.attachVolumeToInstance(aVolume, this, aDevice);
-		return endPoint.getInstanceCache().get(getKey());
+		VolumeAttachment attachment = endPoint.attachVolumeToInstance(aVolume, this, aDevice);
+		aVolume.addVolumeAttachment(attachment);
+		return this;
 	}
 
 	public Instance detachVolume() throws ServerErrorExeception, IOException {
@@ -164,6 +166,19 @@ public class Instance implements Cacheable<String> {
 			}
 		}
 		return null;
+	}
+	
+	public List<Volume> getVolumes() throws IOException {
+		final List<Volume> myVols = new ArrayList<>();
+		final List<Volume> vols = endPoint.getVolumes();
+		for(final Volume v: vols){
+			for(final VolumeAttachment a : v.getVolumeAttachments()) {
+				if(getInstanceId().equals(a.getInstanceId())){
+					myVols.add(v);
+				}
+			}
+		}
+		return myVols;
 	}
 
 	public Instance reboot() throws ServerErrorExeception, IOException {

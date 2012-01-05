@@ -18,6 +18,7 @@ import com.cpn.os4j.command.CreateVolumeCommand;
 import com.cpn.os4j.command.DeleteSnapshot;
 import com.cpn.os4j.command.DeleteVolumeCommand;
 import com.cpn.os4j.command.DescribeAddressesCommand;
+import com.cpn.os4j.command.DescribeAvailabilityZonesCommand;
 import com.cpn.os4j.command.DescribeImagesCommand;
 import com.cpn.os4j.command.DescribeInstancesCommand;
 import com.cpn.os4j.command.DescribeKeyPairsCommand;
@@ -32,6 +33,7 @@ import com.cpn.os4j.command.ReleaseAddressCommand;
 import com.cpn.os4j.command.RunInstancesCommand;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.command.TerminateInstancesCommand;
+import com.cpn.os4j.model.AvailabilityZone;
 import com.cpn.os4j.model.IPAddress;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.Instance;
@@ -60,13 +62,17 @@ public class OpenStackEndPoint implements EndPoint {
 	private final URI uri;
 	private final CacheWrapper<String, Volume> volumeCache = new EhcacheWrapper<>("volumes", cacheManager);
 
+	private CacheWrapper<String, AvailabilityZone> availabilityZonesCache = new EhcacheWrapper<>("availabilityZones", cacheManager);
+
 	public OpenStackEndPoint(final URI aUrl, final Credentials aCreds) throws ServerErrorExeception, IOException {
 		uri = aUrl;
 		credentials = aCreds;
 		populateCaches();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#allocateIPAddress()
 	 */
 	@Override
@@ -76,8 +82,11 @@ public class OpenStackEndPoint implements EndPoint {
 		return results.get(0);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.cpn.os4j.EndPoint#associateAddress(com.cpn.os4j.model.Instance, com.cpn.os4j.model.IPAddress)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.cpn.os4j.EndPoint#associateAddress(com.cpn.os4j.model.Instance,
+	 * com.cpn.os4j.model.IPAddress)
 	 */
 	@Override
 	public EndPoint associateAddress(final Instance anInstance, final IPAddress anIPAddress) throws ServerErrorExeception, IOException {
@@ -89,19 +98,24 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.cpn.os4j.EndPoint#attachVolumeToInstance(com.cpn.os4j.model.Volume, com.cpn.os4j.model.Instance, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.cpn.os4j.EndPoint#attachVolumeToInstance(com.cpn.os4j.model.Volume,
+	 * com.cpn.os4j.model.Instance, java.lang.String)
 	 */
 	@Override
 	public VolumeAttachment attachVolumeToInstance(final Volume aVolume, final Instance anInstance, final String aDevice) throws ServerErrorExeception, IOException {
 		final VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
-		getVolumes();
-		getInstances();
 		return v;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.cpn.os4j.EndPoint#createSnapshotFromVolume(com.cpn.os4j.model.Volume)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.cpn.os4j.EndPoint#createSnapshotFromVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
 	public Snapshot createSnapshotFromVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
@@ -110,7 +124,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return s;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#createVolume(java.lang.String, int)
 	 */
 	@Override
@@ -120,8 +136,12 @@ public class OpenStackEndPoint implements EndPoint {
 		return v;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.cpn.os4j.EndPoint#createVolumeFromSnapshot(com.cpn.os4j.model.Snapshot, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.cpn.os4j.EndPoint#createVolumeFromSnapshot(com.cpn.os4j.model.Snapshot,
+	 * java.lang.String)
 	 */
 	@Override
 	public Volume createVolumeFromSnapshot(final Snapshot aSnapshot, final String anAvailabilityZone) throws ServerErrorExeception, IOException {
@@ -130,7 +150,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return v;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#deleteSnapshot(com.cpn.os4j.model.Snapshot)
 	 */
 	@Override
@@ -139,7 +161,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#deleteVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
@@ -148,7 +172,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#detachVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
@@ -158,8 +184,11 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.cpn.os4j.EndPoint#disassociateAddress(com.cpn.os4j.model.IPAddress)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.cpn.os4j.EndPoint#disassociateAddress(com.cpn.os4j.model.IPAddress)
 	 */
 	@Override
 	public EndPoint disassociateAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException {
@@ -174,7 +203,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#forceDetachVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
@@ -184,7 +215,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getCredentials()
 	 */
 	@Override
@@ -192,7 +225,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return credentials;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getImages()
 	 */
 	@Override
@@ -201,8 +236,18 @@ public class OpenStackEndPoint implements EndPoint {
 		imagesCache.removeAll().putAll(results);
 		return results;
 	}
+	
+	@Override
+	public List<AvailabilityZone> getAvailabilityZones() throws IOException {
+		final List<AvailabilityZone> results = new DescribeAvailabilityZonesCommand(this).execute();
+		availabilityZonesCache.removeAll().putAll(results);
+		return results;
+	}
 
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getImagsCache()
 	 */
 	@Override
@@ -210,7 +255,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return imagesCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getInstanceCache()
 	 */
 	@Override
@@ -218,7 +265,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return instanceCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getInstances()
 	 */
 	@Override
@@ -228,7 +277,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getIPAddressCache()
 	 */
 	@Override
@@ -236,7 +287,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return ipAddessCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getIPAddresses()
 	 */
 	@Override
@@ -246,7 +299,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getKeyPairCache()
 	 */
 	@Override
@@ -254,7 +309,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return keyPairsCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getKeyPairs()
 	 */
 	@Override
@@ -264,7 +321,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getRegionCache()
 	 */
 	@Override
@@ -272,7 +331,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return regionCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getRegions()
 	 */
 	@Override
@@ -282,7 +343,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getSecurityGroupCache()
 	 */
 	@Override
@@ -290,7 +353,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return securityGroupCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getSecurityGroups()
 	 */
 	@Override
@@ -300,7 +365,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getSignatureStrategy()
 	 */
 	@Override
@@ -308,7 +375,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return signatureStrategy;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getSnapshotCache()
 	 */
 	@Override
@@ -316,7 +385,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return snapshotsCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getSnapshots()
 	 */
 	@Override
@@ -326,7 +397,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getURI()
 	 */
 	@Override
@@ -334,7 +407,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return uri;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getVolumeCache()
 	 */
 	@Override
@@ -342,7 +417,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return volumeCache;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#getVolumes()
 	 */
 	@Override
@@ -352,7 +429,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#populateCaches()
 	 */
 	@Override
@@ -368,7 +447,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#rebootInstance(com.cpn.os4j.model.Instance)
 	 */
 	@Override
@@ -378,7 +459,9 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#releaseAddress(com.cpn.os4j.model.IPAddress)
 	 */
 	@Override
@@ -388,9 +471,13 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-		
 	@Override
-	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final String aUserData, final String anAvailabilityZone, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+	public Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, int minCount, int maxCount, AvailabilityZone anAvailabilityZone, String aUserData, SecurityGroup... groups) throws ServerErrorExeception, IOException {
+		return runInstance(image, keyPair, instanceType, addressingType, minCount, maxCount, aUserData, anAvailabilityZone.getName(), groups);
+	}
+	@Override
+	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, final String aUserData, final String anAvailabilityZone, final SecurityGroup... groups)
+			throws ServerErrorExeception, IOException {
 		final RunInstancesCommand i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, anAvailabilityZone, groups);
 		i.setUserData(aUserData);
 		Instance instance = i.execute().get(0);
@@ -398,8 +485,15 @@ public class OpenStackEndPoint implements EndPoint {
 		instanceCache.put(instance.getKey(), instance);
 		return instance;
 	}
+	
+	@Override
+	public Volume createVolume(AvailabilityZone anAvailabilityZone, int aSize) throws ServerErrorExeception, IOException {
+		return createVolume(anAvailabilityZone.getName(), aSize);
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#terminateInstance(com.cpn.os4j.model.Instance)
 	 */
 	@Override
@@ -409,7 +503,19 @@ public class OpenStackEndPoint implements EndPoint {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public Image getImageByLocation(String anImageId) throws ServerErrorExeception, IOException {
+		for (Image i : getImages()) {
+			if (anImageId.equalsIgnoreCase(i.getImageLocation())) {
+				return i;
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.cpn.os4j.EndPoint#toString()
 	 */
 	@Override
@@ -418,7 +524,5 @@ public class OpenStackEndPoint implements EndPoint {
 		builder.append("uri", uri).append("credentials", credentials).append("signatureStrategy", signatureStrategy);
 		return builder.toString();
 	}
-
-
 
 }

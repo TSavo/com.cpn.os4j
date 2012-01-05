@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.UUID;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.HttpEntity;
@@ -80,7 +79,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		queryString.put("Version", "2010-08-31");
 		try {
 			queryString.put("Timestamp", URLEncoder.encode(new Date().toString(), CHAR_ENCODING).replaceAll("\\+", "%20"));
-			queryString.put("GUID", URLEncoder.encode(UUID.randomUUID().toString(), CHAR_ENCODING));
+			//queryString.put("GUID", URLEncoder.encode(UUID.randomUUID().toString(), CHAR_ENCODING));
 		} catch (final UnsupportedEncodingException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

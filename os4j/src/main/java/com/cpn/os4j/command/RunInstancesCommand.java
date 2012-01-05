@@ -24,9 +24,9 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 
 	private final String keyName;
 
-	private final String maxCount;
+	private final int maxCount;
 
-	private final String minCount;
+	private final int minCount;
 
 	private String ramdiskId;
 
@@ -35,7 +35,7 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 	private final List<SecurityGroup> securityGroups = new ArrayList<>();
 
 
-	public RunInstancesCommand(final EndPoint anEndPoint, final Image anImage, final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, final String anAvailabilityZone, final SecurityGroup... groups) {
+	public RunInstancesCommand(final EndPoint anEndPoint, final Image anImage, final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, final String anAvailabilityZone, final SecurityGroup... groups) {
 		super(anEndPoint);
 		imageId = anImage.getImageId();
 		// this.kernelId = kernelId;
@@ -70,8 +70,8 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		queryString.put("InstanceType", instanceType);
 		// queryString.put("KernelId", kernelId);
 		queryString.put("KeyName", keyName);
-		queryString.put("MaxCount", maxCount);
-		queryString.put("MinCount", minCount);
+		queryString.put("MaxCount", new Integer(maxCount).toString());
+		queryString.put("MinCount", new Integer(minCount).toString());
 		if(userData != null){
 			queryString.put("UserData", URLEncoder.encode(userData, "utf-8"));
 		}
@@ -115,11 +115,11 @@ public class RunInstancesCommand extends AbstractOpenStackCommand<Instance> {
 		return keyName;
 	}
 
-	public String getMaxCount() {
+	public int getMaxCount() {
 		return maxCount;
 	}
 
-	public String getMinCount() {
+	public int getMinCount() {
 		return minCount;
 	}
 

@@ -6,6 +6,8 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.http.annotation.Immutable;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
@@ -15,6 +17,7 @@ import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
 @Immutable
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Image implements Cacheable<String> {
 
 	public static Image unmarshall(final Node aNode, final EndPoint anEndPoint) {
@@ -44,6 +47,9 @@ public class Image implements Cacheable<String> {
 
 	private boolean isPublic;
 
+	public Image(){
+		endPoint = null;
+	}
 	private Image(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
 	}
@@ -97,7 +103,7 @@ public class Image implements Cacheable<String> {
 		return isPublic;
 	}
 
-	public Instance runInstance(final KeyPair keyPair, final String instanceType, final String addressingType, final String minCount, final String maxCount, String aUserData, String anAvailabilityZone, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+	public Instance runInstance(final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, String aUserData, String anAvailabilityZone, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
 		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, aUserData, anAvailabilityZone, groups);
 	}
 

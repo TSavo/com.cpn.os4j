@@ -26,16 +26,19 @@ public class OpenStackTest {
 
 	static {
 		try {
-			ep = new OpenStackEndPoint(new URI("http://10.101.100.100:8773/services/Cloud"), new Credentials() {
+			//ep = new OpenStackEndPoint(new URI("http://10.101.100.100:8773/services/Cloud"), new Credentials() {
+				ep = new OpenStackEndPoint(new URI("http://10.1.10.249:8773/services/Cloud"), new Credentials() {
 
 				@Override
 				public String getAccessKey() {
-					return "2c52532c-94b5-4298-89a5-002b4cc82a32%3Avsp";
+//					return "2c52532c-94b5-4298-89a5-002b4cc82a32%3Avsp";
+						return "1cf01825-1303-4fad-a49e-2776a5077bd1%3Avsp";
 				}
 
 				@Override
 				public String getSecretKey() {
-					return "70d45ff2-6958-4d25-96d0-1e79bd5a5dec";
+					//return "70d45ff2-6958-4d25-96d0-1e79bd5a5dec";
+					return "666a4776-19be-4d0e-b2a8-1735dd151606";
 				}
 			});
 		} catch (final URISyntaxException e) {
@@ -48,6 +51,10 @@ public class OpenStackTest {
 	}
 
 	@Test
+	public void testDescribeAvailabilityZones() throws Exception{
+		System.out.println(ep.getAvailabilityZones());
+	}
+	@Test
 	public void testCreateVolume() throws Exception {
 		System.out.println(ep.createVolume("nova", 18).waitUntilAvailable().delete().waitUntilDeleted());
 	}
@@ -58,6 +65,7 @@ public class OpenStackTest {
 	}
 
 	@Test
+	@Ignore
 	public void testGetConsoleOutput() throws Exception {
 		System.out.println(ep.getInstances().get(0).getConsoleOutput());
 	}
@@ -128,7 +136,10 @@ public class OpenStackTest {
 
 	@Test
 	public void testRebootInstances() throws Exception {
-		ep.getInstances().get(0).reboot();
+		final Image image = ep.getImages().get(0);
+		final KeyPair key = ep.getKeyPairs().get(0);
+		final SecurityGroup sg = ep.getSecurityGroups().get(0);
+		image.runInstance(key, "m1.large", "public", 1, 1, null, null, sg).waitUntilRunning().reboot().waitUntilRunning().terminate();
 	}
 
 	@Test
@@ -149,7 +160,7 @@ public class OpenStackTest {
 		final KeyPair key = ep.getKeyPairs().get(0);
 		final SecurityGroup sg = ep.getSecurityGroups().get(0);
 		System.out.println("Starting: " + new Date());
-		image.runInstance(key, "m1.large", "public", "1", "1", null, null, sg).waitUntilRunning().terminate().waitUntilTerminated();
+		image.runInstance(key, "m1.large", "public", 1, 1, null, null, sg).waitUntilRunning().terminate().waitUntilTerminated();
 		System.out.println("Finished: " + new Date());
 	}
 
