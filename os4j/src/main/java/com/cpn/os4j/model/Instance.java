@@ -115,8 +115,8 @@ public class Instance implements Cacheable<String> {
 		return instanceType;
 	}
 
-	public IPAddress getIpAddress() {
-		return endPoint.getIPAddressCache().get(ipAddress);
+	public IPAddress getIpAddress() throws ServerErrorExeception, IOException {
+		return endPoint.getIPAddress(ipAddress);
 	}
 
 	@Override
@@ -213,7 +213,7 @@ public class Instance implements Cacheable<String> {
 		}
 		Thread.sleep(1000);
 		endPoint.getInstances();
-		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning();
+		return endPoint.getInstance(getKey()).waitUntilRunning();
 	}
 
 	public Instance waitUntilRunning(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
@@ -225,12 +225,12 @@ public class Instance implements Cacheable<String> {
 		}
 		Thread.sleep(1000);
 		endPoint.getInstances();
-		return endPoint.getInstanceCache().get(getKey()).waitUntilRunning(maxTimeToWait - 1000);
+		return endPoint.getInstance(getKey()).waitUntilRunning(maxTimeToWait - 1000);
 	}
 
 	public Instance waitUntilTerminated() throws InterruptedException, ServerErrorExeception, IOException {
 		endPoint.getInstances();
-		if (endPoint.getInstanceCache().get(getKey()) != null) {
+		if (endPoint.getInstance(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getInstances();
 		}
@@ -240,7 +240,7 @@ public class Instance implements Cacheable<String> {
 
 	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
 		endPoint.getInstances();
-		while (endPoint.getInstanceCache().get(getKey()) != null) {
+		while (endPoint.getInstance(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getInstances();
 			maxTimeToWait -= 1000;

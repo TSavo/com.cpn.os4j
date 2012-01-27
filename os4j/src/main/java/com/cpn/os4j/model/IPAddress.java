@@ -50,8 +50,8 @@ public class IPAddress implements Cacheable<String> {
 	}
 
 	@JsonIgnore
-	public Instance getInstance() {
-		return endPoint.getInstanceCache().get(instanceId);
+	public Instance getInstance() throws ServerErrorExeception, IOException {
+		return endPoint.getInstance(instanceId);
 	}
 
 	public String getInstanceId() {

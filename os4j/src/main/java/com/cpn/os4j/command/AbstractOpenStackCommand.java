@@ -53,7 +53,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		return list;
 	}
 
-	public static <T> List<T> unmarshall(final Node aDocument, final UnmarshallerHelper<T> aHelper, final EndPoint anEndPoint) {
+	public static <T> List<T> unmarshall(final Document aDocument, final UnmarshallerHelper<T> aHelper, final EndPoint anEndPoint) {
 		try {
 			if ((aHelper != null) && (aHelper.getUnmarshallingClass() != null) && (aHelper.getUnmarshallingXPath() != null)) {
 				return unmarshall(XMLUtil.xPathList(aDocument, aHelper.getUnmarshallingXPath()), aHelper.getUnmarshallingClass(), anEndPoint);

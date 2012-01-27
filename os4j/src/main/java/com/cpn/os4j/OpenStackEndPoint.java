@@ -3,10 +3,13 @@ package com.cpn.os4j;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import net.sf.ehcache.CacheManager;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.http.conn.HttpHostConnectException;
+import org.slf4j.LoggerFactory;
 
 import com.cpn.cache.CacheWrapper;
 import com.cpn.cache.EhcacheWrapper;
@@ -43,6 +46,8 @@ import com.cpn.os4j.model.SecurityGroup;
 import com.cpn.os4j.model.Snapshot;
 import com.cpn.os4j.model.Volume;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 public class OpenStackEndPoint implements EndPoint {
 
@@ -67,7 +72,11 @@ public class OpenStackEndPoint implements EndPoint {
 	public OpenStackEndPoint(final URI aUrl, final Credentials aCreds) throws ServerErrorExeception, IOException {
 		uri = aUrl;
 		credentials = aCreds;
-		populateCaches();
+		try{
+			populateCaches();
+		}catch(HttpHostConnectException e){
+			LoggerFactory.getLogger(OpenStackEndPoint.class).error(e.getMessage(), e);
+		}
 	}
 
 	/*
@@ -108,6 +117,8 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public VolumeAttachment attachVolumeToInstance(final Volume aVolume, final Instance anInstance, final String aDevice) throws ServerErrorExeception, IOException {
 		final VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
+		getVolumes();
+		getInstances();
 		return v;
 	}
 
@@ -192,7 +203,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 */
 	@Override
 	public EndPoint disassociateAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException {
-		final Instance i = getInstanceCache().get(ipAddress.getInstanceId());
+		final Instance i = instanceCache.get(ipAddress.getInstanceId());
 		if (i != null) {
 			i.setIPAddress(null);
 		}
@@ -236,7 +247,7 @@ public class OpenStackEndPoint implements EndPoint {
 		imagesCache.removeAll().putAll(results);
 		return results;
 	}
-	
+
 	@Override
 	public List<AvailabilityZone> getAvailabilityZones() throws IOException {
 		final List<AvailabilityZone> results = new DescribeAvailabilityZonesCommand(this).execute();
@@ -245,25 +256,8 @@ public class OpenStackEndPoint implements EndPoint {
 	}
 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getImagsCache()
-	 */
-	@Override
-	public CacheWrapper<String, Image> getImagesCache() {
-		return imagesCache;
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getInstanceCache()
-	 */
-	@Override
-	public CacheWrapper<String, Instance> getInstanceCache() {
-		return instanceCache;
-	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -273,19 +267,11 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public List<Instance> getInstances() throws ServerErrorExeception, IOException, IOException {
 		final List<Instance> results = new DescribeInstancesCommand(this).execute();
-		getInstanceCache().removeAll().putAll(results);
+		instanceCache.removeAll().putAll(results);
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getIPAddressCache()
-	 */
-	@Override
-	public CacheWrapper<String, IPAddress> getIPAddressCache() {
-		return ipAddessCache;
-	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -295,19 +281,11 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public List<IPAddress> getIPAddresses() throws ServerErrorExeception, IOException, IOException {
 		final List<IPAddress> results = new DescribeAddressesCommand(this).execute();
-		getIPAddressCache().removeAll().putAll(results);
+		ipAddessCache.removeAll().putAll(results);
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getKeyPairCache()
-	 */
-	@Override
-	public CacheWrapper<String, KeyPair> getKeyPairCache() {
-		return keyPairsCache;
-	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -321,15 +299,6 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getRegionCache()
-	 */
-	@Override
-	public CacheWrapper<String, Region> getRegionCache() {
-		return regionCache;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -339,19 +308,10 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public List<Region> getRegions() throws ServerErrorExeception, IOException, IOException {
 		final List<Region> results = new DescribeRegionsCommand(this).execute();
-		getRegionCache().removeAll().putAll(results);
+		regionCache.removeAll().putAll(results);
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getSecurityGroupCache()
-	 */
-	@Override
-	public CacheWrapper<String, SecurityGroup> getSecurityGroupCache() {
-		return securityGroupCache;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -375,15 +335,6 @@ public class OpenStackEndPoint implements EndPoint {
 		return signatureStrategy;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getSnapshotCache()
-	 */
-	@Override
-	public CacheWrapper<String, Snapshot> getSnapshotCache() {
-		return snapshotsCache;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -407,13 +358,7 @@ public class OpenStackEndPoint implements EndPoint {
 		return uri;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cpn.os4j.EndPoint#getVolumeCache()
-	 */
-	@Override
-	public CacheWrapper<String, Volume> getVolumeCache() {
+	private CacheWrapper<String, Volume> getVolumeCache() {
 		return volumeCache;
 	}
 
@@ -475,6 +420,7 @@ public class OpenStackEndPoint implements EndPoint {
 	public Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, int minCount, int maxCount, AvailabilityZone anAvailabilityZone, String aUserData, SecurityGroup... groups) throws ServerErrorExeception, IOException {
 		return runInstance(image, keyPair, instanceType, addressingType, minCount, maxCount, aUserData, anAvailabilityZone.getName(), groups);
 	}
+
 	@Override
 	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, final String aUserData, final String anAvailabilityZone, final SecurityGroup... groups)
 			throws ServerErrorExeception, IOException {
@@ -485,7 +431,7 @@ public class OpenStackEndPoint implements EndPoint {
 		instanceCache.put(instance.getKey(), instance);
 		return instance;
 	}
-	
+
 	@Override
 	public Volume createVolume(AvailabilityZone anAvailabilityZone, int aSize) throws ServerErrorExeception, IOException {
 		return createVolume(anAvailabilityZone.getName(), aSize);
@@ -523,6 +469,78 @@ public class OpenStackEndPoint implements EndPoint {
 		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("uri", uri).append("credentials", credentials).append("signatureStrategy", signatureStrategy);
 		return builder.toString();
+	}
+
+	@Override
+	public Volume getVolume(final String aKey) throws ServerErrorExeception, IOException {
+		try {
+			return Iterables.find(getVolumes(), new com.google.common.base.Predicate<Volume>() {
+
+				@Override
+				public boolean apply(Volume aVolume) {
+					return aVolume.getKey().equals(aKey);
+				}
+
+			});
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public Instance getInstance(final String instanceId) throws ServerErrorExeception, IOException {
+		try {
+			return Iterables.find(getInstances(), new Predicate<Instance>() {
+				@Override
+				public boolean apply(Instance anInstance) {
+					return anInstance.getKey().equals(instanceId);
+				}
+			});
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public Image getImage(final String imageId) throws ServerErrorExeception, IOException {
+		try {
+			return Iterables.find(getImages(), new Predicate<Image>() {
+				@Override
+				public boolean apply(Image anImage) {
+					return anImage.getKey().equals(imageId);
+				}
+			});
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public IPAddress getIPAddress(final String ipAddress) throws ServerErrorExeception, IOException {
+		try {
+			return Iterables.find(getIPAddresses(), new Predicate<IPAddress>() {
+				@Override
+				public boolean apply(IPAddress anIpAddress) {
+					return anIpAddress.getKey().equals(ipAddress);
+				}
+			});
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public Snapshot getSnapshot(final String key) throws ServerErrorExeception, IOException {
+		try {
+			return Iterables.find(getSnapshots(), new Predicate<Snapshot>() {
+				@Override
+				public boolean apply(Snapshot anIpAddress) {
+					return anIpAddress.getKey().equals(key);
+				}
+			});
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 
 }

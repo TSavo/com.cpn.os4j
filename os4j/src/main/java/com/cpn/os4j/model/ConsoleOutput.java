@@ -1,5 +1,6 @@
 package com.cpn.os4j.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -10,6 +11,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.EndPoint;
+import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
@@ -37,8 +39,8 @@ public class ConsoleOutput implements Serializable {
 		endPoint = anEndPoint;
 	}
 
-	public Instance getInstance() {
-		return endPoint.getInstanceCache().get(getInstanceId());
+	public Instance getInstance() throws ServerErrorExeception, IOException {
+		return endPoint.getInstance(getInstanceId());
 	}
 
 	public String getInstanceId() {

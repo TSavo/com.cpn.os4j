@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import com.cpn.cache.CacheWrapper;
 import com.cpn.os4j.command.ServerErrorExeception;
 import com.cpn.os4j.model.AvailabilityZone;
 import com.cpn.os4j.model.IPAddress;
@@ -64,43 +63,41 @@ public interface EndPoint {
 	
 	public abstract List<AvailabilityZone> getAvailabilityZones() throws ServerErrorExeception, IOException;
 
-	public abstract CacheWrapper<String, Image> getImagesCache();
 
-	public abstract CacheWrapper<String, Instance> getInstanceCache();
 
 	public abstract List<Instance> getInstances() throws ServerErrorExeception,
 			IOException, IOException;
 
-	public abstract CacheWrapper<String, IPAddress> getIPAddressCache();
+
 
 	public abstract List<IPAddress> getIPAddresses()
 			throws ServerErrorExeception, IOException, IOException;
 
-	public abstract CacheWrapper<String, KeyPair> getKeyPairCache();
+
 
 	public abstract List<KeyPair> getKeyPairs() throws ServerErrorExeception,
 			IOException, IOException;
 
-	public abstract CacheWrapper<String, Region> getRegionCache();
+
 
 	public abstract List<Region> getRegions() throws ServerErrorExeception,
 			IOException, IOException;
 
-	public abstract CacheWrapper<String, SecurityGroup> getSecurityGroupCache();
+
 
 	public abstract List<SecurityGroup> getSecurityGroups()
 			throws ServerErrorExeception, IOException, IOException;
 
 	public abstract SignatureStrategy getSignatureStrategy();
 
-	public abstract CacheWrapper<String, Snapshot> getSnapshotCache();
+
 
 	public abstract List<Snapshot> getSnapshots() throws ServerErrorExeception,
 			IOException, IOException;
 
 	public abstract URI getURI();
 
-	public abstract CacheWrapper<String, Volume> getVolumeCache();
+
 
 	public abstract List<Volume> getVolumes() throws ServerErrorExeception,
 			IOException, IOException;
@@ -132,6 +129,16 @@ public interface EndPoint {
 	public abstract String toString();
 	
 	public abstract Image getImageByLocation(String anImageId) throws ServerErrorExeception, IOException;
+
+	public abstract Volume getVolume(String key) throws ServerErrorExeception, IOException;
+
+	public abstract Instance getInstance(String instanceId) throws ServerErrorExeception, IOException;
+
+	public abstract Image getImage(String imageId) throws ServerErrorExeception, IOException;
+
+	public abstract IPAddress getIPAddress(String ipAddress) throws ServerErrorExeception, IOException;
+
+	public abstract Snapshot getSnapshot(String key) throws ServerErrorExeception, IOException;
 
 	
 }

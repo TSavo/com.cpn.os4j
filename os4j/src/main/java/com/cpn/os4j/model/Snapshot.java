@@ -110,7 +110,7 @@ public class Snapshot implements Cacheable<String> {
 		if (!status.contains("available")) {
 			Thread.sleep(1000);
 			endPoint.getSnapshots();
-			return endPoint.getSnapshotCache().get(getKey());
+			return endPoint.getSnapshot(getKey());
 		}
 		return this;
 	}

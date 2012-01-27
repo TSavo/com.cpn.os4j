@@ -3,6 +3,7 @@ package com.cpn.os4j.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -36,6 +37,7 @@ public class Volume implements Cacheable<String> {
 			}
 			return v;
 		}
+
 		@JsonIgnore
 		private final EndPoint endPoint;
 
@@ -61,9 +63,10 @@ public class Volume implements Cacheable<String> {
 		public String getDevice() {
 			return device;
 		}
+
 		@JsonIgnore
-		public Instance getInstance() {
-			return endPoint.getInstanceCache().get(instanceId);
+		public Instance getInstance() throws ServerErrorExeception, IOException {
+			return endPoint.getInstance(instanceId);
 		}
 
 		public String getInstanceId() {
@@ -73,7 +76,7 @@ public class Volume implements Cacheable<String> {
 		public String getStatus() {
 			return status;
 		}
-	
+
 		public String getVolumeId() {
 			return volumeId;
 		}
@@ -107,15 +110,20 @@ public class Volume implements Cacheable<String> {
 		}
 		return v;
 	}
+
 	@JsonIgnore
 	private final EndPoint endPoint;
 
 	private String status, availabilityZone, displayName, volumeId, displayDescription, snapshotId, size, createTime;
 
-	private final List<VolumeAttachment> volumeAttachments = new ArrayList<>();
+	private List<VolumeAttachment> volumeAttachments = new ArrayList<>();
 
 	private Volume(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;
+	}
+
+	public Volume() {
+		endPoint = null;
 	}
 
 	public Volume addVolumeAttachment(final VolumeAttachment anAttachment) {
@@ -166,6 +174,7 @@ public class Volume implements Cacheable<String> {
 	}
 
 	@Override
+	@JsonIgnore
 	public String getKey() {
 		return volumeId;
 	}
@@ -202,19 +211,87 @@ public class Volume implements Cacheable<String> {
 		if (status.contains("available")) {
 			return this;
 		}
-		if(status.contains("error")) {
+		if (status.contains("error")) {
 			throw new RuntimeException("While waiting for the volume " + volumeId + ", we got a status of " + status);
 		}
 		Thread.sleep(1000);
 		endPoint.getVolumes();
-		return endPoint.getVolumeCache().get(getKey()).waitUntilAvailable();
+		return endPoint.getVolume(getKey()).waitUntilAvailable();
+	}
+
+	public Volume waitUntilAvailable(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
+		if (status.contains("available")) {
+			return this;
+		}
+		if (status.contains("error")) {
+			throw new RuntimeException("While waiting for the volume " + volumeId + ", we got a status of " + status);
+		}
+		if (maxTimeToWait < 0) {
+			return this;
+		}
+		Thread.sleep(1000);
+		endPoint.getInstances();
+		return endPoint.getVolume(getKey()).waitUntilAvailable(maxTimeToWait - 1000);
 	}
 
 	public Volume waitUntilDeleted() throws InterruptedException, ServerErrorExeception, IOException {
-		while (endPoint.getVolumeCache().get(getKey()) != null) {
-			Thread.sleep(1000);
-			endPoint.getVolumes();
+		try {
+			while (endPoint.getVolume(getKey()) != null) {
+				Thread.sleep(1000);
+				endPoint.getVolumes();
+			}
+		} catch (NoSuchElementException e) {
+			return this;
 		}
 		return this;
+	}
+
+	public Volume waitUntilDeleted(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
+		if (endPoint.getVolume(getKey()) != null) {
+			Thread.sleep(1000);
+			endPoint.getVolumes();
+		} else {
+			return this;
+		}
+		if (maxTimeToWait < 0) {
+			return this;
+		}
+		return waitUntilDeleted(maxTimeToWait - 1000);
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setAvailabilityZone(String availabilityZone) {
+		this.availabilityZone = availabilityZone;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public void setVolumeId(String volumeId) {
+		this.volumeId = volumeId;
+	}
+
+	public void setDisplayDescription(String displayDescription) {
+		this.displayDescription = displayDescription;
+	}
+
+	public void setSnapshotId(String snapshotId) {
+		this.snapshotId = snapshotId;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
+	public void setVolumeAttachments(List<VolumeAttachment> volumeAttachments) {
+		this.volumeAttachments = volumeAttachments;
 	}
 }
