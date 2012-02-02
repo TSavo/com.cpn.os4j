@@ -57,4 +57,12 @@ public class AvailabilityZone implements Cacheable<String> {
 		builder.append("name", name).append("status", status);
 		return builder.toString();
 	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

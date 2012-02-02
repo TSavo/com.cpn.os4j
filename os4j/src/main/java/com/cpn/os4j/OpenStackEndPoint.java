@@ -255,10 +255,6 @@ public class OpenStackEndPoint implements EndPoint {
 		return results;
 	}
 
-
-
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -270,7 +266,6 @@ public class OpenStackEndPoint implements EndPoint {
 		instanceCache.removeAll().putAll(results);
 		return results;
 	}
-
 
 
 	/*
