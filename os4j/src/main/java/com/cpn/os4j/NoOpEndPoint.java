@@ -17,6 +17,13 @@ import com.cpn.os4j.model.Volume;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
 
 public class NoOpEndPoint implements EndPoint {
+	public NoOpEndPoint() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public NoOpEndPoint(URI uri, Credentials someCreds) {
+
+	}
 
 	@Override
 	public IPAddress allocateIPAddress() throws ServerErrorExeception, IOException, IOException {
