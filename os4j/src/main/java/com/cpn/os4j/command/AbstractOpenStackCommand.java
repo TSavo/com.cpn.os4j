@@ -136,7 +136,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 					final StatusLine statusLine = response.getStatusLine();
 					final HttpEntity entity = response.getEntity();
 					if (statusLine.getStatusCode() >= 300) {
-						if(timeFailed++ < 10){
+						if(timeFailed++ < 3){
 							return "RETRY";
 						}
 						if (entity != null) {
