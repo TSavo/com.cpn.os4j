@@ -413,11 +413,11 @@ public class OpenStackEndPoint implements EndPoint {
 
 	@Override
 	public Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, int minCount, int maxCount, AvailabilityZone anAvailabilityZone, String aUserData, SecurityGroup... groups) throws ServerErrorExeception, IOException {
-		return runInstance(image, keyPair, instanceType, addressingType, minCount, maxCount, aUserData, anAvailabilityZone.getName(), groups);
+		return runInstance(image, keyPair, instanceType, addressingType, minCount, maxCount, anAvailabilityZone.getName(), aUserData, groups);
 	}
 
 	@Override
-	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, final String aUserData, final String anAvailabilityZone, final SecurityGroup... groups)
+	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, final String anAvailabilityZone, final String aUserData, final SecurityGroup... groups)
 			throws ServerErrorExeception, IOException {
 		final RunInstancesCommand i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, anAvailabilityZone, groups);
 		i.setUserData(aUserData);
