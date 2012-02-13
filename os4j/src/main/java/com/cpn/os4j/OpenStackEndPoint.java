@@ -2,6 +2,7 @@ package com.cpn.os4j;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -357,6 +358,42 @@ public class OpenStackEndPoint implements EndPoint {
 		return volumeCache;
 	}
 
+	@Override
+	public List<IPAddress> listIPAddresses() {
+		List<IPAddress> addresses = new ArrayList<>();
+		for(String key : ipAddessCache.getKeys()){
+			addresses.add(ipAddessCache.get(key));
+		}
+		return addresses;
+	}
+	
+	@Override
+	public List<Volume> listVolumes() {
+		List<Volume> volumes = new ArrayList<>();
+		for(String key : getVolumeCache().getKeys()){
+			volumes.add(getVolumeCache().get(key));
+		}
+		return volumes;
+	}
+	
+	@Override
+	public List<Instance> listInstances() {
+		List<Instance> instances = new ArrayList<>();
+		for(String key : instanceCache.getKeys()){
+			instances.add(instanceCache.get(key));
+		}
+		return instances;
+	}
+	
+	@Override
+	public List<Image> listImages() {
+		List<Image> images = new ArrayList<>();
+		for(String key : imagesCache.getKeys()){
+			images.add(imagesCache.get(key));
+		}
+		return images;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -446,7 +483,7 @@ public class OpenStackEndPoint implements EndPoint {
 
 	@Override
 	public Image getImageByLocation(String anImageId) throws ServerErrorExeception, IOException {
-		for (Image i : getImages()) {
+		for (Image i : listImages()) {
 			if (anImageId.equalsIgnoreCase(i.getImageLocation())) {
 				return i;
 			}
@@ -469,7 +506,7 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public Volume getVolume(final String aKey) throws ServerErrorExeception, IOException {
 		try {
-			return Iterables.find(getVolumes(), new com.google.common.base.Predicate<Volume>() {
+			return Iterables.find(listVolumes(), new com.google.common.base.Predicate<Volume>() {
 
 				@Override
 				public boolean apply(Volume aVolume) {
@@ -485,7 +522,7 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public Instance getInstance(final String instanceId) throws ServerErrorExeception, IOException {
 		try {
-			return Iterables.find(getInstances(), new Predicate<Instance>() {
+			return Iterables.find(listInstances(), new Predicate<Instance>() {
 				@Override
 				public boolean apply(Instance anInstance) {
 					return anInstance.getKey().equals(instanceId);
@@ -499,7 +536,7 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public Image getImage(final String imageId) throws ServerErrorExeception, IOException {
 		try {
-			return Iterables.find(getImages(), new Predicate<Image>() {
+			return Iterables.find(listImages(), new Predicate<Image>() {
 				@Override
 				public boolean apply(Image anImage) {
 					return anImage.getKey().equals(imageId);
@@ -513,7 +550,7 @@ public class OpenStackEndPoint implements EndPoint {
 	@Override
 	public IPAddress getIPAddress(final String ipAddress) throws ServerErrorExeception, IOException {
 		try {
-			return Iterables.find(getIPAddresses(), new Predicate<IPAddress>() {
+			return Iterables.find(listIPAddresses(), new Predicate<IPAddress>() {
 				@Override
 				public boolean apply(IPAddress anIpAddress) {
 					return anIpAddress.getKey().equals(ipAddress);

@@ -157,7 +157,7 @@ public class Instance implements Cacheable<String> {
 	}
 
 	public Volume getVolume() throws ServerErrorExeception, IOException {
-		final List<Volume> vols = endPoint.getVolumes();
+		final List<Volume> vols = endPoint.listVolumes();
 		for (final Volume v : vols) {
 			for (final VolumeAttachment a : v.getVolumeAttachments()) {
 				if (getInstanceId().equals(a.getInstanceId())) {
@@ -170,7 +170,7 @@ public class Instance implements Cacheable<String> {
 	
 	public List<Volume> getVolumes() throws IOException {
 		final List<Volume> myVols = new ArrayList<>();
-		final List<Volume> vols = endPoint.getVolumes();
+		final List<Volume> vols = endPoint.listVolumes();
 		for(final Volume v: vols){
 			for(final VolumeAttachment a : v.getVolumeAttachments()) {
 				if(getInstanceId().equals(a.getInstanceId())){

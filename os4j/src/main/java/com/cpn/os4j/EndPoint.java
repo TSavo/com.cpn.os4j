@@ -98,7 +98,10 @@ public interface EndPoint {
 	public abstract URI getURI();
 
 
-
+	public abstract List<Volume> listVolumes();
+	public abstract List<IPAddress> listIPAddresses();
+	public abstract List<Instance> listInstances();
+	public abstract List<Image> listImages();
 	public abstract List<Volume> getVolumes() throws ServerErrorExeception,
 			IOException, IOException;
 

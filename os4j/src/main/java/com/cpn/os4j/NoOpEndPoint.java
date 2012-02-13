@@ -2,6 +2,7 @@ package com.cpn.os4j;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.cpn.os4j.command.ServerErrorExeception;
@@ -23,6 +24,26 @@ public class NoOpEndPoint implements EndPoint {
 
 	public NoOpEndPoint(URI uri, Credentials someCreds) {
 
+	}
+
+	@Override
+	public List<Image> listImages() {
+		return new ArrayList<Image>();
+	}
+
+	@Override
+	public List<Instance> listInstances() {
+		return new ArrayList<Instance>();
+	}
+
+	@Override
+	public List<IPAddress> listIPAddresses() {
+		return new ArrayList<IPAddress>();
+	}
+
+	@Override
+	public List<Volume> listVolumes() {
+		return new ArrayList<Volume>();
 	}
 
 	@Override
