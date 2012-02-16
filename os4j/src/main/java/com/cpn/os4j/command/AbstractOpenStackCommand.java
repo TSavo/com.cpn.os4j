@@ -193,7 +193,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 
 	@Override
 	public String getVerb() {
-		return "GET";
+		return "POST";
 	}
 
 	public OpenStackCommand<T> put(final String aKey, final String aValue) {
