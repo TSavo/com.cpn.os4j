@@ -2,8 +2,8 @@ package com.cpn.os4j.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -104,6 +104,12 @@ public class Volume implements Cacheable<String> {
 			v.size = x.get("size");
 			for (final Node n : x.getList("attachmentSet/item")) {
 				v.volumeAttachments.add(VolumeAttachment.unmarshall(n, anEndPoint));
+			}
+			for(Iterator<VolumeAttachment> i = v.volumeAttachments.iterator(); i.hasNext();){
+				VolumeAttachment va = i.next();
+				if(va.instanceId == null || "".equals(va.instanceId)){
+					i.remove();
+				}
 			}
 		} catch (final XPathExpressionException e) {
 			throw new RuntimeException(e.getMessage(), e);
@@ -207,18 +213,7 @@ public class Volume implements Cacheable<String> {
 		return builder.toString();
 	}
 
-	public Volume waitUntilAvailable() throws InterruptedException, ServerErrorExeception, IOException {
-		if (status.contains("available")) {
-			return this;
-		}
-		if (status.contains("error")) {
-			throw new RuntimeException("While waiting for the volume " + volumeId + ", we got a status of " + status);
-		}
-		Thread.sleep(1000);
-		endPoint.getVolumes();
-		return endPoint.getVolume(getKey()).waitUntilAvailable();
-	}
-
+	
 	public Volume waitUntilAvailable(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
 		if (status.contains("available")) {
 			return this;
@@ -230,21 +225,10 @@ public class Volume implements Cacheable<String> {
 			return this;
 		}
 		Thread.sleep(1000);
-		endPoint.getInstances();
+		endPoint.getVolumes();
 		return endPoint.getVolume(getKey()).waitUntilAvailable(maxTimeToWait - 1000);
 	}
 
-	public Volume waitUntilDeleted() throws InterruptedException, ServerErrorExeception, IOException {
-		try {
-			while (endPoint.getVolume(getKey()) != null) {
-				Thread.sleep(1000);
-				endPoint.getVolumes();
-			}
-		} catch (NoSuchElementException e) {
-			return this;
-		}
-		return this;
-	}
 
 	public Volume waitUntilDeleted(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
 		if (endPoint.getVolume(getKey()) != null) {

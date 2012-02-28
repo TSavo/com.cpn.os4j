@@ -56,7 +56,7 @@ public class OpenStackTest {
 	}
 	@Test
 	public void testCreateVolume() throws Exception {
-		System.out.println(ep.createVolume("nova", 18).waitUntilAvailable().delete().waitUntilDeleted());
+		System.out.println(ep.createVolume("nova", 18).waitUntilAvailable(120000).delete().waitUntilDeleted(120000));
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class OpenStackTest {
 		final Image image = ep.getImages().get(0);
 		final KeyPair key = ep.getKeyPairs().get(0);
 		final SecurityGroup sg = ep.getSecurityGroups().get(0);
-		image.runInstance(key, "m1.large", "public", 1, 1, null, null, sg).waitUntilRunning().reboot().waitUntilRunning().terminate();
+		image.runInstance(key, "m1.large", "public", 1, 1, null, null, sg).waitUntilRunning(120000).reboot().waitUntilRunning(120000).terminate();
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class OpenStackTest {
 		final KeyPair key = ep.getKeyPairs().get(0);
 		final SecurityGroup sg = ep.getSecurityGroups().get(0);
 		System.out.println("Starting: " + new Date());
-		image.runInstance(key, "m1.large", "public", 1, 1, null, null, sg).waitUntilRunning().terminate().waitUntilTerminated();
+		image.runInstance(key, "m1.large", "public", 1, 1, null, null, sg).waitUntilRunning(120000).terminate().waitUntilTerminated(120000);
 		System.out.println("Finished: " + new Date());
 	}
 

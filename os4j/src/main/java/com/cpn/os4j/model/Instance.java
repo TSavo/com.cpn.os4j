@@ -170,7 +170,7 @@ public class Instance implements Cacheable<String> {
 	
 	public List<Volume> getVolumes() throws IOException {
 		final List<Volume> myVols = new ArrayList<>();
-		final List<Volume> vols = endPoint.listVolumes();
+		final List<Volume> vols = endPoint.getVolumes();
 		for(final Volume v: vols){
 			for(final VolumeAttachment a : v.getVolumeAttachments()) {
 				if(getInstanceId().equals(a.getInstanceId())){
@@ -207,14 +207,6 @@ public class Instance implements Cacheable<String> {
 		return builder.toString();
 	}
 
-	public Instance waitUntilRunning() throws InterruptedException, ServerErrorExeception, IOException {
-		if (instanceState.equals("running")) {
-			return this;
-		}
-		Thread.sleep(1000);
-		endPoint.getInstances();
-		return endPoint.getInstance(getKey()).waitUntilRunning();
-	}
 
 	public Instance waitUntilRunning(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
 		if (instanceState.equals("running")) {
@@ -226,16 +218,6 @@ public class Instance implements Cacheable<String> {
 		Thread.sleep(1000);
 		endPoint.getInstances();
 		return endPoint.getInstance(getKey()).waitUntilRunning(maxTimeToWait - 1000);
-	}
-
-	public Instance waitUntilTerminated() throws InterruptedException, ServerErrorExeception, IOException {
-		endPoint.getInstances();
-		if (endPoint.getInstance(getKey()) != null) {
-			Thread.sleep(1000);
-			endPoint.getInstances();
-		}
-		instanceState = "terminated";
-		return this;
 	}
 
 	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
