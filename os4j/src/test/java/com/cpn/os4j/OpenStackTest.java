@@ -14,7 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cpn.os4j.command.OpenStackCommand;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.SecurityGroup;
@@ -43,7 +43,7 @@ public class OpenStackTest {
 			});
 		} catch (final URISyntaxException e) {
 			throw new RuntimeException(e.getMessage(), e);
-		} catch (final ServerErrorExeception e) {
+		} catch (final ServerErrorException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} catch (final IOException e) {
 			throw new RuntimeException(e.getMessage(), e);

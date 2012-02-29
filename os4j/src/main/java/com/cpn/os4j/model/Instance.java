@@ -14,7 +14,7 @@ import org.w3c.dom.Node;
 import com.cpn.cache.Cacheable;
 import com.cpn.os4j.EndPoint;
 import com.cpn.os4j.command.GetConsoleOutputCommand;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.os4j.model.Volume.VolumeAttachment;
 import com.cpn.xml.XMLUtil;
 
@@ -55,18 +55,18 @@ public class Instance implements Cacheable<String> {
 		endPoint = anEndPoint;
 	}
 
-	public Instance associateAddress(final IPAddress anAddress) throws ServerErrorExeception, IOException {
+	public Instance associateAddress(final IPAddress anAddress) throws ServerErrorException, IOException {
 		endPoint.associateAddress(this, anAddress);
 		return this;
 	}
 
-	public Instance attachVolume(final Volume aVolume, final String aDevice) throws ServerErrorExeception, IOException {
+	public Instance attachVolume(final Volume aVolume, final String aDevice) throws ServerErrorException, IOException {
 		VolumeAttachment attachment = endPoint.attachVolumeToInstance(aVolume, this, aDevice);
 		aVolume.addVolumeAttachment(attachment);
 		return this;
 	}
 
-	public Instance detachVolume() throws ServerErrorExeception, IOException {
+	public Instance detachVolume() throws ServerErrorException, IOException {
 		final Volume v = getVolume();
 		if (v != null) {
 			endPoint.detachVolume(v);
@@ -74,7 +74,7 @@ public class Instance implements Cacheable<String> {
 		return this;
 	}
 
-	public Instance disassociateAddress() throws ServerErrorExeception, IOException {
+	public Instance disassociateAddress() throws ServerErrorException, IOException {
 		if(getIpAddress() != null){
 			endPoint.disassociateAddress(getIpAddress());
 		}
@@ -86,7 +86,7 @@ public class Instance implements Cacheable<String> {
 	}
 
 	@JsonIgnore
-	public ConsoleOutput getConsoleOutput() throws ServerErrorExeception, IOException {
+	public ConsoleOutput getConsoleOutput() throws ServerErrorException, IOException {
 		return new GetConsoleOutputCommand(endPoint, this).execute().get(0);
 	}
 
@@ -115,7 +115,7 @@ public class Instance implements Cacheable<String> {
 		return instanceType;
 	}
 
-	public IPAddress getIpAddress() throws ServerErrorExeception, IOException {
+	public IPAddress getIpAddress() throws ServerErrorException, IOException {
 		return endPoint.getIPAddress(ipAddress);
 	}
 
@@ -156,7 +156,7 @@ public class Instance implements Cacheable<String> {
 		return rootDeviceType;
 	}
 
-	public Volume getVolume() throws ServerErrorExeception, IOException {
+	public Volume getVolume() throws ServerErrorException, IOException {
 		final List<Volume> vols = endPoint.listVolumes();
 		for (final Volume v : vols) {
 			for (final VolumeAttachment a : v.getVolumeAttachments()) {
@@ -181,7 +181,7 @@ public class Instance implements Cacheable<String> {
 		return myVols;
 	}
 
-	public Instance reboot() throws ServerErrorExeception, IOException {
+	public Instance reboot() throws ServerErrorException, IOException {
 		endPoint.rebootInstance(this);
 		instanceState = "rebooting";
 		return this;
@@ -192,7 +192,7 @@ public class Instance implements Cacheable<String> {
 		return this;
 	}
 
-	public Instance terminate() throws ServerErrorExeception, IOException {
+	public Instance terminate() throws ServerErrorException, IOException {
 		endPoint.terminateInstance(this);
 		instanceState = "terminating";
 		return this;
@@ -208,7 +208,7 @@ public class Instance implements Cacheable<String> {
 	}
 
 
-	public Instance waitUntilRunning(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
+	public Instance waitUntilRunning(final long maxTimeToWait) throws InterruptedException, ServerErrorException, IOException {
 		if (instanceState.equals("running")) {
 			return this;
 		}
@@ -220,7 +220,7 @@ public class Instance implements Cacheable<String> {
 		return endPoint.getInstance(getKey()).waitUntilRunning(maxTimeToWait - 1000);
 	}
 
-	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
+	public Instance waitUntilTerminated(long maxTimeToWait) throws InterruptedException, ServerErrorException, IOException {
 		endPoint.getInstances();
 		while (endPoint.getInstance(getKey()) != null) {
 			Thread.sleep(1000);

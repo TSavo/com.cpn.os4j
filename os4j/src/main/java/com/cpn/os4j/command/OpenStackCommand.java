@@ -9,7 +9,7 @@ import com.cpn.os4j.model.UnmarshallerHelper;
 
 public interface OpenStackCommand<T> {
 
-	public abstract List<T> execute() throws ServerErrorExeception, IOException;
+	public abstract List<T> execute() throws ServerErrorException, IOException;
 
 	public abstract String getAction();
 

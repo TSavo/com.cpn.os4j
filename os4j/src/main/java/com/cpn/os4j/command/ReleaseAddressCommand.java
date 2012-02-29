@@ -16,7 +16,7 @@ public class ReleaseAddressCommand extends AbstractOpenStackCommand<Object> {
 	}
 
 	@Override
-	public List<Object> execute() throws ServerErrorExeception, IOException {
+	public List<Object> execute() throws ServerErrorException, IOException {
 		put("PublicIp", ipAddress.getIpAddress());
 		return super.execute();
 	}

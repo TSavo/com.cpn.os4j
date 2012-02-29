@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
 import com.cpn.os4j.EndPoint;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
@@ -39,18 +39,18 @@ public class IPAddress implements Cacheable<String> {
 		endPoint = anEndPoint;
 	}
 
-	public IPAddress associateWithInstance(final Instance anInstance) throws ServerErrorExeception, IOException {
+	public IPAddress associateWithInstance(final Instance anInstance) throws ServerErrorException, IOException {
 		endPoint.associateAddress(anInstance, this);
 		return this;
 	}
 
-	public IPAddress disassociate() throws ServerErrorExeception, IOException {
+	public IPAddress disassociate() throws ServerErrorException, IOException {
 		endPoint.disassociateAddress(this);
 		return this;
 	}
 
 	@JsonIgnore
-	public Instance getInstance() throws ServerErrorExeception, IOException {
+	public Instance getInstance() throws ServerErrorException, IOException {
 		return endPoint.getInstance(instanceId);
 	}
 
@@ -67,7 +67,7 @@ public class IPAddress implements Cacheable<String> {
 		return getIpAddress();
 	}
 
-	public EndPoint release() throws ServerErrorExeception, IOException {
+	public EndPoint release() throws ServerErrorException, IOException {
 		return endPoint.releaseAddress(this);
 	}
 

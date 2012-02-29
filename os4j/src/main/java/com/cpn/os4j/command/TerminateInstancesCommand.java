@@ -26,7 +26,7 @@ public class TerminateInstancesCommand extends AbstractOpenStackCommand<Object> 
 	}
 
 	@Override
-	public List<Object> execute() throws ServerErrorExeception, IOException {
+	public List<Object> execute() throws ServerErrorException, IOException {
 		int counter = 1;
 		for (final Instance i : instances) {
 			queryString.put("InstanceId." + (counter < 10 ? "0" : "") + counter++, i.getInstanceId());

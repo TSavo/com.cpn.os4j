@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
 import com.cpn.os4j.EndPoint;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
@@ -102,7 +102,7 @@ public class Image implements Cacheable<String> {
 		return isPublic;
 	}
 
-	public Instance runInstance(final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, String aUserData, String anAvailabilityZone, final SecurityGroup... groups) throws ServerErrorExeception, IOException {
+	public Instance runInstance(final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, String aUserData, String anAvailabilityZone, final SecurityGroup... groups) throws ServerErrorException, IOException {
 		return endPoint.runInstance(this, keyPair, instanceType, addressingType, minCount, maxCount, aUserData, anAvailabilityZone, groups);
 	}
 

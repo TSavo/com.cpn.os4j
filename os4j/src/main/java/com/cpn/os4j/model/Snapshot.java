@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
 import com.cpn.os4j.EndPoint;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
@@ -44,11 +44,11 @@ public class Snapshot implements Cacheable<String> {
 		endPoint = anEndPoint;
 	}
 
-	public Volume createVolume(final String anAvailabilityZone) throws ServerErrorExeception, IOException {
+	public Volume createVolume(final String anAvailabilityZone) throws ServerErrorException, IOException {
 		return endPoint.createVolumeFromSnapshot(this, anAvailabilityZone);
 	}
 
-	public Snapshot delete() throws ServerErrorExeception, IOException {
+	public Snapshot delete() throws ServerErrorException, IOException {
 		endPoint.deleteSnapshot(this);
 		return this;
 	}
@@ -106,7 +106,7 @@ public class Snapshot implements Cacheable<String> {
 		return builder.toString();
 	}
 
-	public Snapshot waitUntilAvailable() throws InterruptedException, ServerErrorExeception, IOException {
+	public Snapshot waitUntilAvailable() throws InterruptedException, ServerErrorException, IOException {
 		if (!status.contains("available")) {
 			Thread.sleep(1000);
 			endPoint.getSnapshots();

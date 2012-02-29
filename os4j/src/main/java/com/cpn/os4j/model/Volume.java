@@ -14,7 +14,7 @@ import org.w3c.dom.Node;
 
 import com.cpn.cache.Cacheable;
 import com.cpn.os4j.EndPoint;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
@@ -65,7 +65,7 @@ public class Volume implements Cacheable<String> {
 		}
 
 		@JsonIgnore
-		public Instance getInstance() throws ServerErrorExeception, IOException {
+		public Instance getInstance() throws ServerErrorException, IOException {
 			return endPoint.getInstance(instanceId);
 		}
 
@@ -139,26 +139,26 @@ public class Volume implements Cacheable<String> {
 		return this;
 	}
 
-	public Volume attachToInstance(final Instance anInstance, final String aDevice) throws ServerErrorExeception, IOException {
+	public Volume attachToInstance(final Instance anInstance, final String aDevice) throws ServerErrorException, IOException {
 		endPoint.attachVolumeToInstance(this, anInstance, aDevice);
 		return this;
 	}
 
-	public Snapshot createSnapshot() throws ServerErrorExeception, IOException {
+	public Snapshot createSnapshot() throws ServerErrorException, IOException {
 		return endPoint.createSnapshotFromVolume(this);
 	}
 
-	public Volume delete() throws ServerErrorExeception, IOException {
+	public Volume delete() throws ServerErrorException, IOException {
 		endPoint.deleteVolume(this);
 		return this;
 	}
 
-	public Volume detach() throws ServerErrorExeception, IOException {
+	public Volume detach() throws ServerErrorException, IOException {
 		endPoint.detachVolume(this);
 		return this;
 	}
 
-	public Volume forceDetach() throws ServerErrorExeception, IOException {
+	public Volume forceDetach() throws ServerErrorException, IOException {
 		endPoint.forceDetachVolume(this);
 		return this;
 	}
@@ -214,7 +214,7 @@ public class Volume implements Cacheable<String> {
 	}
 
 	
-	public Volume waitUntilAvailable(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
+	public Volume waitUntilAvailable(final long maxTimeToWait) throws InterruptedException, ServerErrorException, IOException {
 		if (status.contains("available")) {
 			return this;
 		}
@@ -230,7 +230,7 @@ public class Volume implements Cacheable<String> {
 	}
 
 
-	public Volume waitUntilDeleted(final long maxTimeToWait) throws InterruptedException, ServerErrorExeception, IOException {
+	public Volume waitUntilDeleted(final long maxTimeToWait) throws InterruptedException, ServerErrorException, IOException {
 		if (endPoint.getVolume(getKey()) != null) {
 			Thread.sleep(1000);
 			endPoint.getVolumes();

@@ -35,7 +35,7 @@ import com.cpn.os4j.command.DisassociateAddressCommand;
 import com.cpn.os4j.command.RebootInstancesCommand;
 import com.cpn.os4j.command.ReleaseAddressCommand;
 import com.cpn.os4j.command.RunInstancesCommand;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.os4j.command.TerminateInstancesCommand;
 import com.cpn.os4j.model.AvailabilityZone;
 import com.cpn.os4j.model.IPAddress;
@@ -70,7 +70,7 @@ public class OpenStackEndPoint implements EndPoint {
 
 	private CacheWrapper<String, AvailabilityZone> availabilityZonesCache = new EhcacheWrapper<>("availabilityZones", cacheManager);
 
-	public OpenStackEndPoint(final URI aUrl, final Credentials aCreds) throws ServerErrorExeception, IOException {
+	public OpenStackEndPoint(final URI aUrl, final Credentials aCreds) throws ServerErrorException, IOException {
 		uri = aUrl;
 		credentials = aCreds;
 		try{
@@ -86,7 +86,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#allocateIPAddress()
 	 */
 	@Override
-	public IPAddress allocateIPAddress() throws ServerErrorExeception, IOException, IOException {
+	public IPAddress allocateIPAddress() throws ServerErrorException, IOException, IOException {
 		final List<IPAddress> results = new AllocateAddressCommand(this).execute();
 		ipAddessCache.put(results.get(0).getKey(), results.get(0));
 		return results.get(0);
@@ -99,7 +99,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * com.cpn.os4j.model.IPAddress)
 	 */
 	@Override
-	public EndPoint associateAddress(final Instance anInstance, final IPAddress anIPAddress) throws ServerErrorExeception, IOException {
+	public EndPoint associateAddress(final Instance anInstance, final IPAddress anIPAddress) throws ServerErrorException, IOException {
 		new AssociateAddressCommand(this, anInstance, anIPAddress).execute();
 		anInstance.setIPAddress(anIPAddress.getIpAddress());
 		anIPAddress.setInstanceId(anInstance.getInstanceId());
@@ -116,7 +116,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * com.cpn.os4j.model.Instance, java.lang.String)
 	 */
 	@Override
-	public VolumeAttachment attachVolumeToInstance(final Volume aVolume, final Instance anInstance, final String aDevice) throws ServerErrorExeception, IOException {
+	public VolumeAttachment attachVolumeToInstance(final Volume aVolume, final Instance anInstance, final String aDevice) throws ServerErrorException, IOException {
 		final VolumeAttachment v = new AttachVolumeCommand(this, aVolume, anInstance, aDevice).execute().get(0).addToVolume(aVolume);
 		getVolumes();
 		getInstances();
@@ -130,7 +130,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * com.cpn.os4j.EndPoint#createSnapshotFromVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
-	public Snapshot createSnapshotFromVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+	public Snapshot createSnapshotFromVolume(final Volume aVolume) throws ServerErrorException, IOException {
 		final Snapshot s = new CreateSnapshotCommand(this, aVolume).execute().get(0);
 		getSnapshots();
 		return s;
@@ -142,7 +142,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#createVolume(java.lang.String, int)
 	 */
 	@Override
-	public Volume createVolume(final String anAvailabilityZone, final int aSize) throws ServerErrorExeception, IOException {
+	public Volume createVolume(final String anAvailabilityZone, final int aSize) throws ServerErrorException, IOException {
 		final Volume v = new CreateVolumeCommand(this, anAvailabilityZone, aSize).execute().get(0);
 		getVolumes();
 		return v;
@@ -156,7 +156,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * java.lang.String)
 	 */
 	@Override
-	public Volume createVolumeFromSnapshot(final Snapshot aSnapshot, final String anAvailabilityZone) throws ServerErrorExeception, IOException {
+	public Volume createVolumeFromSnapshot(final Snapshot aSnapshot, final String anAvailabilityZone) throws ServerErrorException, IOException {
 		final Volume v = new CreateVolumeCommand(this, anAvailabilityZone, Integer.parseInt(aSnapshot.getVolumeSize()), aSnapshot).execute().get(0);
 		getVolumes();
 		return v;
@@ -168,7 +168,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#deleteSnapshot(com.cpn.os4j.model.Snapshot)
 	 */
 	@Override
-	public EndPoint deleteSnapshot(final Snapshot snapshot) throws ServerErrorExeception, IOException {
+	public EndPoint deleteSnapshot(final Snapshot snapshot) throws ServerErrorException, IOException {
 		new DeleteSnapshot(this, snapshot).execute();
 		return this;
 	}
@@ -179,7 +179,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#deleteVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
-	public EndPoint deleteVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+	public EndPoint deleteVolume(final Volume aVolume) throws ServerErrorException, IOException {
 		new DeleteVolumeCommand(this, aVolume).execute();
 		return this;
 	}
@@ -190,7 +190,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#detachVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
-	public EndPoint detachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+	public EndPoint detachVolume(final Volume aVolume) throws ServerErrorException, IOException {
 		new DetachVolumeCommand(this, aVolume).execute();
 		getVolumes();
 		return this;
@@ -203,7 +203,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * com.cpn.os4j.EndPoint#disassociateAddress(com.cpn.os4j.model.IPAddress)
 	 */
 	@Override
-	public EndPoint disassociateAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException {
+	public EndPoint disassociateAddress(final IPAddress ipAddress) throws ServerErrorException, IOException {
 		final Instance i = instanceCache.get(ipAddress.getInstanceId());
 		if (i != null) {
 			i.setIPAddress(null);
@@ -221,7 +221,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#forceDetachVolume(com.cpn.os4j.model.Volume)
 	 */
 	@Override
-	public EndPoint forceDetachVolume(final Volume aVolume) throws ServerErrorExeception, IOException {
+	public EndPoint forceDetachVolume(final Volume aVolume) throws ServerErrorException, IOException {
 		new DetachVolumeCommand(this, aVolume, true).execute();
 		getVolumes();
 		return this;
@@ -243,7 +243,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getImages()
 	 */
 	@Override
-	public List<Image> getImages() throws ServerErrorExeception, IOException, IOException {
+	public List<Image> getImages() throws ServerErrorException, IOException, IOException {
 		final List<Image> results = new DescribeImagesCommand(this).execute();
 		imagesCache.removeAll().putAll(results);
 		return results;
@@ -262,7 +262,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getInstances()
 	 */
 	@Override
-	public List<Instance> getInstances() throws ServerErrorExeception, IOException, IOException {
+	public List<Instance> getInstances() throws ServerErrorException, IOException, IOException {
 		final List<Instance> results = new DescribeInstancesCommand(this).execute();
 		instanceCache.removeAll().putAll(results);
 		return results;
@@ -275,7 +275,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getIPAddresses()
 	 */
 	@Override
-	public List<IPAddress> getIPAddresses() throws ServerErrorExeception, IOException, IOException {
+	public List<IPAddress> getIPAddresses() throws ServerErrorException, IOException, IOException {
 		final List<IPAddress> results = new DescribeAddressesCommand(this).execute();
 		ipAddessCache.removeAll().putAll(results);
 		return results;
@@ -289,7 +289,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getKeyPairs()
 	 */
 	@Override
-	public List<KeyPair> getKeyPairs() throws ServerErrorExeception, IOException, IOException {
+	public List<KeyPair> getKeyPairs() throws ServerErrorException, IOException, IOException {
 		final List<KeyPair> results = new DescribeKeyPairsCommand(this).execute();
 		keyPairsCache.removeAll().putAll(results);
 		return results;
@@ -302,7 +302,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getRegions()
 	 */
 	@Override
-	public List<Region> getRegions() throws ServerErrorExeception, IOException, IOException {
+	public List<Region> getRegions() throws ServerErrorException, IOException, IOException {
 		final List<Region> results = new DescribeRegionsCommand(this).execute();
 		regionCache.removeAll().putAll(results);
 		return results;
@@ -315,7 +315,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getSecurityGroups()
 	 */
 	@Override
-	public List<SecurityGroup> getSecurityGroups() throws ServerErrorExeception, IOException, IOException {
+	public List<SecurityGroup> getSecurityGroups() throws ServerErrorException, IOException, IOException {
 		final List<SecurityGroup> results = new DescribeSecurityGroupsCommand(this).execute();
 		securityGroupCache.removeAll().putAll(results);
 		return results;
@@ -338,7 +338,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getSnapshots()
 	 */
 	@Override
-	public List<Snapshot> getSnapshots() throws ServerErrorExeception, IOException, IOException {
+	public List<Snapshot> getSnapshots() throws ServerErrorException, IOException, IOException {
 		final List<Snapshot> results = new DescribeSnapshotsCommand(this).execute();
 		snapshotsCache.removeAll().putAll(results);
 		return results;
@@ -400,7 +400,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#getVolumes()
 	 */
 	@Override
-	public List<Volume> getVolumes() throws ServerErrorExeception, IOException, IOException {
+	public List<Volume> getVolumes() throws ServerErrorException, IOException, IOException {
 		final List<Volume> results = new DescribeVolumesCommand(this).execute();
 		getVolumeCache().removeAll().putAll(results);
 		return results;
@@ -412,7 +412,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#populateCaches()
 	 */
 	@Override
-	public EndPoint populateCaches() throws ServerErrorExeception, IOException {
+	public EndPoint populateCaches() throws ServerErrorException, IOException {
 		getInstances();
 		getIPAddresses();
 		getRegions();
@@ -430,7 +430,7 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#rebootInstance(com.cpn.os4j.model.Instance)
 	 */
 	@Override
-	public EndPoint rebootInstance(final Instance instance) throws ServerErrorExeception, IOException {
+	public EndPoint rebootInstance(final Instance instance) throws ServerErrorException, IOException {
 		new RebootInstancesCommand(this, instance).execute();
 		getInstances();
 		return this;
@@ -442,20 +442,20 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#releaseAddress(com.cpn.os4j.model.IPAddress)
 	 */
 	@Override
-	public EndPoint releaseAddress(final IPAddress ipAddress) throws ServerErrorExeception, IOException, IOException {
+	public EndPoint releaseAddress(final IPAddress ipAddress) throws ServerErrorException, IOException, IOException {
 		new ReleaseAddressCommand(this, ipAddress).execute();
 		getIPAddresses();
 		return this;
 	}
 
 	@Override
-	public Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, int minCount, int maxCount, AvailabilityZone anAvailabilityZone, String aUserData, SecurityGroup... groups) throws ServerErrorExeception, IOException {
+	public Instance runInstance(Image image, KeyPair keyPair, String instanceType, String addressingType, int minCount, int maxCount, AvailabilityZone anAvailabilityZone, String aUserData, SecurityGroup... groups) throws ServerErrorException, IOException {
 		return runInstance(image, keyPair, instanceType, addressingType, minCount, maxCount, anAvailabilityZone.getName(), aUserData, groups);
 	}
 
 	@Override
 	public Instance runInstance(final Image image, final KeyPair keyPair, final String instanceType, final String addressingType, final int minCount, final int maxCount, final String anAvailabilityZone, final String aUserData, final SecurityGroup... groups)
-			throws ServerErrorExeception, IOException {
+			throws ServerErrorException, IOException {
 		final RunInstancesCommand i = new RunInstancesCommand(this, image, keyPair, instanceType, addressingType, minCount, maxCount, anAvailabilityZone, groups);
 		i.setUserData(aUserData);
 		Instance instance = i.execute().get(0);
@@ -465,7 +465,7 @@ public class OpenStackEndPoint implements EndPoint {
 	}
 
 	@Override
-	public Volume createVolume(AvailabilityZone anAvailabilityZone, int aSize) throws ServerErrorExeception, IOException {
+	public Volume createVolume(AvailabilityZone anAvailabilityZone, int aSize) throws ServerErrorException, IOException {
 		return createVolume(anAvailabilityZone.getName(), aSize);
 	}
 
@@ -475,14 +475,14 @@ public class OpenStackEndPoint implements EndPoint {
 	 * @see com.cpn.os4j.EndPoint#terminateInstance(com.cpn.os4j.model.Instance)
 	 */
 	@Override
-	public EndPoint terminateInstance(final Instance anInstance) throws ServerErrorExeception, IOException {
+	public EndPoint terminateInstance(final Instance anInstance) throws ServerErrorException, IOException {
 		new TerminateInstancesCommand(this, anInstance).execute();
 		getInstances();
 		return this;
 	}
 
 	@Override
-	public Image getImageByLocation(String anImageId) throws ServerErrorExeception, IOException {
+	public Image getImageByLocation(String anImageId) throws ServerErrorException, IOException {
 		for (Image i : listImages()) {
 			if (anImageId.equalsIgnoreCase(i.getImageLocation())) {
 				return i;
@@ -504,7 +504,7 @@ public class OpenStackEndPoint implements EndPoint {
 	}
 
 	@Override
-	public Volume getVolume(final String aKey) throws ServerErrorExeception, IOException {
+	public Volume getVolume(final String aKey) throws ServerErrorException, IOException {
 		try {
 			return Iterables.find(listVolumes(), new com.google.common.base.Predicate<Volume>() {
 
@@ -520,7 +520,7 @@ public class OpenStackEndPoint implements EndPoint {
 	}
 
 	@Override
-	public Instance getInstance(final String instanceId) throws ServerErrorExeception, IOException {
+	public Instance getInstance(final String instanceId) throws ServerErrorException, IOException {
 		try {
 			return Iterables.find(listInstances(), new Predicate<Instance>() {
 				@Override
@@ -534,7 +534,7 @@ public class OpenStackEndPoint implements EndPoint {
 	}
 
 	@Override
-	public Image getImage(final String imageId) throws ServerErrorExeception, IOException {
+	public Image getImage(final String imageId) throws ServerErrorException, IOException {
 		try {
 			return Iterables.find(listImages(), new Predicate<Image>() {
 				@Override
@@ -548,7 +548,7 @@ public class OpenStackEndPoint implements EndPoint {
 	}
 
 	@Override
-	public IPAddress getIPAddress(final String ipAddress) throws ServerErrorExeception, IOException {
+	public IPAddress getIPAddress(final String ipAddress) throws ServerErrorException, IOException {
 		try {
 			return Iterables.find(listIPAddresses(), new Predicate<IPAddress>() {
 				@Override
@@ -562,7 +562,7 @@ public class OpenStackEndPoint implements EndPoint {
 	}
 
 	@Override
-	public Snapshot getSnapshot(final String key) throws ServerErrorExeception, IOException {
+	public Snapshot getSnapshot(final String key) throws ServerErrorException, IOException {
 		try {
 			return Iterables.find(getSnapshots(), new Predicate<Snapshot>() {
 				@Override

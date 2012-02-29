@@ -56,6 +56,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	public static <T> List<T> unmarshall(final Document aDocument, final UnmarshallerHelper<T> aHelper, final EndPoint anEndPoint) {
 		try {
 			if ((aHelper != null) && (aHelper.getUnmarshallingClass() != null) && (aHelper.getUnmarshallingXPath() != null)) {
+				//System.out.println(XMLUtil.prettyPrint(aDocument));
 				return unmarshall(XMLUtil.xPathList(aDocument, aHelper.getUnmarshallingXPath()), aHelper.getUnmarshallingClass(), anEndPoint);
 			} else {
 				LoggerFactory.getLogger(AbstractOpenStackCommand.class).warn("I don't have a way to unmarshall the following XML: " + XMLUtil.prettyPrint(aDocument));
@@ -86,7 +87,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 	}
 
 	@Override
-	public List<T> execute() throws ServerErrorExeception, IOException {
+	public List<T> execute() throws ServerErrorException, IOException {
 
 		final HttpClient client = new DefaultHttpClient();
 
@@ -156,7 +157,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 									return "//Response/Errors/Error";
 								}
 							}, endPoint);
-							throw new ServerErrorExeception(statusLine.getStatusCode(), errors, body, ref);
+							throw new ServerErrorException(statusLine.getStatusCode(), errors, body, ref);
 						} else {
 							throw new HttpResponseException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
 						}

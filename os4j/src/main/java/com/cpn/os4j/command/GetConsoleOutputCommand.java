@@ -16,7 +16,7 @@ public class GetConsoleOutputCommand extends AbstractOpenStackCommand<ConsoleOut
 	}
 
 	@Override
-	public List<ConsoleOutput> execute() throws ServerErrorExeception, IOException {
+	public List<ConsoleOutput> execute() throws ServerErrorException, IOException {
 		queryString.put("InstanceId", instance.getInstanceId());
 		return super.execute();
 	}

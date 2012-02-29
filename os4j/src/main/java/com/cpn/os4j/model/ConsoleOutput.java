@@ -11,7 +11,7 @@ import org.apache.http.annotation.Immutable;
 import org.w3c.dom.Node;
 
 import com.cpn.os4j.EndPoint;
-import com.cpn.os4j.command.ServerErrorExeception;
+import com.cpn.os4j.command.ServerErrorException;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
@@ -39,7 +39,7 @@ public class ConsoleOutput implements Serializable {
 		endPoint = anEndPoint;
 	}
 
-	public Instance getInstance() throws ServerErrorExeception, IOException {
+	public Instance getInstance() throws ServerErrorException, IOException {
 		return endPoint.getInstance(getInstanceId());
 	}
 
