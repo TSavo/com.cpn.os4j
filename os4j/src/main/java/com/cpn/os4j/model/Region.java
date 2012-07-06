@@ -26,7 +26,7 @@ public class Region implements Cacheable<String> {
 		return r;
 	}
 
-	private final EndPoint endPoint;
+	private transient final EndPoint endPoint;
 
 	private String regionEndpoint;
 

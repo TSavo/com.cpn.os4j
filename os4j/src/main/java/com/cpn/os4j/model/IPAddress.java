@@ -30,7 +30,7 @@ public class IPAddress implements Cacheable<String> {
 		return ip;
 	}
 
-	private final EndPoint endPoint;
+	private transient final EndPoint endPoint;
 	private String instanceId;
 
 	private String ipAddress;

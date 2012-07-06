@@ -47,7 +47,7 @@ public class Instance implements Cacheable<String> {
 
 	private String displayName, rootDeviceType, keyName, instanceId, instanceState, publicDnsName, imageId, privateDnsName, launchTime, amiLaunchIndex, rootDeviceName, ramdiskId, ipAddress, instanceType, privateIpAddress;
 	@JsonIgnore
-	private final EndPoint endPoint;
+	private transient final EndPoint endPoint;
 
 	private Instance(final EndPoint anEndPoint) {
 		endPoint = anEndPoint;

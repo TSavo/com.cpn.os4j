@@ -26,7 +26,7 @@ public class ServerError implements Serializable {
 
 	private final String code;
 	@SuppressWarnings("unused")
-	private final EndPoint endPoint;
+	private transient final EndPoint endPoint;
 
 	private final String message;
 

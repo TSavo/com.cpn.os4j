@@ -39,7 +39,7 @@ public class Volume implements Cacheable<String> {
 		}
 
 		@JsonIgnore
-		private final EndPoint endPoint;
+		private transient final EndPoint endPoint;
 
 		private String status, instanceId, volumeId, deleteOnTermination, device, attachTime;
 

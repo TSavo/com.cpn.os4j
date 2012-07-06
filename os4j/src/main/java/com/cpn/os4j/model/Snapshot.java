@@ -36,7 +36,7 @@ public class Snapshot implements Cacheable<String> {
 		return s;
 	}
 
-	private final EndPoint endPoint;
+	private transient final EndPoint endPoint;
 
 	private String status, displayName, description, volumeId, displayDescription, volumeSize, progress, startTime, ownerId, snapshotId;
 
