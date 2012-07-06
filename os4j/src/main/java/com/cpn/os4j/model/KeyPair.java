@@ -1,5 +1,6 @@
 package com.cpn.os4j.model;
 
+import javax.annotation.concurrent.Immutable;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -10,6 +11,7 @@ import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
+@Immutable
 public class KeyPair implements Cacheable<String> {
 
 	public static KeyPair unmarshall(final Node aNode, final EndPoint anOpenStack) {

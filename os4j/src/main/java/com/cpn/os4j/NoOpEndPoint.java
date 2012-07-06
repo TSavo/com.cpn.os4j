@@ -53,6 +53,12 @@ public class NoOpEndPoint implements EndPoint {
 	}
 
 	@Override
+	public EndPoint associateAddress(Instance anInstance, String anIPAddress) throws ServerErrorException, IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public EndPoint associateAddress(Instance anInstance, IPAddress anIPAddress) throws ServerErrorException, IOException {
 		// TODO Auto-generated method stub
 		return null;
@@ -107,7 +113,7 @@ public class NoOpEndPoint implements EndPoint {
 	}
 
 	@Override
-	public EndPoint disassociateAddress(IPAddress ipAddress) throws ServerErrorException, IOException {
+	public EndPoint disassociateAddress(String ipAddress) throws ServerErrorException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

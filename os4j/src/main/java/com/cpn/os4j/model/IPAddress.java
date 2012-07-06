@@ -45,7 +45,7 @@ public class IPAddress implements Cacheable<String> {
 	}
 
 	public IPAddress disassociate() throws ServerErrorException, IOException {
-		endPoint.disassociateAddress(this);
+		endPoint.disassociateAddress(ipAddress);
 		return this;
 	}
 

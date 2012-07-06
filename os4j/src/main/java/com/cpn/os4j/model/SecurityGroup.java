@@ -15,6 +15,7 @@ import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
+@Immutable
 public class SecurityGroup implements Cacheable<String> {
 
 	@Immutable

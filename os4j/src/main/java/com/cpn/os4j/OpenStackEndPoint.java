@@ -107,6 +107,16 @@ public class OpenStackEndPoint implements EndPoint {
 		getIPAddresses();
 		return this;
 	}
+	
+	@Override
+	public EndPoint associateAddress(final Instance anInstance, final String anIPAddress) throws ServerErrorException, IOException {
+		new AssociateAddressCommand(this, anInstance, anIPAddress).execute();
+		anInstance.setIPAddress(anIPAddress);
+		//anIPAddress.setInstanceId(anInstance.getInstanceId());
+		getInstances();
+		getIPAddresses();
+		return this;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -203,13 +213,8 @@ public class OpenStackEndPoint implements EndPoint {
 	 * com.cpn.os4j.EndPoint#disassociateAddress(com.cpn.os4j.model.IPAddress)
 	 */
 	@Override
-	public EndPoint disassociateAddress(final IPAddress ipAddress) throws ServerErrorException, IOException {
-		final Instance i = instanceCache.get(ipAddress.getInstanceId());
-		if (i != null) {
-			i.setIPAddress(null);
-		}
+	public EndPoint disassociateAddress(final String ipAddress) throws ServerErrorException, IOException {
 		new DisassociateAddressCommand(this, ipAddress).execute();
-		ipAddress.setInstanceId(null);
 		getInstances();
 		getIPAddresses();
 		return this;

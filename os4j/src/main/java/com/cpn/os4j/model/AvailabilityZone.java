@@ -3,6 +3,7 @@ package com.cpn.os4j.model;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.http.annotation.Immutable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.w3c.dom.Node;
 
@@ -11,6 +12,7 @@ import com.cpn.os4j.EndPoint;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
+@Immutable
 public class AvailabilityZone implements Cacheable<String> {
 
 	public AvailabilityZone(){
@@ -58,11 +60,4 @@ public class AvailabilityZone implements Cacheable<String> {
 		return builder.toString();
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
 }

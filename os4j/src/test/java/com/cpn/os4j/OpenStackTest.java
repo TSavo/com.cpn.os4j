@@ -1,13 +1,16 @@
 package com.cpn.os4j;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.junit.Ignore;
@@ -15,7 +18,9 @@ import org.junit.Test;
 
 import com.cpn.os4j.command.OpenStackCommand;
 import com.cpn.os4j.command.ServerErrorException;
+import com.cpn.os4j.model.IPAddress;
 import com.cpn.os4j.model.Image;
+import com.cpn.os4j.model.Instance;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.SecurityGroup;
 import com.cpn.os4j.model.Volume;
@@ -26,19 +31,20 @@ public class OpenStackTest {
 
 	static {
 		try {
-			//ep = new OpenStackEndPoint(new URI("http://10.101.100.100:8773/services/Cloud"), new Credentials() {
-				ep = new OpenStackEndPoint(new URI("http://10.1.10.249:8773/services/Cloud"), new Credentials() {
+			// ep = new OpenStackEndPoint(new
+			// URI("http://10.101.100.100:8773/services/Cloud"), new Credentials() {
+			ep = new OpenStackEndPoint(new URI("http://control.dev.intercloud.net:8773/services/Cloud"), new Credentials() {
 
 				@Override
 				public String getAccessKey() {
-//					return "2c52532c-94b5-4298-89a5-002b4cc82a32%3Avsp";
-						return "1cf01825-1303-4fad-a49e-2776a5077bd1%3Avsp";
+					// return "2c52532c-94b5-4298-89a5-002b4cc82a32%3Avsp";
+					return "434a9e43bd6e41dda66171cf948735a5";
 				}
 
 				@Override
 				public String getSecretKey() {
-					//return "70d45ff2-6958-4d25-96d0-1e79bd5a5dec";
-					return "666a4776-19be-4d0e-b2a8-1735dd151606";
+					// return "70d45ff2-6958-4d25-96d0-1e79bd5a5dec";
+					return "ae9edebe0ee5456cb241f28c3ae3dbac";
 				}
 			});
 		} catch (final URISyntaxException e) {
@@ -51,9 +57,10 @@ public class OpenStackTest {
 	}
 
 	@Test
-	public void testDescribeAvailabilityZones() throws Exception{
+	public void testDescribeAvailabilityZones() throws Exception {
 		System.out.println(ep.getAvailabilityZones());
 	}
+
 	@Test
 	public void testCreateVolume() throws Exception {
 		System.out.println(ep.createVolume("nova", 18).waitUntilAvailable(120000).delete().waitUntilDeleted(120000));
@@ -148,7 +155,8 @@ public class OpenStackTest {
 	}
 
 	@Test
-	@Ignore /* Snapshots break volumes... */
+	@Ignore
+	/* Snapshots break volumes... */
 	public void testSnapshotFromImage() throws Exception {
 		final Volume v = ep.getVolumes().get(0);
 		System.out.println(v.createSnapshot().waitUntilAvailable().delete());
@@ -161,6 +169,22 @@ public class OpenStackTest {
 		final SecurityGroup sg = ep.getSecurityGroups().get(0);
 		System.out.println("Starting: " + new Date());
 		image.runInstance(key, "m1.large", "public", 1, 1, null, null, sg).waitUntilRunning(120000).terminate().waitUntilTerminated(120000);
+		System.out.println("Finished: " + new Date());
+		
+	}
+	
+	@Test
+	public void testAttachAddressToInstance() throws Exception{
+		final Image image = ep.getImages().get(1);
+		final KeyPair key = ep.getKeyPairs().get(0);
+		final SecurityGroup sg = ep.getSecurityGroups().get(0);
+		System.out.println("Starting: " + new Date());
+		List<IPAddress> addresses = ep.getIPAddresses();
+		Collections.reverse(ep.getIPAddresses());
+		Instance instance = image.runInstance(key, "c1.small", "public", 1, 1, null, null, sg).waitUntilRunning(120000).associateAddress(addresses.get(0));
+		assertNotNull(instance.getPublicDnsName());
+		System.out.println("Public Address: " + instance.getPublicDnsName());
+		instance.terminate().waitUntilTerminated(120000);
 		System.out.println("Finished: " + new Date());
 	}
 

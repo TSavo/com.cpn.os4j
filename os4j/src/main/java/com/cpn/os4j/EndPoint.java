@@ -25,6 +25,10 @@ public interface EndPoint {
 			final IPAddress anIPAddress) throws ServerErrorException,
 			IOException;
 
+	public abstract EndPoint associateAddress(final Instance anInstance,
+			final String anIPAddress) throws ServerErrorException,
+			IOException;
+	
 	public abstract VolumeAttachment attachVolumeToInstance(
 			final Volume aVolume, final Instance anInstance,
 			final String aDevice) throws ServerErrorException, IOException;
@@ -50,7 +54,7 @@ public interface EndPoint {
 	public abstract EndPoint detachVolume(final Volume aVolume)
 			throws ServerErrorException, IOException;
 
-	public abstract EndPoint disassociateAddress(final IPAddress ipAddress)
+	public abstract EndPoint disassociateAddress(final String ipAddress)
 			throws ServerErrorException, IOException;
 
 	public abstract EndPoint forceDetachVolume(final Volume aVolume)

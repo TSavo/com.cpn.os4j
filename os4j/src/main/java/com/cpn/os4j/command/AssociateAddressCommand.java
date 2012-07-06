@@ -10,6 +10,12 @@ public class AssociateAddressCommand extends AbstractOpenStackCommand<Object> {
 		put("InstanceId", anInstance.getInstanceId());
 		put("PublicIp", anIpAddress.getIpAddress());
 	}
+	
+	public AssociateAddressCommand(final EndPoint anEndPoint, final Instance anInstance, final String anIpAddress) {
+		super(anEndPoint);
+		put("InstanceId", anInstance.getInstanceId());
+		put("PublicIp", anIpAddress);
+	}
 
 	@Override
 	public String getAction() {

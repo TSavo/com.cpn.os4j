@@ -7,7 +7,6 @@ import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.http.annotation.Immutable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.w3c.dom.Node;
 
@@ -19,7 +18,6 @@ import com.cpn.os4j.model.Volume.VolumeAttachment;
 import com.cpn.xml.XMLUtil;
 
 @SuppressWarnings("serial")
-@Immutable
 public class Instance implements Cacheable<String> {
 
 	public static Instance unmarshall(final Node aNode, final EndPoint anEndPoint) {
@@ -56,6 +54,11 @@ public class Instance implements Cacheable<String> {
 	}
 
 	public Instance associateAddress(final IPAddress anAddress) throws ServerErrorException, IOException {
+		endPoint.associateAddress(this, anAddress);
+		return this;
+	}
+	
+	public Instance associateAddress(final String anAddress) throws ServerErrorException, IOException {
 		endPoint.associateAddress(this, anAddress);
 		return this;
 	}
@@ -115,8 +118,8 @@ public class Instance implements Cacheable<String> {
 		return instanceType;
 	}
 
-	public IPAddress getIpAddress() throws ServerErrorException, IOException {
-		return endPoint.getIPAddress(ipAddress);
+	public String getIpAddress() throws ServerErrorException, IOException {
+		return ipAddress;
 	}
 
 	@Override
@@ -214,6 +217,9 @@ public class Instance implements Cacheable<String> {
 		}
 		if (maxTimeToWait < 0) {
 			return this;
+		}
+		if(instanceState.contains("error")){
+			throw new RuntimeException("Error while waiting for an instance to become available. State is: " + instanceState);
 		}
 		Thread.sleep(1000);
 		endPoint.getInstances();
