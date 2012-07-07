@@ -37,6 +37,10 @@ import com.cpn.xml.XMLUtil;
 
 public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>, UnmarshallerHelper<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8591755034847598561L;
 	private static final String CHAR_ENCODING = Charset.forName("UTF-8").name();
 	private int timeFailed = 0;
 
@@ -67,7 +71,7 @@ public abstract class AbstractOpenStackCommand<T> implements OpenStackCommand<T>
 		}
 	}
 
-	private final EndPoint endPoint;
+	private final transient EndPoint endPoint;
 
 	protected TreeMap<String, String> queryString = new TreeMap<String, String>();
 
