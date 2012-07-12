@@ -37,6 +37,9 @@ public class ComputeEndpoint implements Serializable {
 
 	}
 
+	public Token getToken(){
+		return token;
+	}
 	public String getTenantId() {
 		return token.getTenant().getId();
 	}
@@ -74,18 +77,51 @@ public class ComputeEndpoint implements Serializable {
 		return getServerDetails(aServer.getId());
 	}
 
-	public Server createServer(String aName, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
+	
+	public Server createServer(String aName, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality){
 		if (someMetadata == null) {
 			someMetadata = new HashMap<>();
 		}
 		if (aPersonality == null) {
 			aPersonality = new ArrayList<>();
 		}
+
 		RestCommand<ServerRequest, ServerResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/servers");
-		command.setRequestModel(new ServerRequest(new ServerConfiguration(aName, anImage, aFlavor, someMetadata, aPersonality)));
+		command.setRequestModel(new ServerRequest(new ServerConfiguration(aName, anImageRef, aFlavorRef, someMetadata, aPersonality)));
 		command.setResponseModel(ServerResponse.class);
 		return command.post().getServer().setComputeEndpoint(this);
+	}
+	public Server createServer(String aName, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
+		return createServer(aName, anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
+	}
+
+	public Server rebootServer(Server aServer, boolean aHard) {
+		return rebootServer(aServer.getId(), aHard);
+	}
+
+	public Server rebootServer(String aServerId, boolean aHard) {
+		RestCommand<RebootRequest, String> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/servers/" + aServerId + "/action");
+		command.setRequestModel(new RebootRequest(aHard ? RebootRequest.HARD : RebootRequest.SOFT));
+		command.post();
+		return getServerDetails(aServerId);
+	}
+
+	public Server associateIp(Server aServer, IPAddress anIpAddress) {
+		return associateIp(aServer.getId(), anIpAddress.getIp());
+	}
+
+	public Server associateIp(String aServerId, String anIpAddress) {
+		RestCommand<Map<String, Map<String, String>>, String> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/servers/" + aServerId + "/action");
+		Map<String, Map<String, String>> request = new HashMap<>();
+		Map<String, String> ip = new HashMap<>();
+		ip.put("address", anIpAddress);
+		request.put("addFloatingIp", ip);
+		command.setRequestModel(request);
+		command.post();
+		return getServerDetails(aServerId);
 	}
 
 	public void deleteServer(Server aServer) {
@@ -108,7 +144,7 @@ public class ComputeEndpoint implements Serializable {
 	@Logged
 	public IPAddress allocateIPAddress(IPAddressPool aPool) {
 		RestCommand<Map<String, String>, IPAddressResponse> command = new RestCommand<>(token);
-		command.setPath("/v1.1/" + getTenantId() + "/os-floating-ips");
+		command.setPath(getServerUrl() + "/os-floating-ips");
 		command.setResponseModel(IPAddressResponse.class);
 		Map<String, String> args = new HashMap<>();
 		args.put("pool", aPool.getName());
@@ -118,28 +154,41 @@ public class ComputeEndpoint implements Serializable {
 
 	public List<IPAddress> listAddresses() {
 		RestCommand<String, IPAddressResponse> command = new RestCommand<>(token);
-		command.setPath(getServerUrl() + "/v1.1/" + getTenantId() + "/os-floating-ips");
+		command.setPath(getServerUrl() + "/os-floating-ips");
 		command.setResponseModel(IPAddressResponse.class);
 		return command.get().getIpAddresses();
 	}
 
 	public List<IPAddressPool> listPools() {
 		RestCommand<String, IPAddressResponse> command = new RestCommand<>(token);
-		command.setPath(getServerUrl() + "/v1.1/" + getTenantId() + "/os-floating-ip-pools");
+		command.setPath(getServerUrl() + "/os-floating-ip-pools");
 		command.setResponseModel(IPAddressResponse.class);
-		return command.get().getPools();
+		List<IPAddressPool> pools = command.get().getPools();
+		for (IPAddressPool p : pools) {
+			p.setComputeEndpoint(this);
+		}
+		return pools;
 	}
 
+	public IPAddressPool getIPAddressPoolByName(String aName){
+		List<IPAddressPool> list = listPools();
+		for(IPAddressPool p : list){
+			if(p.getName().equals(aName)){
+				return p;
+			}
+		}
+		return null;
+	}
 	public IPAddress describeAddress(int anId) {
 		RestCommand<String, IPAddressResponse> command = new RestCommand<>(token);
-		command.setPath("/v1.1/" + getTenantId() + "/os-floating-ips/" + anId);
+		command.setPath(getServerUrl() + "/os-floating-ips/" + anId);
 		command.setResponseModel(IPAddressResponse.class);
 		return command.get().getIpAddress();
 	}
 
 	public void deallocateIpAddress(int anId) {
 		RestCommand<String, String> command = new RestCommand<>(token);
-		command.setPath("/v1.1/" + getTenantId() + "/os-floating-ips/" + anId);
+		command.setPath(getServerUrl() + "/os-floating-ips/" + anId);
 		command.delete();
 	}
 

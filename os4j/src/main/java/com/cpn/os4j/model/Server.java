@@ -46,22 +46,31 @@ public class Server extends AbstractOpenStackModel {
 
 	@JsonIgnore
 	public Server waitUntilRunning(long aTimeout) throws InterruptedException {
-		if ("ACTIVE".equals(status)) {
-			return this;
+		Server server = this;
+		while (!("ACTIVE".equals(server.getStatus()))) {
+			if (aTimeout < 0) {
+				return server;
+			}
+			if ("ERROR".equals(server.getStatus())) {
+				throw new RuntimeException("Error while waiting for an instance to become available. State is: " + server.getStatus());
+			}
+			Thread.sleep(1000);
+			aTimeout -= 1000;
+			server = getComputeEndpoint().getServerDetails(this);
 		}
-		if (aTimeout < 0) {
-			return this;
-		}
-		if ("ERROR".equals(status)) {
-			throw new RuntimeException("Error while waiting for an instance to become available. State is: " + status);
-		}
-		Thread.sleep(1000);
+		return server;
+	}
 
-		return getComputeEndpoint().getServerDetails(this).waitUntilRunning(aTimeout - 1000);
+	public Server associateIp(IPAddress address) {
+		return associateIp(address.getIp());
 	}
 	
+	public Server associateIp(String address){
+		return getComputeEndpoint().associateIp(this.getId(), address);
+	}
+
 	@JsonIgnore
-	public Server delete(){
+	public Server delete() {
 		getComputeEndpoint().deleteServer(this);
 		return this;
 	}

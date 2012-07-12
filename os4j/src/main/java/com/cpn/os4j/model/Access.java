@@ -6,6 +6,7 @@ import java.util.Map;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.cpn.os4j.ComputeEndpoint;
+import com.cpn.os4j.NetworkEndpoint;
 
 public class Access {
 	List<EndPointDescription> serviceCatalog;
@@ -14,6 +15,24 @@ public class Access {
 
 	public boolean localhostHack = false;
 
+	@JsonIgnore
+	public NetworkEndpoint getNetworkEndpoint(String aRegion, String endPointType){
+		for (EndPointDescription d : serviceCatalog) {
+			if (d.getType().equals("network")) {
+				for (Map<String, String> urls : d.getEndpoints()) {
+					if (urls.get("region").equals(aRegion)) {
+						if (localhostHack) {
+							return new NetworkEndpoint(urls.get(endPointType).replaceAll("192\\.168\\.31\\.38", "control.dev.intercloud.net"), token);
+						} else {
+							return new NetworkEndpoint(urls.get(endPointType), token);
+						}
+					}
+				}
+			}
+		}
+		throw new RuntimeException("Couldn't find the NetworkEndpoint for region: " + aRegion + " and type: " + endPointType);
+	}
+	
 	@JsonIgnore
 	public ComputeEndpoint getComputeEndpoint(String aRegion, String endPointType) {
 		for (EndPointDescription d : serviceCatalog) {
@@ -29,7 +48,7 @@ public class Access {
 				}
 			}
 		}
-		throw new RuntimeException("Couldn't find the endpoint for region: " + aRegion + " and type: " + endPointType);
+		throw new RuntimeException("Couldn't find the ComputeEndpoint for region: " + aRegion + " and type: " + endPointType);
 	}
 
 	public List<EndPointDescription> getServiceCatalog() {

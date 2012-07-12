@@ -8,6 +8,7 @@ public class ServerConfiguration {
 	String name;
 	String imageRef;
 	String flavorRef;
+	
 	Map<String, String> metadata;
 	List<SerializedFile> personality;
 
@@ -65,5 +66,6 @@ public class ServerConfiguration {
 	public void setPersonality(List<SerializedFile> personality) {
 		this.personality = personality;
 	}
+
 
 }

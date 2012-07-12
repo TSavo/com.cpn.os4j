@@ -19,6 +19,10 @@ public class SerializedFile implements Serializable {
 
 	public SerializedFile() {
 	}
+	
+	public SerializedFile(String aPath, String someData){
+		this(aPath, someData.getBytes());
+	}
 
 	public SerializedFile(String aPath, byte[] someBytes) {
 		path = aPath;
