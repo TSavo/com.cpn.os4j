@@ -1,6 +1,10 @@
 package com.cpn.os4j.model;
 
-public class Tenant {
+import java.io.Serializable;
+
+public class Tenant implements Serializable {
+
+	private static final long serialVersionUID = -8570469557845043470L;
 	String id;
 	String name;
 	String description;

@@ -1,9 +1,13 @@
 package com.cpn.os4j.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class Link {
+public class Link implements Serializable {
 
+
+	private static final long serialVersionUID = -1886401695620567182L;
 	String href;
 	String rel;
 	String type;

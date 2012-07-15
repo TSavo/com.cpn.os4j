@@ -1,7 +1,10 @@
 package com.cpn.os4j.model;
 
-public class Token {
+import java.io.Serializable;
 
+public class Token implements Serializable{
+
+	private static final long serialVersionUID = 558710544261035380L;
 	String expires;
 	String id;
 	Tenant tenant;
