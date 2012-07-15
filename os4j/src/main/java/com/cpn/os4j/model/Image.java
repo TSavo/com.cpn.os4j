@@ -6,6 +6,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Image extends AbstractOpenStackModel{
+
+	private static final long serialVersionUID = -4256144888881122608L;
 	String id;
 	String name;
 	String updated;

@@ -10,6 +10,8 @@ import com.cpn.os4j.ComputeEndpoint;
 
 public class Server extends AbstractOpenStackModel {
 
+
+	private static final long serialVersionUID = 8308147727947512720L;
 	String id;
 	String name;
 	String updated;
@@ -42,7 +44,7 @@ public class Server extends AbstractOpenStackModel {
 	String taskState;
 
 	@JsonIgnore
-	transient ComputeEndpoint computeEndpoint;
+	ComputeEndpoint computeEndpoint;
 
 	@JsonIgnore
 	public Server waitUntilRunning(long aTimeout) throws InterruptedException {

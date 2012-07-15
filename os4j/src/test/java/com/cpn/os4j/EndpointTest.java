@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.cpn.os4j.model.Access;
 import com.cpn.os4j.model.Flavor;
+import com.cpn.os4j.model.IPAddress;
 import com.cpn.os4j.model.IPAddressPool;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.Server;
@@ -28,10 +29,10 @@ public class EndpointTest {
 				pool = p;
 			}
 		}
-		
-		Server server = cep.createServer("test", images.get(0), flavors.get(0), null, null).waitUntilRunning(100000);
+		IPAddress ip = pool.getIPAddresses().get(0);
+		Server server = cep.createServer("test", ip, images.get(0), flavors.get(0), null, null).waitUntilRunning(100000);
 		System.out.println(server);
-		cep.associateIp(server, pool.getIPAddresses().get(0));
+		cep.associateIp(server, ip);
 		//server.delete();
 	}
 		

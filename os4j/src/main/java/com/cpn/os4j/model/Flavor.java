@@ -5,6 +5,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Flavor extends AbstractOpenStackModel {
 
+
+	private static final long serialVersionUID = 1264918407525243722L;
 	String id;
 	String name;
 	int ram;

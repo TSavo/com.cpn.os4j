@@ -1,9 +1,13 @@
 package com.cpn.os4j.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class IPAddress {
+public class IPAddress implements Serializable {
+
+	private static final long serialVersionUID = -6192279024256341201L;
 	String id;
 	int version;
 	String addr;

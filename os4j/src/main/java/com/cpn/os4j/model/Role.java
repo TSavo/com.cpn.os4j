@@ -1,7 +1,11 @@
 package com.cpn.os4j.model;
 
-public class Role {
+import java.io.Serializable;
 
+public class Role implements Serializable{
+
+
+	private static final long serialVersionUID = -3354277509186160658L;
 	String id;
 	String name;
 	String tenantId;

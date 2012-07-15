@@ -10,6 +10,7 @@ import com.cpn.logging.Logged;
 import com.cpn.os4j.command.RestCommand;
 import com.cpn.os4j.model.Flavor;
 import com.cpn.os4j.model.FlavorsResponse;
+import com.cpn.os4j.model.FullServerConfiguration;
 import com.cpn.os4j.model.IPAddress;
 import com.cpn.os4j.model.IPAddressPool;
 import com.cpn.os4j.model.IPAddressResponse;
@@ -17,7 +18,7 @@ import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.ImagesResponse;
 import com.cpn.os4j.model.SerializedFile;
 import com.cpn.os4j.model.Server;
-import com.cpn.os4j.model.ServerConfiguration;
+import com.cpn.os4j.model.ServerNameConfiguration;
 import com.cpn.os4j.model.ServerRequest;
 import com.cpn.os4j.model.ServerResponse;
 import com.cpn.os4j.model.ServersResponse;
@@ -77,8 +78,17 @@ public class ComputeEndpoint implements Serializable {
 		return getServerDetails(aServer.getId());
 	}
 
+	public Server renameServer(String aServerId, String aName){
+		RestCommand<ServerRequest, ServerResponse> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/servers/" + aServerId);
+		ServerNameConfiguration config = new ServerNameConfiguration();
+		config.setName(aName);
+		command.setRequestModel(new ServerRequest(config));
+		command.setResponseModel(ServerResponse.class);
+		return command.put().getServer().setComputeEndpoint(this);
+	}
 	
-	public Server createServer(String aName, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality){
+	public Server createServer(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality){
 		if (someMetadata == null) {
 			someMetadata = new HashMap<>();
 		}
@@ -88,12 +98,12 @@ public class ComputeEndpoint implements Serializable {
 
 		RestCommand<ServerRequest, ServerResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/servers");
-		command.setRequestModel(new ServerRequest(new ServerConfiguration(aName, anImageRef, aFlavorRef, someMetadata, aPersonality)));
+		command.setRequestModel(new ServerRequest(new FullServerConfiguration(aName, anIpAddress, anImageRef, aFlavorRef, someMetadata, aPersonality)));
 		command.setResponseModel(ServerResponse.class);
 		return command.post().getServer().setComputeEndpoint(this);
 	}
-	public Server createServer(String aName, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
-		return createServer(aName, anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
+	public Server createServer(String aName, IPAddress anIpAddress, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
+		return createServer(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
 	}
 
 	public Server rebootServer(Server aServer, boolean aHard) {
