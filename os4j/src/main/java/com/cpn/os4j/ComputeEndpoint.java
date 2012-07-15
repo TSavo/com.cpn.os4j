@@ -38,9 +38,10 @@ public class ComputeEndpoint implements Serializable {
 
 	}
 
-	public Token getToken(){
+	public Token getToken() {
 		return token;
 	}
+
 	public String getTenantId() {
 		return token.getTenant().getId();
 	}
@@ -78,7 +79,7 @@ public class ComputeEndpoint implements Serializable {
 		return getServerDetails(aServer.getId());
 	}
 
-	public Server renameServer(String aServerId, String aName){
+	public Server renameServer(String aServerId, String aName) {
 		RestCommand<ServerRequest, ServerResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/servers/" + aServerId);
 		ServerNameConfiguration config = new ServerNameConfiguration();
@@ -87,8 +88,8 @@ public class ComputeEndpoint implements Serializable {
 		command.setResponseModel(ServerResponse.class);
 		return command.put().getServer().setComputeEndpoint(this);
 	}
-	
-	public Server createServer(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality){
+
+	public Server createServer(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
 		if (someMetadata == null) {
 			someMetadata = new HashMap<>();
 		}
@@ -102,6 +103,7 @@ public class ComputeEndpoint implements Serializable {
 		command.setResponseModel(ServerResponse.class);
 		return command.post().getServer().setComputeEndpoint(this);
 	}
+
 	public Server createServer(String aName, IPAddress anIpAddress, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
 		return createServer(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
 	}
@@ -180,15 +182,16 @@ public class ComputeEndpoint implements Serializable {
 		return pools;
 	}
 
-	public IPAddressPool getIPAddressPoolByName(String aName){
+	public IPAddressPool getIPAddressPoolByName(String aName) {
 		List<IPAddressPool> list = listPools();
-		for(IPAddressPool p : list){
-			if(p.getName().equals(aName)){
+		for (IPAddressPool p : list) {
+			if (p.getName().equals(aName)) {
 				return p;
 			}
 		}
 		return null;
 	}
+
 	public IPAddress describeAddress(int anId) {
 		RestCommand<String, IPAddressResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/os-floating-ips/" + anId);

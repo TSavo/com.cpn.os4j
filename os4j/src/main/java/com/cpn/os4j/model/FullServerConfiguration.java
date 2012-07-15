@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class FullServerConfiguration implements Serializable, ServerConfiguration{
 
 
@@ -78,6 +80,14 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 
 	public void setAccessIPv4(String accessIPv4) {
 		this.accessIPv4 = accessIPv4;
+	}
+
+	public String getUserData() {
+		return userData;
+	}
+
+	public void setUserData(String userData) {
+		this.userData = userData;
 	}
 
 
