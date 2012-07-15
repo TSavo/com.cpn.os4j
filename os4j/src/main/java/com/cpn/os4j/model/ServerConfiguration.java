@@ -8,6 +8,7 @@ public class ServerConfiguration {
 	String name;
 	String imageRef;
 	String flavorRef;
+	String accessIPv4;
 	
 	Map<String, String> metadata;
 	List<SerializedFile> personality;
@@ -15,16 +16,17 @@ public class ServerConfiguration {
 	public ServerConfiguration() {
 	}
 
-	public ServerConfiguration(String aName, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
+	public ServerConfiguration(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
 		name = aName;
 		imageRef = anImageRef;
 		flavorRef = aFlavorRef;
 		metadata = someMetadata;
 		personality = aPersonality;
+		accessIPv4 = anIpAddress;
 	}
 
-	public ServerConfiguration(String aName, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
-		this(aName, anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
+	public ServerConfiguration(String aName, IPAddress anAddress, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
+		this(aName, anAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
 	}
 
 	public String getName() {

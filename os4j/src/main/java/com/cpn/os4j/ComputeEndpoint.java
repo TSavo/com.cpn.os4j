@@ -78,7 +78,7 @@ public class ComputeEndpoint implements Serializable {
 	}
 
 	
-	public Server createServer(String aName, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality){
+	public Server createServer(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality){
 		if (someMetadata == null) {
 			someMetadata = new HashMap<>();
 		}
@@ -88,12 +88,12 @@ public class ComputeEndpoint implements Serializable {
 
 		RestCommand<ServerRequest, ServerResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/servers");
-		command.setRequestModel(new ServerRequest(new ServerConfiguration(aName, anImageRef, aFlavorRef, someMetadata, aPersonality)));
+		command.setRequestModel(new ServerRequest(new ServerConfiguration(aName, anIpAddress, anImageRef, aFlavorRef, someMetadata, aPersonality)));
 		command.setResponseModel(ServerResponse.class);
 		return command.post().getServer().setComputeEndpoint(this);
 	}
-	public Server createServer(String aName, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
-		return createServer(aName, anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
+	public Server createServer(String aName, IPAddress anIPAddress, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
+		return createServer(aName, anIPAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
 	}
 
 	public Server rebootServer(Server aServer, boolean aHard) {
