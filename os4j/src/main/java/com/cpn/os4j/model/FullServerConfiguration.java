@@ -82,13 +82,7 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 		this.accessIPv4 = accessIPv4;
 	}
 
-	public String getUserData() {
-		return userData;
-	}
 
-	public void setUserData(String userData) {
-		this.userData = userData;
-	}
 
 
 }
