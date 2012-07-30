@@ -16,6 +16,8 @@ public class SerializedFile implements Serializable {
 	private static final long serialVersionUID = 2904773678458586926L;
 	String path;
 	String contents;
+	String postxfer;
+	
 
 	public SerializedFile() {
 	}
@@ -29,8 +31,17 @@ public class SerializedFile implements Serializable {
 		contents = Base64.encodeBase64String(someBytes);
 	}
 
+	public SerializedFile(String aPath, byte[] someBytes, String aPostxfer) {
+		this(aPath, someBytes);
+		postxfer = aPostxfer;
+	}
+
 	public SerializedFile(String aPath, InputStream aStream) throws IOException {
 		this(aPath, IOUtils.toByteArray(aStream));
+	}
+	
+	public SerializedFile(String aPath, InputStream aStream, String aPostXfer) throws IOException {
+		this(aPath, IOUtils.toByteArray(aStream), aPostXfer);
 	}
 
 	public SerializedFile(String aPath, File aFile) throws FileNotFoundException, IOException {
@@ -56,8 +67,16 @@ public class SerializedFile implements Serializable {
 	@Override
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("path", path).append("contents", contents);
+		builder.append("path", path).append("contents", contents).append("postxfer", postxfer);
 		return builder.toString();
+	}
+
+	public String getPostxfer() {
+		return postxfer;
+	}
+
+	public void setPostxfer(String postxfer) {
+		this.postxfer = postxfer;
 	}
 
 }
