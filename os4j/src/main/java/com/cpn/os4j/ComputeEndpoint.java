@@ -258,3 +258,4 @@ public class ComputeEndpoint implements Serializable {
 	}
 
 }
+
