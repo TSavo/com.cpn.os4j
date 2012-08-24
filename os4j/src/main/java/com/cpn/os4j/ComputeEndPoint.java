@@ -16,6 +16,8 @@ import com.cpn.os4j.model.IPAddressPool;
 import com.cpn.os4j.model.IPAddressResponse;
 import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.ImagesResponse;
+import com.cpn.os4j.model.KeyPair;
+import com.cpn.os4j.model.KeyPairResponse;
 import com.cpn.os4j.model.SerializedFile;
 import com.cpn.os4j.model.Server;
 import com.cpn.os4j.model.ServerNameConfiguration;
@@ -23,6 +25,9 @@ import com.cpn.os4j.model.ServerRequest;
 import com.cpn.os4j.model.ServerResponse;
 import com.cpn.os4j.model.ServersResponse;
 import com.cpn.os4j.model.Token;
+import com.cpn.os4j.model.Volume;
+import com.cpn.os4j.model.VolumeAttachment;
+import com.cpn.os4j.model.VolumeAttachmentResponse;
 
 public class ComputeEndpoint implements Serializable {
 
@@ -89,7 +94,7 @@ public class ComputeEndpoint implements Serializable {
 		return command.put().getServer().setComputeEndpoint(this);
 	}
 
-	public Server createServer(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
+	public Server createServer(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality, String aKeyName, String aUserData) {
 		if (someMetadata == null) {
 			someMetadata = new HashMap<>();
 		}
@@ -99,13 +104,13 @@ public class ComputeEndpoint implements Serializable {
 
 		RestCommand<ServerRequest, ServerResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/servers");
-		command.setRequestModel(new ServerRequest(new FullServerConfiguration(aName, anIpAddress, anImageRef, aFlavorRef, someMetadata, aPersonality)));
+		command.setRequestModel(new ServerRequest(new FullServerConfiguration(aName, anIpAddress, anImageRef, aFlavorRef, someMetadata, aPersonality, aKeyName, aUserData)));
 		command.setResponseModel(ServerResponse.class);
 		return command.post().getServer().setComputeEndpoint(this);
 	}
 
-	public Server createServer(String aName, IPAddress anIpAddress, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality) {
-		return createServer(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality);
+	public Server createServer(String aName, IPAddress anIpAddress, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality, String aKeyName, String aUserData) {
+		return createServer(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality, aKeyName, aUserData);
 	}
 
 	public Server rebootServer(Server aServer, boolean aHard) {
@@ -203,6 +208,53 @@ public class ComputeEndpoint implements Serializable {
 		RestCommand<String, String> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/os-floating-ips/" + anId);
 		command.delete();
+	}
+
+	public List<VolumeAttachment> listVolumeAttachments(String aServerId) {
+		RestCommand<String, VolumeAttachmentResponse> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/servers/" + aServerId + "/os-volume_attachments");
+		command.setResponseModel(VolumeAttachmentResponse.class);
+		return command.get().getVolumeAttachments();
+	}
+
+	public List<VolumeAttachment> listVolumeAttachments(Server aServer) {
+		return listVolumeAttachments(aServer.getId());
+	}
+
+	public VolumeAttachment attachVolume(Server aServer, Volume aVolume, String aDevice) {
+		return attachVolume(aServer.getId(), aVolume.getId(), aDevice);
+	}
+
+	public VolumeAttachment attachVolume(String aServerId, String aVolumeId, String aDevice) {
+		RestCommand<Map<String, VolumeAttachment>, VolumeAttachmentResponse> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/servers/" + aServerId + "/os-volume_attachments");
+		command.setResponseModel(VolumeAttachmentResponse.class);
+		Map<String, VolumeAttachment> args = new HashMap<>();
+		VolumeAttachment v = new VolumeAttachment();
+		v.setDevice(aDevice);
+		v.setVolumeId(aVolumeId);
+		args.put("volumeAttachment", v);
+		command.setRequestModel(args);
+		return command.post().getVolumeAttachment();
+	}
+
+	public void detachVolume(Server aServer, Volume aVolume) {
+		detachVolume(aServer.getId(), aVolume.getId());
+	}
+
+	public void detachVolume(String aServerId, String aVolumeAttachmentId) {
+		RestCommand<String, String> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/servers/" + aServerId + "/os-volume_attachments/" + aVolumeAttachmentId);
+		command.delete();
+	}
+
+	public List<KeyPair> listKeyPairs() {
+
+		RestCommand<String, KeyPairResponse> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/os-keypairs");
+		command.setResponseModel(KeyPairResponse.class);
+		return command.get().getKeyPairList();
+
 	}
 
 }

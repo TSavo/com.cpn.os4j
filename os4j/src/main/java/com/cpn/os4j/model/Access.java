@@ -7,6 +7,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.cpn.os4j.ComputeEndpoint;
 import com.cpn.os4j.NetworkEndpoint;
+import com.cpn.os4j.VolumeEndpoint;
 
 public class Access {
 	List<EndPointDescription> serviceCatalog;
@@ -31,6 +32,23 @@ public class Access {
 			}
 		}
 		throw new RuntimeException("Couldn't find the NetworkEndpoint for region: " + aRegion + " and type: " + endPointType);
+	}
+	@JsonIgnore
+	public VolumeEndpoint getVolumeEndpoint(String aRegion, String endPointType){
+		for (EndPointDescription d : serviceCatalog) {
+			if (d.getType().equals("volume")) {
+				for (Map<String, String> urls : d.getEndpoints()) {
+					if (urls.get("region").equals(aRegion)) {
+						if (localhostHack) {
+							return new VolumeEndpoint(urls.get(endPointType).replaceAll("192\\.168\\.31\\.38", "control.dev.intercloud.net"), token);
+						} else {
+							return new VolumeEndpoint(urls.get(endPointType), token);
+						}
+					}
+				}
+			}
+		}
+		throw new RuntimeException("Couldn't find the ComputeEndpoint for region: " + aRegion + " and type: " + endPointType);
 	}
 	
 	@JsonIgnore

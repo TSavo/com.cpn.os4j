@@ -20,20 +20,31 @@ public class EndpointTest {
 		Access access = ep.getAccess();
 		access.localhostHack = true;
 		ComputeEndpoint cep = access.getComputeEndpoint("RegionOne", "publicURL");
+		VolumeEndpoint vep = access.getVolumeEndpoint("RegionOne", "publicURL");
 		List<Image> images = cep.listImages();
 		List<Flavor> flavors = cep.listFlavors();
-		System.out.println(cep.listAddresses());
-		IPAddressPool pool = null;
-		for(IPAddressPool p : cep.listPools()){
-			if(p.getName().equals("vcgs")){
-				pool = p;
-			}
-		}
-		IPAddress ip = pool.getIPAddresses().get(0);
-		Server server = cep.createServer("test", ip, images.get(0), flavors.get(0), null, null).waitUntilRunning(100000);
-		System.out.println(server);
-		cep.associateIp(server, ip);
-		//server.delete();
-	}
+		System.out.println(vep.listVolumes());
+		System.out.println(cep.listKeyPairs());
+		// System.out.println(cep.listAddresses());
+
+		//Volume v = vep.createVolume("test", "test", 1, new HashMap<String, String>(), "nova");
 		
+		//vep.deleteVolume(v);
+//		IPAddressPool pool = null;
+//		for (IPAddressPool p : cep.listPools()) {
+//			if (p.getName().equals("vcgs")) {
+//				pool = p;
+//			}
+//		}
+//		IPAddress ip = pool.getIPAddresses().get(0);
+//		Server server = cep.createServer("test", ip, images.get(0), flavors.get(0), null, null).waitUntilRunning(100000);
+//
+//		// System.out.println(server);
+//		cep.associateIp(server, ip);
+//		System.out.println(cep.listVolumeAttachments(server));
+//
+//		
+//		System.out.println(cep.attachVolume(server.getId(), vep.listVolumes().get(0).getId(), "/dev/sda"));
+//		server.delete();
+	}
 }
