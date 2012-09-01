@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+
 public class FullServerConfiguration implements Serializable, ServerConfiguration {
 
 	private static final long serialVersionUID = -5963753281735130626L;

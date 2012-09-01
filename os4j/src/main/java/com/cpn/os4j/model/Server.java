@@ -68,6 +68,7 @@ public class Server extends AbstractOpenStackModel {
 	}
 	
 	public Server associateIp(String address){
+		getComputeEndpoint().setIpAddress(this.getId(), address);
 		return getComputeEndpoint().associateIp(this.getId(), address);
 	}
 

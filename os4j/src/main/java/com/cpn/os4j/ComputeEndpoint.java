@@ -20,6 +20,7 @@ import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.KeyPairResponse;
 import com.cpn.os4j.model.SerializedFile;
 import com.cpn.os4j.model.Server;
+import com.cpn.os4j.model.ServerIPAddressConfiguration;
 import com.cpn.os4j.model.ServerNameConfiguration;
 import com.cpn.os4j.model.ServerRequest;
 import com.cpn.os4j.model.ServerResponse;
@@ -94,6 +95,16 @@ public class ComputeEndpoint implements Serializable {
 		return command.put().getServer().setComputeEndpoint(this);
 	}
 
+	public Server setIpAddress(String aServerId, String anIPAddress){
+		RestCommand<ServerRequest, ServerResponse> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/servers/" + aServerId);
+		ServerIPAddressConfiguration config = new ServerIPAddressConfiguration();
+		config.setAccessIPv4(anIPAddress);
+		command.setRequestModel(new ServerRequest(config));
+		command.setResponseModel(ServerResponse.class);
+		return command.put().getServer().setComputeEndpoint(this);
+	}
+	
 	public Server createServer(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality, String aKeyName, String aUserData) {
 		if (someMetadata == null) {
 			someMetadata = new HashMap<>();
