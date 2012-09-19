@@ -15,64 +15,33 @@ public class IPAddressPool {
 	@JsonIgnore
 	private transient ComputeEndpoint computeEndpoint;
 
-	
 	public IPAddressPool() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public IPAddressPool(String aName) {
-		name =aName;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<IPAddress> getIPAddresses() {
-		List<IPAddress> addresses = getComputeEndpoint().listAddresses();
-		Iterator<IPAddress> i = addresses.iterator();
-		while (i.hasNext()) {
-			IPAddress ip = i.next();
-			if (!ip.getPool().equals(name) || (ip.getInstanceId() != null)) {
-				i.remove();
-			}
-		}
-		return addresses;
+	public IPAddressPool(final String aName) {
+		name = aName;
 	}
 
 	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("name", name);
-		return builder.toString();
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		IPAddressPool other = (IPAddressPool) obj;
+		}
+		final IPAddressPool other = (IPAddressPool) obj;
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -80,8 +49,43 @@ public class IPAddressPool {
 		return computeEndpoint;
 	}
 
-	public void setComputeEndpoint(ComputeEndpoint computeEndpoint) {
+	public List<IPAddress> getIPAddresses() {
+		final List<IPAddress> addresses = getComputeEndpoint().listAddresses();
+		final Iterator<IPAddress> i = addresses.iterator();
+		while (i.hasNext()) {
+			final IPAddress ip = i.next();
+			if (!ip.getPool().equals(name) || (ip.getInstanceId() != null)) {
+				i.remove();
+			}
+		}
+		return addresses;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	public void setComputeEndpoint(final ComputeEndpoint computeEndpoint) {
 		this.computeEndpoint = computeEndpoint;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("name", name);
+		return builder.toString();
 	}
 
 }

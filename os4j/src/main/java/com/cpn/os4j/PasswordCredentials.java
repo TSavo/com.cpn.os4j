@@ -8,25 +8,25 @@ public class PasswordCredentials implements Serializable {
 	String username;
 	String password;
 
-	public PasswordCredentials(String aUsername, String aPassword) {
+	public PasswordCredentials(final String aUsername, final String aPassword) {
 		username = aUsername;
 		password = aPassword;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public String getUsername() {
+		return username;
+	}
+
+	public void setPassword(final String password) {
 		this.password = password;
+	}
+
+	public void setUsername(final String username) {
+		this.username = username;
 	}
 
 }

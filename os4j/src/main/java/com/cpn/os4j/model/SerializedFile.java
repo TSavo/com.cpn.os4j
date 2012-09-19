@@ -17,66 +17,65 @@ public class SerializedFile implements Serializable {
 	String path;
 	String contents;
 	String postxfer;
-	
 
 	public SerializedFile() {
 	}
-	
-	public SerializedFile(String aPath, String someData){
-		this(aPath, someData.getBytes());
-	}
 
-	public SerializedFile(String aPath, byte[] someBytes) {
+	public SerializedFile(final String aPath, final byte[] someBytes) {
 		path = aPath;
 		contents = Base64.encodeBase64String(someBytes);
 	}
 
-	public SerializedFile(String aPath, byte[] someBytes, String aPostxfer) {
+	public SerializedFile(final String aPath, final byte[] someBytes, final String aPostxfer) {
 		this(aPath, someBytes);
 		postxfer = aPostxfer;
 	}
 
-	public SerializedFile(String aPath, InputStream aStream) throws IOException {
-		this(aPath, IOUtils.toByteArray(aStream));
-	}
-	
-	public SerializedFile(String aPath, InputStream aStream, String aPostXfer) throws IOException {
-		this(aPath, IOUtils.toByteArray(aStream), aPostXfer);
-	}
-
-	public SerializedFile(String aPath, File aFile) throws FileNotFoundException, IOException {
+	public SerializedFile(final String aPath, final File aFile) throws FileNotFoundException, IOException {
 		this(aPath, new FileInputStream(aFile));
 	}
 
-	public String getPath() {
-		return path;
+	public SerializedFile(final String aPath, final InputStream aStream) throws IOException {
+		this(aPath, IOUtils.toByteArray(aStream));
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public SerializedFile(final String aPath, final InputStream aStream, final String aPostXfer) throws IOException {
+		this(aPath, IOUtils.toByteArray(aStream), aPostXfer);
+	}
+
+	public SerializedFile(final String aPath, final String someData) {
+		this(aPath, someData.getBytes());
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("path", path).append("contents", contents).append("postxfer", postxfer);
-		return builder.toString();
+	public String getPath() {
+		return path;
 	}
 
 	public String getPostxfer() {
 		return postxfer;
 	}
 
-	public void setPostxfer(String postxfer) {
+	public void setContents(final String contents) {
+		this.contents = contents;
+	}
+
+	public void setPath(final String path) {
+		this.path = path;
+	}
+
+	public void setPostxfer(final String postxfer) {
 		this.postxfer = postxfer;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("path", path).append("contents", contents).append("postxfer", postxfer);
+		return builder.toString();
 	}
 
 }

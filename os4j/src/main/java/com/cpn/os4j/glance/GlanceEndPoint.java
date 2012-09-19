@@ -15,34 +15,35 @@ public class GlanceEndPoint {
 
 	private static String url = "http://archive:9292/v1/images";
 
-	public GlanceEndPoint(String aUrl){
-		url = aUrl;
-	}
 	static HttpClient client = new HttpClient();
 
 	public static List<GlanceImage> listImages() {
-		RestTemplate template = new RestTemplate();
-		return template.getForEntity(url, GlanceImageListResponse.class).getBody().getImages();
+		final RestTemplate template = new RestTemplate();
+		return template.getForEntity(GlanceEndPoint.url, GlanceImageListResponse.class).getBody().getImages();
 	}
-	
-	
-	public static GlanceImage upload(String aName, InputStream stream, long length) {
-//		RestTemplate template = new RestTemplate();
-//		template.postForEntity(url, new InputStreamEntity(stream, length), GlanceImageResponse.class).getBody().getImage();
-		PostMethod method = new PostMethod(url);
+
+	public static GlanceImage upload(final String aName, final InputStream stream, final long length) {
+		// RestTemplate template = new RestTemplate();
+		// template.postForEntity(url, new InputStreamEntity(stream, length),
+		// GlanceImageResponse.class).getBody().getImage();
+		final PostMethod method = new PostMethod(GlanceEndPoint.url);
 		try {
 			method.setRequestEntity(new InputStreamRequestEntity(stream, length, "application/octet-stream"));
 			method.setContentChunked(false);
 			method.addRequestHeader("x-image-meta-name", aName);
 			method.addRequestHeader("content-type", "application/octet-stream");
-			client.executeMethod(method);
-			ObjectMapper mapper = new ObjectMapper();
-		  ObjectReader reader = mapper.reader(GlanceImageResponse.class);
-		  return reader.<GlanceImageResponse>readValue(new String(method.getResponseBody())).getImage();
-		} catch (IOException e) {
+			GlanceEndPoint.client.executeMethod(method);
+			final ObjectMapper mapper = new ObjectMapper();
+			final ObjectReader reader = mapper.reader(GlanceImageResponse.class);
+			return reader.<GlanceImageResponse> readValue(new String(method.getResponseBody())).getImage();
+		} catch (final IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {
 			method.releaseConnection();
 		}
+	}
+
+	public GlanceEndPoint(final String aUrl) {
+		GlanceEndPoint.url = aUrl;
 	}
 }

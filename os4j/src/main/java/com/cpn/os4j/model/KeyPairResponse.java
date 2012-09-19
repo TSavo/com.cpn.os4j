@@ -10,10 +10,14 @@ public class KeyPairResponse {
 	List<KeyPairResponse> keypairs;
 	KeyPair keypair;
 
+	public KeyPair getKeypair() {
+		return keypair;
+	}
+
 	@JsonIgnore
 	public List<KeyPair> getKeyPairList() {
-		List<KeyPair> results = new ArrayList<>();
-		for (KeyPairResponse r : keypairs) {
+		final List<KeyPair> results = new ArrayList<>();
+		for (final KeyPairResponse r : keypairs) {
 			results.add(r.getKeypair());
 		}
 		return results;
@@ -23,16 +27,12 @@ public class KeyPairResponse {
 		return keypairs;
 	}
 
-	public void setKeypairs(List<KeyPairResponse> keypairs) {
-		this.keypairs = keypairs;
-	}
-
-	public KeyPair getKeypair() {
-		return keypair;
-	}
-
-	public void setKeypair(KeyPair keypair) {
+	public void setKeypair(final KeyPair keypair) {
 		this.keypair = keypair;
+	}
+
+	public void setKeypairs(final List<KeyPairResponse> keypairs) {
+		this.keypairs = keypairs;
 	}
 
 }

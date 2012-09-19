@@ -6,34 +6,35 @@ public class Network {
 
 	String id;
 	String name;
+
 	public Network() {
 	}
 
-	
-	public Network(String id, String name) {
+	public Network(final String id, final String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
 
-
 	public String getId() {
 		return id;
 	}
-	public void setId(String id) {
-		this.id = id;
-	}
+
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+
+	public void setId(final String id) {
+		this.id = id;
+	}
+
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("id", id).append("name", name);
 		return builder.toString();
 	}

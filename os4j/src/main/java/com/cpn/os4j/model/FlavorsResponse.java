@@ -11,15 +11,15 @@ public class FlavorsResponse {
 		return flavors;
 	}
 
-	public void setFlavors(List<Flavor> flavors) {
+	public void setFlavors(final List<Flavor> flavors) {
 		this.flavors = flavors;
 	}
 
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("flavors", flavors);
 		return builder.toString();
 	}
-	
+
 }

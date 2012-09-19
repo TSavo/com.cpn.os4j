@@ -15,63 +15,60 @@ public class RestCommand<Request, Response> {
 	private Request requestModel;
 	private Class<Response> responseModel;
 
-	private Token token;
+	private final Token token;
 
-	public RestCommand(Token aToken) {
+	public RestCommand(final Token aToken) {
 		token = aToken;
 	}
 
+	public void delete() {
+		if (getRequestModel() == null) {
+			RestCommand.restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<String>(getHttpHeaders()), null);
+		} else {
+			RestCommand.restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), null);
+		}
+	}
+
+	public Response get() {
+		return RestCommand.restTemplate.exchange(getPath(), HttpMethod.GET, new HttpEntity<String>(getHttpHeaders()), getResponseModel()).getBody();
+	}
+
 	public HttpHeaders getHttpHeaders() {
-		HttpHeaders headers = new HttpHeaders();
+		final HttpHeaders headers = new HttpHeaders();
 		headers.set("X-Auth-Token", token.getId());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		return headers;
 	}
 
-	public Response get() {
-		return restTemplate.exchange(getPath(), HttpMethod.GET, new HttpEntity<String>(getHttpHeaders()), getResponseModel()).getBody();
-	}
-
-	public Response post() {
-		return restTemplate.exchange(getPath(), HttpMethod.POST, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
-	}
-
-	public Response put() {
-		return restTemplate.exchange(getPath(), HttpMethod.PUT, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
-	}
-
-	
-	public void delete() {
-		if (getRequestModel() == null) {
-			restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<String>(getHttpHeaders()), null);
-		} else {
-			restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), null);
-		}
-	}
-	
-	
-
 	public String getPath() {
 		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
 	}
 
 	public Request getRequestModel() {
 		return requestModel;
 	}
 
-	public void setRequestModel(Request requestModel) {
-		this.requestModel = requestModel;
-	}
-
 	public Class<Response> getResponseModel() {
 		return responseModel;
 	}
 
-	public void setResponseModel(Class<Response> responseModel) {
+	public Response post() {
+		return RestCommand.restTemplate.exchange(getPath(), HttpMethod.POST, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
+	}
+
+	public Response put() {
+		return RestCommand.restTemplate.exchange(getPath(), HttpMethod.PUT, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
+	}
+
+	public void setPath(final String path) {
+		this.path = path;
+	}
+
+	public void setRequestModel(final Request requestModel) {
+		this.requestModel = requestModel;
+	}
+
+	public void setResponseModel(final Class<Response> responseModel) {
 		this.responseModel = responseModel;
 	}
 

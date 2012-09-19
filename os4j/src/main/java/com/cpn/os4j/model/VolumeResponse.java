@@ -13,21 +13,21 @@ public class VolumeResponse {
 		return volume;
 	}
 
-	public void setVolume(Volume volume) {
-		this.volume = volume;
-	}
-
 	public List<Volume> getVolumes() {
 		return volumes;
 	}
 
-	public void setVolumes(List<Volume> volumes) {
+	public void setVolume(final Volume volume) {
+		this.volume = volume;
+	}
+
+	public void setVolumes(final List<Volume> volumes) {
 		this.volumes = volumes;
 	}
 
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("volume", volume).append("volumes", volumes);
 		return builder.toString();
 	}

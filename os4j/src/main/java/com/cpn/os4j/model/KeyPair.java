@@ -17,49 +17,49 @@ public class KeyPair implements Serializable {
 	String userId;
 	String fingerprint;
 
-	public String getPublicKey() {
-		return publicKey;
-	}
-
-	public void setPublicKey(String publicKey) {
-		this.publicKey = publicKey;
-	}
-
-	public String getPrivateKey() {
-		return privateKey;
-	}
-
-	public void setPrivateKey(String privateKey) {
-		this.privateKey = privateKey;
+	public String getFingerprint() {
+		return fingerprint;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getPrivateKey() {
+		return privateKey;
+	}
+
+	public String getPublicKey() {
+		return publicKey;
 	}
 
 	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getFingerprint() {
-		return fingerprint;
-	}
-
-	public void setFingerprint(String fingerprint) {
+	public void setFingerprint(final String fingerprint) {
 		this.fingerprint = fingerprint;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public void setPrivateKey(final String privateKey) {
+		this.privateKey = privateKey;
+	}
+
+	public void setPublicKey(final String publicKey) {
+		this.publicKey = publicKey;
+	}
+
+	public void setUserId(final String userId) {
+		this.userId = userId;
 	}
 
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("publicKey", publicKey).append("privateKey", privateKey).append("name", name).append("userId", userId).append("fingerprint", fingerprint);
 		return builder.toString();
 	}

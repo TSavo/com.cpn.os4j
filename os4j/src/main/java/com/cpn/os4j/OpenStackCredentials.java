@@ -9,7 +9,7 @@ public class OpenStackCredentials {
 	public OpenStackCredentials() {
 	}
 
-	public OpenStackCredentials(AuthenticationCredentials someCreds) {
+	public OpenStackCredentials(final AuthenticationCredentials someCreds) {
 		setAuth(someCreds);
 	}
 
@@ -17,13 +17,13 @@ public class OpenStackCredentials {
 		return auth;
 	}
 
-	public void setAuth(AuthenticationCredentials auth) {
+	public void setAuth(final AuthenticationCredentials auth) {
 		this.auth = auth;
 	}
 
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("auth", auth);
 		return builder.toString();
 	}

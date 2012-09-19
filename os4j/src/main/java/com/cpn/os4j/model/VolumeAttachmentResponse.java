@@ -8,21 +8,26 @@ public class VolumeAttachmentResponse {
 
 	VolumeAttachment volumeAttachment;
 	List<VolumeAttachment> volumeAttachments;
+
 	public VolumeAttachment getVolumeAttachment() {
 		return volumeAttachment;
 	}
-	public void setVolumeAttachment(VolumeAttachment volumeAttachment) {
-		this.volumeAttachment = volumeAttachment;
-	}
+
 	public List<VolumeAttachment> getVolumeAttachments() {
 		return volumeAttachments;
 	}
-	public void setVolumeAttachments(List<VolumeAttachment> volumeAttachments) {
+
+	public void setVolumeAttachment(final VolumeAttachment volumeAttachment) {
+		this.volumeAttachment = volumeAttachment;
+	}
+
+	public void setVolumeAttachments(final List<VolumeAttachment> volumeAttachments) {
 		this.volumeAttachments = volumeAttachments;
 	}
+
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("volumeAttachment", volumeAttachment).append("volumeAttachments", volumeAttachments);
 		return builder.toString();
 	}

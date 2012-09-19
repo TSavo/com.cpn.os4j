@@ -16,34 +16,15 @@ public class VolumeEndpoint implements Serializable {
 	String serverUrl;
 	Token token;
 
-	public VolumeEndpoint(String aServerUrl, Token aToken) {
+	public VolumeEndpoint(final String aServerUrl, final Token aToken) {
 		super();
 		token = aToken;
 		serverUrl = aServerUrl;
 
 	}
 
-	public Token getToken() {
-		return token;
-	}
-
-	public String getTenantId() {
-		return token.getTenant().getId();
-	}
-
-	public String getServerUrl() {
-		return serverUrl;
-	}
-
-	public List<Volume> listVolumes() {
-		RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
-		command.setPath(getServerUrl() + "/volumes");
-		command.setResponseModel(VolumeResponse.class);
-		return command.get().getVolumes();
-	}
-
-	public Volume createVolume(String aName, String aDescription, long aSize, Map<String, String> someMetadata, String anAvilabilityZone) {
-		Volume v = new Volume();
+	public Volume createVolume(final String aName, final String aDescription, final long aSize, final Map<String, String> someMetadata, final String anAvilabilityZone) {
+		final Volume v = new Volume();
 		v.setDisplayName(aName);
 		v.setDisplayDescription(aDescription);
 		v.setSize(aSize);
@@ -53,31 +34,50 @@ public class VolumeEndpoint implements Serializable {
 
 	}
 
-	public void deleteVolume(Volume aVolume) {
-		deleteVolume(aVolume.getId());
-	}
-
-	public void deleteVolume(String aVolumeId) {
-		RestCommand<String, String> command = new RestCommand<>(token);
-		command.setPath(getServerUrl() + "/volumes/" + aVolumeId);
-		command.delete();
-	}
-
-	public Volume createVolume(Volume aVolume) {
-		RestCommand<Map<String, Volume>, VolumeResponse> command = new RestCommand<>(token);
+	public Volume createVolume(final Volume aVolume) {
+		final RestCommand<Map<String, Volume>, VolumeResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/volumes");
-		Map<String, Volume> map = new HashMap<>();
+		final Map<String, Volume> map = new HashMap<>();
 		map.put("volume", aVolume);
 		command.setRequestModel(map);
 		command.setResponseModel(VolumeResponse.class);
 		return command.post().getVolume().setEndpoint(this);
 	}
 
-	public Volume getVolume(String anId) {
-		RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
+	public void deleteVolume(final String aVolumeId) {
+		final RestCommand<String, String> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/volumes/" + aVolumeId);
+		command.delete();
+	}
+
+	public void deleteVolume(final Volume aVolume) {
+		deleteVolume(aVolume.getId());
+	}
+
+	public String getServerUrl() {
+		return serverUrl;
+	}
+
+	public String getTenantId() {
+		return token.getTenant().getId();
+	}
+
+	public Token getToken() {
+		return token;
+	}
+
+	public Volume getVolume(final String anId) {
+		final RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
 		command.setPath(getServerUrl() + "/volumes/" + anId);
 		command.setResponseModel(VolumeResponse.class);
 		return command.get().getVolume();
+	}
+
+	public List<Volume> listVolumes() {
+		final RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
+		command.setPath(getServerUrl() + "/volumes");
+		command.setResponseModel(VolumeResponse.class);
+		return command.get().getVolumes();
 	}
 
 }

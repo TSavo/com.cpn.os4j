@@ -9,18 +9,20 @@ import com.cpn.os4j.model.AccessResponse;
 public class ServiceCatalog {
 
 	private static RestTemplate restTemplate = new RestTemplate();
-	private OpenStackCredentials credentials;
-	private String serverUrl;
+	private final OpenStackCredentials credentials;
+	private final String serverUrl;
 
-	public ServiceCatalog(String aServerUrl, OpenStackCredentials someCredentials) {
+	public ServiceCatalog(final String aServerUrl, final OpenStackCredentials someCredentials) {
 		serverUrl = aServerUrl;
 		credentials = someCredentials;
 	}
-	public HttpHeaders getHttpHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		return headers;
-	}
+
 	public Access getAccess() {
-		return restTemplate.postForEntity(serverUrl + "/v2.0/tokens", credentials, AccessResponse.class).getBody().getAccess();
+		return ServiceCatalog.restTemplate.postForEntity(serverUrl + "/v2.0/tokens", credentials, AccessResponse.class).getBody().getAccess();
+	}
+
+	public HttpHeaders getHttpHeaders() {
+		final HttpHeaders headers = new HttpHeaders();
+		return headers;
 	}
 }

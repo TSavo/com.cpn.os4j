@@ -8,8 +8,8 @@ public class GlanceImageResponse {
 		return image;
 	}
 
-	public void setImage(GlanceImage image) {
+	public void setImage(final GlanceImage image) {
 		this.image = image;
 	}
-	
+
 }

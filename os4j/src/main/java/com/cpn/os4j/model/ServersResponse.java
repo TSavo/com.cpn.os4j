@@ -10,8 +10,8 @@ public class ServersResponse {
 		return servers;
 	}
 
-	public void setServers(List<Server> servers) {
+	public void setServers(final List<Server> servers) {
 		this.servers = servers;
 	}
-	
+
 }

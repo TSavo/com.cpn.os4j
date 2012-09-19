@@ -18,13 +18,13 @@ public class AuthenticationCredentials implements Serializable {
 	public AuthenticationCredentials() {
 	}
 
-	public AuthenticationCredentials(PasswordCredentials someCreds, String tenantName) {
+	public AuthenticationCredentials(final PasswordCredentials someCreds, final String tenantName) {
 		super();
 		passwordCredentials = someCreds;
 		this.tenantName = tenantName;
 	}
 
-	public AuthenticationCredentials(PasswordCredentials someCreds, Tenant aTenant) {
+	public AuthenticationCredentials(final PasswordCredentials someCreds, final Tenant aTenant) {
 		this(someCreds, aTenant.getName());
 	}
 
@@ -32,21 +32,21 @@ public class AuthenticationCredentials implements Serializable {
 		return passwordCredentials;
 	}
 
-	public void setPasswordCredentials(PasswordCredentials passwordCredentials) {
-		this.passwordCredentials = passwordCredentials;
-	}
-
 	public String getTenantName() {
 		return tenantName;
 	}
 
-	public void setTenantName(String tenantName) {
+	public void setPasswordCredentials(final PasswordCredentials passwordCredentials) {
+		this.passwordCredentials = passwordCredentials;
+	}
+
+	public void setTenantName(final String tenantName) {
 		this.tenantName = tenantName;
 	}
 
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
+		final ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("passwordCredentials", passwordCredentials).append("tenantName", tenantName);
 		return builder.toString();
 	}

@@ -8,8 +8,8 @@ public class AccessResponse {
 		return access;
 	}
 
-	public void setAccess(Access access) {
+	public void setAccess(final Access access) {
 		this.access = access;
 	}
-	
+
 }

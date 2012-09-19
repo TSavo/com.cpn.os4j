@@ -11,35 +11,37 @@ public class EndPointDescription {
 	List<String> endpointLinks;
 	String name;
 	String type;
-	
-	
-	public List<Map<String, String>> getEndpoints() {
-		return endpoints;
-	}
-	public void setEndpoints(List<Map<String, String>> endpoints) {
-		this.endpoints = endpoints;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-
 
 	public List<String> getEndpointLinks() {
 		return endpointLinks;
 	}
 
-	public void setEndpointLinks(List<String> endpointLinks) {
+	public List<Map<String, String>> getEndpoints() {
+		return endpoints;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setEndpointLinks(final List<String> endpointLinks) {
 		this.endpointLinks = endpointLinks;
 	}
-	
-	
+
+	public void setEndpoints(final List<Map<String, String>> endpoints) {
+		this.endpoints = endpoints;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public void setType(final String type) {
+		this.type = type;
+	}
+
 }

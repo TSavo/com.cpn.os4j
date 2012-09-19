@@ -10,9 +10,8 @@ public class GlanceImageListResponse {
 		return images;
 	}
 
-	public void setImages(List<GlanceImage> images) {
+	public void setImages(final List<GlanceImage> images) {
 		this.images = images;
 	}
-	
-	
+
 }

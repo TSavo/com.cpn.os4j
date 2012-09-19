@@ -48,34 +48,34 @@ public class GlanceImage {
 
 	}
 
-	public GlanceImage(String aUri) {
+	public GlanceImage(final String aUri) {
 		uri = aUri;
 	}
 
-	public String getUri() {
-		return uri;
+	public void download(final OutputStream stream) {
+		final GetMethod method = new GetMethod(getUri());
+		try {
+			client.executeMethod(method);
+			final byte[] buffer = new byte[4096];
+			int n = 0;
+			final InputStream input = method.getResponseBodyAsStream();
+			while (-1 != (n = input.read(buffer))) {
+				stream.write(buffer, 0, n);
+			}
+		} catch (final Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			method.releaseConnection();
+		}
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public String getChecksum() {
+		return checksum;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@JsonProperty(value = "disk_format")
-	public String getDiskFormat() {
-		return diskFormat;
-	}
-
-	@JsonProperty(value = "disk_format")
-	public void setDiskFormat(String diskFormat) {
-		this.diskFormat = diskFormat;
+	@JsonIgnore
+	public HttpClient getClient() {
+		return client;
 	}
 
 	@JsonProperty(value = "container_format")
@@ -83,45 +83,9 @@ public class GlanceImage {
 		return containerFormat;
 	}
 
-	@JsonProperty(value = "container_format")
-	public void setContainerFormat(String containerFormat) {
-		this.containerFormat = containerFormat;
-	}
-
-	public long getSize() {
-		return size;
-	}
-
-	public void setSize(long size) {
-		this.size = size;
-	}
-
-	public String getChecksum() {
-		return checksum;
-	}
-
-	public void setChecksum(String checksum) {
-		this.checksum = checksum;
-	}
-
 	@JsonProperty(value = "created_at")
 	public Date getCreatedAt() {
 		return createdAt;
-	}
-
-	@JsonProperty(value = "created_at")
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	@JsonProperty(value = "updated_at")
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	@JsonProperty(value = "updated_at")
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	@JsonProperty(value = "deleted_at")
@@ -129,37 +93,13 @@ public class GlanceImage {
 		return deletedAt;
 	}
 
-	@JsonProperty(value = "deleted_at")
-	public void setDeletedAt(Date deletedAt) {
-		this.deletedAt = deletedAt;
+	@JsonProperty(value = "disk_format")
+	public String getDiskFormat() {
+		return diskFormat;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	@JsonProperty(value = "is_public")
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-	@JsonProperty(value = "is_public")
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
-	@JsonProperty(value = "min_ram")
-	public long getMinRam() {
-		return minRam;
-	}
-
-	@JsonProperty(value = "min_ram")
-	public void setMinRam(long minRam) {
-		this.minRam = minRam;
+	public String getId() {
+		return id;
 	}
 
 	@JsonProperty(value = "min_disk")
@@ -167,37 +107,65 @@ public class GlanceImage {
 		return minDisk;
 	}
 
-	@JsonProperty(value = "min_disk")
-	public void setMinDisk(long minDisk) {
-		this.minDisk = minDisk;
+	@JsonProperty(value = "min_ram")
+	public long getMinRam() {
+		return minRam;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
 	public Map<String, String> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(Map<String, String> properties) {
-		this.properties = properties;
+	public long getSize() {
+		return size;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	@JsonProperty(value = "updated_at")
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public String getUri() {
+		return uri;
+	}
+
+	@JsonProperty(value = "deleted")
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	@JsonProperty(value = "protected")
+	public boolean isProtected() {
+		return isProtected;
+	}
+
+	@JsonProperty(value = "is_public")
+	public boolean isPublic() {
+		return isPublic;
 	}
 
 	public void populate() throws HttpException, IOException {
-		HeadMethod method = new HeadMethod(uri);
+		final HeadMethod method = new HeadMethod(uri);
 		client.executeMethod(method);
 		populateFromHeaders(method.getResponseHeaders());
 	}
 
-	public void populateFromHeaders(Header[] someHeaders) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public void populateFromHeaders(final Header[] someHeaders) {
+		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-		for (Header h : someHeaders) {
+		for (final Header h : someHeaders) {
 			if (h.getName().equals("x-image-meta-uri")) {
 				setUri(h.getValue());
 			}
@@ -219,13 +187,13 @@ public class GlanceImage {
 			if (h.getName().equals("x-image-meta-created_at")) {
 				try {
 					setCreatedAt(dateFormat.parse(h.getValue()));
-				} catch (ParseException e) {
+				} catch (final ParseException e) {
 				}
 			}
 			if (h.getName().equals("x-image-meta-updated_at")) {
 				try {
 					setUpdatedAt(dateFormat.parse(h.getValue()));
-				} catch (ParseException e) {
+				} catch (final ParseException e) {
 				}
 			}
 			if (h.getName().equals("x-image-meta-status")) {
@@ -249,8 +217,46 @@ public class GlanceImage {
 		}
 	}
 
+	public void setChecksum(final String checksum) {
+		this.checksum = checksum;
+	}
+
+	@JsonIgnore
+	public void setClient(final HttpClient client) {
+		this.client = client;
+	}
+
+	@JsonProperty(value = "container_format")
+	public void setContainerFormat(final String containerFormat) {
+		this.containerFormat = containerFormat;
+	}
+
+	@JsonProperty(value = "created_at")
+	public void setCreatedAt(final Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	@JsonProperty(value = "deleted")
+	public void setDeleted(final boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	@JsonProperty(value = "deleted_at")
+	public void setDeletedAt(final Date deletedAt) {
+		this.deletedAt = deletedAt;
+	}
+
+	@JsonProperty(value = "disk_format")
+	public void setDiskFormat(final String diskFormat) {
+		this.diskFormat = diskFormat;
+	}
+
+	public void setId(final String id) {
+		this.id = id;
+	}
+
 	public GlanceImage setMetadata() {
-		PutMethod method = new PutMethod(uri);
+		final PutMethod method = new PutMethod(uri);
 		try {
 			method.addRequestHeader("x-image-meta-name", getName());
 			if (getDiskFormat() != null) {
@@ -278,72 +284,66 @@ public class GlanceImage {
 			if (getOwner() != null) {
 				method.addRequestHeader("x-image-meta-owner", getOwner());
 			}
-			for (Entry<String, String> kv : getProperties().entrySet()) {
+			for (final Entry<String, String> kv : getProperties().entrySet()) {
 				method.addRequestHeader("x-image-meta-property-" + kv.getKey(), kv.getValue());
 			}
 			client.executeMethod(method);
 			populateFromHeaders(method.getResponseHeaders());
 			return this;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {
 			method.releaseConnection();
 		}
 	}
 
-	public void download(OutputStream stream) {
-		GetMethod method = new GetMethod(getUri());
-		try {
-			client.executeMethod(method);
-			byte[] buffer = new byte[4096];
-			int n = 0;
-			InputStream input = method.getResponseBodyAsStream();
-			while (-1 != (n = input.read(buffer))) {
-				stream.write(buffer, 0, n);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
-		} finally {
-			method.releaseConnection();
-		}
+	@JsonProperty(value = "min_disk")
+	public void setMinDisk(final long minDisk) {
+		this.minDisk = minDisk;
 	}
 
-	public String getId() {
-		return id;
+	@JsonProperty(value = "min_ram")
+	public void setMinRam(final long minRam) {
+		this.minRam = minRam;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setName(final String name) {
+		this.name = name;
 	}
 
-	@JsonIgnore
-	public HttpClient getClient() {
-		return client;
+	public void setOwner(final String owner) {
+		this.owner = owner;
 	}
 
-	@JsonIgnore
-	public void setClient(HttpClient client) {
-		this.client = client;
-	}
-
-	@JsonProperty(value = "deleted")
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	@JsonProperty(value = "deleted")
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void setProperties(final Map<String, String> properties) {
+		this.properties = properties;
 	}
 
 	@JsonProperty(value = "protected")
-	public boolean isProtected() {
-		return isProtected;
-	}
-
-	@JsonProperty(value = "protected")
-	public void setProtected(boolean isProtected) {
+	public void setProtected(final boolean isProtected) {
 		this.isProtected = isProtected;
+	}
+
+	@JsonProperty(value = "is_public")
+	public void setPublic(final boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
+	public void setSize(final long size) {
+		this.size = size;
+	}
+
+	public void setStatus(final String status) {
+		this.status = status;
+	}
+
+	@JsonProperty(value = "updated_at")
+	public void setUpdatedAt(final Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public void setUri(final String uri) {
+		this.uri = uri;
 	}
 
 }

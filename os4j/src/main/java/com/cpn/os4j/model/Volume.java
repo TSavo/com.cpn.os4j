@@ -28,119 +28,118 @@ public class Volume implements Serializable {
 	String availabilityZone;
 	@JsonProperty("snapshot_id")
 	String snapshotId;
-	
+
 	List<VolumeAttachment> attachments = new ArrayList<>();
 	@JsonProperty("created_at")
 	String createdAt;
-	
+
 	String status;
-	
+
 	@JsonIgnore
 	transient VolumeEndpoint endpoint;
-	
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public String getDisplayDescription() {
-		return displayDescription;
-	}
-
-	public void setDisplayDescription(String displayDescription) {
-		this.displayDescription = displayDescription;
-	}
-
-	public long getSize() {
-		return size;
-	}
-
-	public void setSize(long size) {
-		this.size = size;
-	}
-
-	public String getVolumeType() {
-		return volumeType;
-	}
-
-	public void setVolumeType(String volumeType) {
-		this.volumeType = volumeType;
-	}
-
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
+	public List<VolumeAttachment> getAttachments() {
+		return attachments;
 	}
 
 	public String getAvailabilityZone() {
 		return availabilityZone;
 	}
 
-	public void setAvailabilityZone(String availabilityZone) {
-		this.availabilityZone = availabilityZone;
-	}
-
-	public String getSnapshotId() {
-		return snapshotId;
-	}
-
-	public void setSnapshotId(String snapshotId) {
-		this.snapshotId = snapshotId;
-	}
-
-	public List<VolumeAttachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<VolumeAttachment> volumeAttachments) {
-		this.attachments = volumeAttachments;
-	}
-
 	public String getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
+	public String getDisplayDescription() {
+		return displayDescription;
 	}
 
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("id", id).append("displayName", displayName).append("displayDescription", displayDescription).append("size", size).append("volumeType", volumeType).append("metadata", metadata).append("availabilityZone", availabilityZone)
-				.append("snapshotId", snapshotId).append("attachments", attachments).append("createdAt", createdAt).append("status", status);
-		return builder.toString();
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	public String getDisplayName() {
+		return displayName;
 	}
 
 	public VolumeEndpoint getEndpoint() {
 		return endpoint;
 	}
 
-	public Volume setEndpoint(VolumeEndpoint endpoint) {
+	public String getId() {
+		return id;
+	}
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public String getSnapshotId() {
+		return snapshotId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public String getVolumeType() {
+		return volumeType;
+	}
+
+	public void setAttachments(final List<VolumeAttachment> volumeAttachments) {
+		this.attachments = volumeAttachments;
+	}
+
+	public void setAvailabilityZone(final String availabilityZone) {
+		this.availabilityZone = availabilityZone;
+	}
+
+	public void setCreatedAt(final String createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public void setDisplayDescription(final String displayDescription) {
+		this.displayDescription = displayDescription;
+	}
+
+	public void setDisplayName(final String displayName) {
+		this.displayName = displayName;
+	}
+
+	public Volume setEndpoint(final VolumeEndpoint endpoint) {
 		this.endpoint = endpoint;
 		return this;
+	}
+
+	public void setId(final String id) {
+		this.id = id;
+	}
+
+	public void setMetadata(final Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
+	public void setSize(final long size) {
+		this.size = size;
+	}
+
+	public void setSnapshotId(final String snapshotId) {
+		this.snapshotId = snapshotId;
+	}
+
+	public void setStatus(final String status) {
+		this.status = status;
+	}
+
+	public void setVolumeType(final String volumeType) {
+		this.volumeType = volumeType;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("id", id).append("displayName", displayName).append("displayDescription", displayDescription).append("size", size).append("volumeType", volumeType).append("metadata", metadata).append("availabilityZone", availabilityZone)
+				.append("snapshotId", snapshotId).append("attachments", attachments).append("createdAt", createdAt).append("status", status);
+		return builder.toString();
 	}
 }

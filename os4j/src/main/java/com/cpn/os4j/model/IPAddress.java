@@ -18,66 +18,66 @@ public class IPAddress implements Serializable {
 	String instanceId;
 	String pool;
 
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
 	public String getAddr() {
 		return addr;
-	}
-
-	public void setAddr(String addr) {
-		this.addr = addr;
-	}
-
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("id", id).append("version", version).append("addr", addr).append("ip", ip).append("fixedIp", fixedIp).append("instanceId", instanceId).append("pool", pool);
-		return builder.toString();
-	}
-
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
 	}
 
 	public String getFixedIp() {
 		return fixedIp;
 	}
 
-	public void setFixedIp(String fixedIp) {
-		this.fixedIp = fixedIp;
-	}
-
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public String getIp() {
+		return ip;
 	}
 
 	public String getPool() {
 		return pool;
 	}
 
-	public void setPool(String pool) {
+	public int getVersion() {
+		return version;
+	}
+
+	public void setAddr(final String addr) {
+		this.addr = addr;
+	}
+
+	public void setFixedIp(final String fixedIp) {
+		this.fixedIp = fixedIp;
+	}
+
+	public void setId(final String id) {
+		this.id = id;
+	}
+
+	public void setInstanceId(final String instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	public void setIp(final String ip) {
+		this.ip = ip;
+	}
+
+	public void setPool(final String pool) {
 		this.pool = pool;
+	}
+
+	public void setVersion(final int version) {
+		this.version = version;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("id", id).append("version", version).append("addr", addr).append("ip", ip).append("fixedIp", fixedIp).append("instanceId", instanceId).append("pool", pool);
+		return builder.toString();
 	}
 }

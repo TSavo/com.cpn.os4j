@@ -8,8 +8,8 @@ public class ServerResponse {
 		return server;
 	}
 
-	public void setServer(Server server) {
+	public void setServer(final Server server) {
 		this.server = server;
 	}
-	
+
 }

@@ -17,45 +17,10 @@ public class Access {
 	public boolean localhostHack = false;
 
 	@JsonIgnore
-	public NetworkEndpoint getNetworkEndpoint(String aRegion, String endPointType){
-		for (EndPointDescription d : serviceCatalog) {
-			if (d.getType().equals("network")) {
-				for (Map<String, String> urls : d.getEndpoints()) {
-					if (urls.get("region").equals(aRegion)) {
-						if (localhostHack) {
-							return new NetworkEndpoint(urls.get(endPointType).replaceAll("192\\.168\\.31\\.38", "control.dev.intercloud.net"), token);
-						} else {
-							return new NetworkEndpoint(urls.get(endPointType), token);
-						}
-					}
-				}
-			}
-		}
-		throw new RuntimeException("Couldn't find the NetworkEndpoint for region: " + aRegion + " and type: " + endPointType);
-	}
-	@JsonIgnore
-	public VolumeEndpoint getVolumeEndpoint(String aRegion, String endPointType){
-		for (EndPointDescription d : serviceCatalog) {
-			if (d.getType().equals("volume")) {
-				for (Map<String, String> urls : d.getEndpoints()) {
-					if (urls.get("region").equals(aRegion)) {
-						if (localhostHack) {
-							return new VolumeEndpoint(urls.get(endPointType).replaceAll("192\\.168\\.31\\.38", "control.dev.intercloud.net"), token);
-						} else {
-							return new VolumeEndpoint(urls.get(endPointType), token);
-						}
-					}
-				}
-			}
-		}
-		throw new RuntimeException("Couldn't find the ComputeEndpoint for region: " + aRegion + " and type: " + endPointType);
-	}
-	
-	@JsonIgnore
-	public ComputeEndpoint getComputeEndpoint(String aRegion, String endPointType) {
-		for (EndPointDescription d : serviceCatalog) {
+	public ComputeEndpoint getComputeEndpoint(final String aRegion, final String endPointType) {
+		for (final EndPointDescription d : serviceCatalog) {
 			if (d.getType().equals("compute")) {
-				for (Map<String, String> urls : d.getEndpoints()) {
+				for (final Map<String, String> urls : d.getEndpoints()) {
 					if (urls.get("region").equals(aRegion)) {
 						if (localhostHack) {
 							return new ComputeEndpoint(urls.get(endPointType).replaceAll("192\\.168\\.31\\.38", "control.dev.intercloud.net"), token);
@@ -69,27 +34,63 @@ public class Access {
 		throw new RuntimeException("Couldn't find the ComputeEndpoint for region: " + aRegion + " and type: " + endPointType);
 	}
 
-	public List<EndPointDescription> getServiceCatalog() {
-		return serviceCatalog;
+	@JsonIgnore
+	public NetworkEndpoint getNetworkEndpoint(final String aRegion, final String endPointType) {
+		for (final EndPointDescription d : serviceCatalog) {
+			if (d.getType().equals("network")) {
+				for (final Map<String, String> urls : d.getEndpoints()) {
+					if (urls.get("region").equals(aRegion)) {
+						if (localhostHack) {
+							return new NetworkEndpoint(urls.get(endPointType).replaceAll("192\\.168\\.31\\.38", "control.dev.intercloud.net"), token);
+						} else {
+							return new NetworkEndpoint(urls.get(endPointType), token);
+						}
+					}
+				}
+			}
+		}
+		throw new RuntimeException("Couldn't find the NetworkEndpoint for region: " + aRegion + " and type: " + endPointType);
 	}
 
-	public void setServiceCatalog(List<EndPointDescription> serviceCatalog) {
-		this.serviceCatalog = serviceCatalog;
+	public List<EndPointDescription> getServiceCatalog() {
+		return serviceCatalog;
 	}
 
 	public Token getToken() {
 		return token;
 	}
 
-	public void setToken(Token token) {
-		this.token = token;
-	}
-
 	public User getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	@JsonIgnore
+	public VolumeEndpoint getVolumeEndpoint(final String aRegion, final String endPointType) {
+		for (final EndPointDescription d : serviceCatalog) {
+			if (d.getType().equals("volume")) {
+				for (final Map<String, String> urls : d.getEndpoints()) {
+					if (urls.get("region").equals(aRegion)) {
+						if (localhostHack) {
+							return new VolumeEndpoint(urls.get(endPointType).replaceAll("192\\.168\\.31\\.38", "control.dev.intercloud.net"), token);
+						} else {
+							return new VolumeEndpoint(urls.get(endPointType), token);
+						}
+					}
+				}
+			}
+		}
+		throw new RuntimeException("Couldn't find the ComputeEndpoint for region: " + aRegion + " and type: " + endPointType);
+	}
+
+	public void setServiceCatalog(final List<EndPointDescription> serviceCatalog) {
+		this.serviceCatalog = serviceCatalog;
+	}
+
+	public void setToken(final Token token) {
+		this.token = token;
+	}
+
+	public void setUser(final User user) {
 		this.user = user;
 	}
 

@@ -14,34 +14,34 @@ public class VolumeAttachment implements Serializable {
 	String volumeId;
 	String device;
 
-	public String getVolumeId() {
-		return volumeId;
-	}
-
-	public void setVolumeId(String volumeId) {
-		this.volumeId = volumeId;
-	}
-
 	public String getDevice() {
 		return device;
-	}
-
-	public void setDevice(String device) {
-		this.device = device;
-	}
-
-	@Override
-	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("id", id).append("volumeId", volumeId).append("device", device);
-		return builder.toString();
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public String getVolumeId() {
+		return volumeId;
+	}
+
+	public void setDevice(final String device) {
+		this.device = device;
+	}
+
+	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public void setVolumeId(final String volumeId) {
+		this.volumeId = volumeId;
+	}
+
+	@Override
+	public String toString() {
+		final ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("id", id).append("volumeId", volumeId).append("device", device);
+		return builder.toString();
 	}
 }

@@ -10,8 +10,8 @@ public class ImagesResponse {
 		return images;
 	}
 
-	public void setImages(List<Image> images) {
+	public void setImages(final List<Image> images) {
 		this.images = images;
 	}
-	
+
 }

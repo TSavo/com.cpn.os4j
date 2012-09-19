@@ -7,11 +7,11 @@ public class ServerNameConfiguration implements ServerConfiguration {
 	 */
 	private static final long serialVersionUID = 5701996450907355403L;
 	String name;
-	
+
 	public ServerNameConfiguration() {
 	}
 
-	public ServerNameConfiguration(String aName) {
+	public ServerNameConfiguration(final String aName) {
 		setName(aName);
 	}
 
@@ -19,8 +19,8 @@ public class ServerNameConfiguration implements ServerConfiguration {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
-	
+
 }

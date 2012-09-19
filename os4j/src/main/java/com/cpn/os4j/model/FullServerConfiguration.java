@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-
 public class FullServerConfiguration implements Serializable, ServerConfiguration {
 
 	private static final long serialVersionUID = -5963753281735130626L;
@@ -25,7 +24,11 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 	public FullServerConfiguration() {
 	}
 
-	public FullServerConfiguration(String aName, String anIpAddress, String anImageRef, String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality, String aKeyName, String aUserData) {
+	public FullServerConfiguration(final String aName, final IPAddress anIpAddress, final Image anImage, final Flavor aFlavor, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData) {
+		this(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality, aKeyName, aUserData);
+	}
+
+	public FullServerConfiguration(final String aName, final String anIpAddress, final String anImageRef, final String aFlavorRef, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData) {
 		name = aName;
 		imageRef = anImageRef;
 		flavorRef = aFlavorRef;
@@ -36,56 +39,52 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 		userData = aUserData;
 	}
 
-	public FullServerConfiguration(String aName, IPAddress anIpAddress, Image anImage, Flavor aFlavor, Map<String, String> someMetadata, List<SerializedFile> aPersonality, String aKeyName, String aUserData) {
-		this(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality, aKeyName, aUserData);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getImageRef() {
-		return imageRef;
-	}
-
-	public void setImageRef(String imageRef) {
-		this.imageRef = imageRef;
+	public String getAccessIPv4() {
+		return accessIPv4;
 	}
 
 	public String getFlavorRef() {
 		return flavorRef;
 	}
 
-	public void setFlavorRef(String flavorRef) {
-		this.flavorRef = flavorRef;
+	public String getImageRef() {
+		return imageRef;
 	}
 
 	public Map<String, String> getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
+	public String getName() {
+		return name;
 	}
 
 	public List<SerializedFile> getPersonality() {
 		return personality;
 	}
 
-	public void setPersonality(List<SerializedFile> personality) {
-		this.personality = personality;
-	}
-
-	public String getAccessIPv4() {
-		return accessIPv4;
-	}
-
-	public void setAccessIPv4(String accessIPv4) {
+	public void setAccessIPv4(final String accessIPv4) {
 		this.accessIPv4 = accessIPv4;
+	}
+
+	public void setFlavorRef(final String flavorRef) {
+		this.flavorRef = flavorRef;
+	}
+
+	public void setImageRef(final String imageRef) {
+		this.imageRef = imageRef;
+	}
+
+	public void setMetadata(final Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public void setPersonality(final List<SerializedFile> personality) {
+		this.personality = personality;
 	}
 
 }
