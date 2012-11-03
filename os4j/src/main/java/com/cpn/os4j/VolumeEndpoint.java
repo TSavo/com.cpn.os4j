@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cpn.os4j.command.HttpHeaderDelegate;
 import com.cpn.os4j.command.RestCommand;
 import com.cpn.os4j.model.Token;
 import com.cpn.os4j.model.Volume;
@@ -15,12 +16,13 @@ public class VolumeEndpoint implements Serializable {
 	private static final long serialVersionUID = -1493848236703532753L;
 	String serverUrl;
 	Token token;
+	HttpHeaderDelegate headerDelegate;
 
 	public VolumeEndpoint(final String aServerUrl, final Token aToken) {
 		super();
 		token = aToken;
 		serverUrl = aServerUrl;
-
+		headerDelegate=new CommonHttpHeaderDelegate(aToken);
 	}
 
 	public Volume createVolume(final String aName, final String aDescription, final long aSize, final Map<String, String> someMetadata, final String anAvilabilityZone) {
@@ -36,6 +38,7 @@ public class VolumeEndpoint implements Serializable {
 
 	public Volume createVolume(final Volume aVolume) {
 		final RestCommand<Map<String, Volume>, VolumeResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes");
 		final Map<String, Volume> map = new HashMap<>();
 		map.put("volume", aVolume);
@@ -46,6 +49,7 @@ public class VolumeEndpoint implements Serializable {
 
 	public void deleteVolume(final String aVolumeId) {
 		final RestCommand<String, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes/" + aVolumeId);
 		command.delete();
 	}
@@ -68,6 +72,7 @@ public class VolumeEndpoint implements Serializable {
 
 	public Volume getVolume(final String anId) {
 		final RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes/" + anId);
 		command.setResponseModel(VolumeResponse.class);
 		return command.get().getVolume();
@@ -75,6 +80,7 @@ public class VolumeEndpoint implements Serializable {
 
 	public List<Volume> listVolumes() {
 		final RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes");
 		command.setResponseModel(VolumeResponse.class);
 		return command.get().getVolumes();

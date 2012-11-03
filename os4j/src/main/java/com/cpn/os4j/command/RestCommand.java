@@ -3,7 +3,6 @@ package com.cpn.os4j.command;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import com.cpn.os4j.model.Token;
@@ -14,13 +13,14 @@ public class RestCommand<Request, Response> {
 	private String path;
 	private Request requestModel;
 	private Class<Response> responseModel;
-
+	private HttpHeaderDelegate headerDelegate;
 	private final Token token;
 
 	public RestCommand(final Token aToken) {
 		token = aToken;
 	}
 
+	
 	public void delete() {
 		if (getRequestModel() == null) {
 			RestCommand.restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<String>(getHttpHeaders()), null);
@@ -34,10 +34,7 @@ public class RestCommand<Request, Response> {
 	}
 
 	public HttpHeaders getHttpHeaders() {
-		final HttpHeaders headers = new HttpHeaders();
-		headers.set("X-Auth-Token", token.getId());
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		return headers;
+		return headerDelegate.getHttpHeaders();
 	}
 
 	public String getPath() {
@@ -72,4 +69,13 @@ public class RestCommand<Request, Response> {
 		this.responseModel = responseModel;
 	}
 
+	public HttpHeaderDelegate getHeaderDelegate() {
+		return headerDelegate;
+	}
+
+	public void setHeaderDelegate(HttpHeaderDelegate headerDelegate) {
+		this.headerDelegate = headerDelegate;
+	}
+
+	
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cpn.logging.Logged;
+import com.cpn.os4j.command.HttpHeaderDelegate;
 import com.cpn.os4j.command.RestCommand;
 import com.cpn.os4j.model.Flavor;
 import com.cpn.os4j.model.FlavorsResponse;
@@ -36,17 +37,18 @@ public class ComputeEndpoint implements Serializable {
 
 	String serverUrl;
 	Token token;
-
+	HttpHeaderDelegate headerDelegate;
 	public ComputeEndpoint(final String aServerUrl, final Token aToken) {
 		super();
 		token = aToken;
 		serverUrl = aServerUrl;
-
+		headerDelegate=new CommonHttpHeaderDelegate(aToken);
 	}
 
 	@Logged
 	public IPAddress allocateIPAddress(final IPAddressPool aPool) {
 		final RestCommand<Map<String, String>, IPAddressResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/os-floating-ips");
 		command.setResponseModel(IPAddressResponse.class);
 		final Map<String, String> args = new HashMap<>();
@@ -61,6 +63,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public Server associateIp(final String aServerId, final String anIpAddress) {
 		final RestCommand<Map<String, Map<String, String>>, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId + "/action");
 		final Map<String, Map<String, String>> request = new HashMap<>();
 		final Map<String, String> ip = new HashMap<>();
@@ -77,6 +80,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public VolumeAttachment attachVolume(final String aServerId, final String aVolumeId, final String aDevice) {
 		final RestCommand<Map<String, VolumeAttachment>, VolumeAttachmentResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId + "/os-volume_attachments");
 		command.setResponseModel(VolumeAttachmentResponse.class);
 		final Map<String, VolumeAttachment> args = new HashMap<>();
@@ -101,6 +105,7 @@ public class ComputeEndpoint implements Serializable {
 		}
 
 		final RestCommand<Map<String, Object>, ServerResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers");
 		Map<String, Object> map = new HashMap<>();
 		map.put("server", new FullServerConfiguration(aName, anIpAddress, anImageRef, aFlavorRef, someMetadata, aPersonality, aKeyName, aUserData));
@@ -111,6 +116,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public void deallocateIpAddress(final int anId) {
 		final RestCommand<String, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/os-floating-ips/" + anId);
 		command.delete();
 	}
@@ -121,12 +127,14 @@ public class ComputeEndpoint implements Serializable {
 
 	public void deleteServer(final String anId) {
 		final RestCommand<String, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + anId);
 		command.delete();
 	}
 
 	public void suspendServer(final String anId) {
 		final RestCommand<Map<String, String>, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + anId + "/action");
 		Map<String, String> map = new HashMap<>();
 		map.put("suspend", "true");
@@ -140,6 +148,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public void resumeServer(String anId) {
 		final RestCommand<Map<String, String>, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + anId + "/action");
 		Map<String, String> map = new HashMap<>();
 		map.put("resume", "true");
@@ -153,6 +162,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public void pauseServer(final String anId) {
 		final RestCommand<Map<String, String>, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + anId + "/action");
 		Map<String, String> map = new HashMap<>();
 		map.put("pause", "true");
@@ -166,6 +176,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public void unpauseServer(String anId) {
 		final RestCommand<Map<String, String>, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + anId + "/action");
 		Map<String, String> map = new HashMap<>();
 		map.put("unpause", "true");
@@ -179,6 +190,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public IPAddress describeAddress(final int anId) {
 		final RestCommand<String, IPAddressResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/os-floating-ips/" + anId);
 		command.setResponseModel(IPAddressResponse.class);
 		return command.get().getIpAddress();
@@ -190,6 +202,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public void detachVolume(final String aServerId, final String aVolumeAttachmentId) {
 		final RestCommand<String, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId + "/os-volume_attachments/" + aVolumeAttachmentId);
 		command.delete();
 	}
@@ -210,6 +223,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public Server getServerDetails(final String aServerId) {
 		final RestCommand<String, ServerResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId);
 		command.setResponseModel(ServerResponse.class);
 		return command.get().getServer().setComputeEndpoint(this);
@@ -229,6 +243,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public List<IPAddress> listAddresses() {
 		final RestCommand<String, IPAddressResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/os-floating-ips");
 		command.setResponseModel(IPAddressResponse.class);
 		return command.get().getIpAddresses();
@@ -236,6 +251,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public List<Flavor> listFlavors() {
 		final RestCommand<String, FlavorsResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/flavors/detail");
 		command.setResponseModel(FlavorsResponse.class);
 		return command.get().getFlavors();
@@ -243,14 +259,15 @@ public class ComputeEndpoint implements Serializable {
 
 	public List<Image> listImages() {
 		final RestCommand<String, ImagesResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/images/detail");
 		command.setResponseModel(ImagesResponse.class);
 		return command.get().getImages();
 	}
 
 	public List<KeyPair> listKeyPairs() {
-
 		final RestCommand<String, KeyPairResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/os-keypairs");
 		command.setResponseModel(KeyPairResponse.class);
 		return command.get().getKeyPairList();
@@ -259,6 +276,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public List<IPAddressPool> listPools() {
 		final RestCommand<String, IPAddressResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/os-floating-ip-pools");
 		command.setResponseModel(IPAddressResponse.class);
 		final List<IPAddressPool> pools = command.get().getPools();
@@ -270,6 +288,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public List<Server> listServers() {
 		final RestCommand<String, ServersResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/detail");
 		command.setResponseModel(ServersResponse.class);
 		final List<Server> servers = command.get().getServers();
@@ -285,6 +304,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public List<VolumeAttachment> listVolumeAttachments(final String aServerId) {
 		final RestCommand<String, VolumeAttachmentResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId + "/os-volume_attachments");
 		command.setResponseModel(VolumeAttachmentResponse.class);
 		return command.get().getVolumeAttachments();
@@ -296,6 +316,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public Server rebootServer(final String aServerId, final boolean aHard) {
 		final RestCommand<RebootRequest, String> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId + "/action");
 		command.setRequestModel(new RebootRequest(aHard ? RebootRequest.HARD : RebootRequest.SOFT));
 		command.post();
@@ -308,6 +329,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public Server renameServer(final String aServerId, final String aName) {
 		final RestCommand<Map<String, Object>, ServerResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId);
 		final ServerNameConfiguration config = new ServerNameConfiguration();
 		config.setName(aName);
@@ -320,6 +342,7 @@ public class ComputeEndpoint implements Serializable {
 
 	public Server setIpAddress(final String aServerId, final String anIPAddress) {
 		final RestCommand<Map<String, Object>, ServerResponse> command = new RestCommand<>(token);
+		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/servers/" + aServerId);
 		final ServerIPAddressConfiguration config = new ServerIPAddressConfiguration();
 		config.setAccessIPv4(anIPAddress);

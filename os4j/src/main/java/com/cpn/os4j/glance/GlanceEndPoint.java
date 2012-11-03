@@ -11,26 +11,38 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectReader;
 import org.springframework.web.client.RestTemplate;
 
+import com.cpn.os4j.model.Token;
+
 public class GlanceEndPoint {
 
-	private static String url = "http://archive:9292/v1/images";
+	private String url = "http://localhost:9292";
+	private Token token;
+
+	public Token getToken() {
+		return token;
+	}
+
+	public void setToken(Token token) {
+		this.token = token;
+	}
 
 	static HttpClient client = new HttpClient();
 
-	public static List<GlanceImage> listImages() {
+	public List<GlanceImage> listImages() {
 		final RestTemplate template = new RestTemplate();
-		return template.getForEntity(GlanceEndPoint.url, GlanceImageListResponse.class).getBody().getImages();
+		return template.getForEntity(url, GlanceImageListResponse.class).getBody().getImages();
 	}
 
-	public static GlanceImage upload(final String aName, final InputStream stream, final long length) {
+	public GlanceImage upload(final String aName, final InputStream stream, final long length) {
 		// RestTemplate template = new RestTemplate();
 		// template.postForEntity(url, new InputStreamEntity(stream, length),
 		// GlanceImageResponse.class).getBody().getImage();
-		final PostMethod method = new PostMethod(GlanceEndPoint.url);
+		final PostMethod method = new PostMethod(url+ "/v1/images");
 		try {
 			method.setRequestEntity(new InputStreamRequestEntity(stream, length, "application/octet-stream"));
 			method.setContentChunked(false);
 			method.addRequestHeader("x-image-meta-name", aName);
+			method.addRequestHeader("X-Auth-Token", token.getId());
 			method.addRequestHeader("content-type", "application/octet-stream");
 			GlanceEndPoint.client.executeMethod(method);
 			final ObjectMapper mapper = new ObjectMapper();
@@ -43,7 +55,8 @@ public class GlanceEndPoint {
 		}
 	}
 
-	public GlanceEndPoint(final String aUrl) {
-		GlanceEndPoint.url = aUrl;
+	public GlanceEndPoint(final String aUrl, Token aToken) {
+		url = aUrl;
+		token = aToken;
 	}
 }
