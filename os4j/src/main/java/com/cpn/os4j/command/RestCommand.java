@@ -1,36 +1,48 @@
 package com.cpn.os4j.command;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import com.cpn.os4j.NoAuthHeaderDelegate;
 import com.cpn.os4j.model.Token;
 
 public class RestCommand<Request, Response> {
 
-	private static final RestTemplate restTemplate = new RestTemplate();
+	private RestTemplate restTemplate;// = new RestTemplate();
 	private String path;
 	private Request requestModel;
 	private Class<Response> responseModel;
-	private HttpHeaderDelegate headerDelegate;
-	private final Token token;
+	private HttpHeaderDelegate headerDelegate=new NoAuthHeaderDelegate();
 
-	public RestCommand(final Token aToken) {
-		token = aToken;
+
+	public RestCommand(){
+		restTemplate=new RestTemplate();
 	}
-
+	
+	public RestCommand(final String aUserName, final String aPassword,final String anAuthDomain, int aPort){
+		DefaultHttpClient client = new DefaultHttpClient();
+		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(aUserName, aPassword);
+		client.getCredentialsProvider().setCredentials(new AuthScope(anAuthDomain, aPort, AuthScope.ANY_REALM), credentials);
+		HttpComponentsClientHttpRequestFactory commons = new HttpComponentsClientHttpRequestFactory(client);
+		restTemplate=new RestTemplate(commons);
+	}
 	
 	public void delete() {
 		if (getRequestModel() == null) {
-			RestCommand.restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<String>(getHttpHeaders()), null);
+			restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<String>(getHttpHeaders()), null);
 		} else {
-			RestCommand.restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), null);
+			restTemplate.exchange(getPath(), HttpMethod.DELETE, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), null);
 		}
 	}
 
 	public Response get() {
-		return RestCommand.restTemplate.exchange(getPath(), HttpMethod.GET, new HttpEntity<String>(getHttpHeaders()), getResponseModel()).getBody();
+		return restTemplate.exchange(getPath(), HttpMethod.GET, new HttpEntity<String>(getHttpHeaders()), getResponseModel()).getBody();
 	}
 
 	public HttpHeaders getHttpHeaders() {
@@ -50,11 +62,11 @@ public class RestCommand<Request, Response> {
 	}
 
 	public Response post() {
-		return RestCommand.restTemplate.exchange(getPath(), HttpMethod.POST, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
+		return restTemplate.exchange(getPath(), HttpMethod.POST, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
 	}
 
 	public Response put() {
-		return RestCommand.restTemplate.exchange(getPath(), HttpMethod.PUT, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
+		return restTemplate.exchange(getPath(), HttpMethod.PUT, new HttpEntity<Request>(getRequestModel(), getHttpHeaders()), getResponseModel()).getBody();
 	}
 
 	public void setPath(final String path) {

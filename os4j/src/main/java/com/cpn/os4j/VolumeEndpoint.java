@@ -22,7 +22,7 @@ public class VolumeEndpoint implements Serializable {
 		super();
 		token = aToken;
 		serverUrl = aServerUrl;
-		headerDelegate=new CommonHttpHeaderDelegate(aToken);
+		headerDelegate=new XAuthTokenHeaderDelegate(aToken);
 	}
 
 	public Volume createVolume(final String aName, final String aDescription, final long aSize, final Map<String, String> someMetadata, final String anAvilabilityZone) {
@@ -37,7 +37,7 @@ public class VolumeEndpoint implements Serializable {
 	}
 
 	public Volume createVolume(final Volume aVolume) {
-		final RestCommand<Map<String, Volume>, VolumeResponse> command = new RestCommand<>(token);
+		final RestCommand<Map<String, Volume>, VolumeResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes");
 		final Map<String, Volume> map = new HashMap<>();
@@ -48,7 +48,7 @@ public class VolumeEndpoint implements Serializable {
 	}
 
 	public void deleteVolume(final String aVolumeId) {
-		final RestCommand<String, String> command = new RestCommand<>(token);
+		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes/" + aVolumeId);
 		command.delete();
@@ -71,7 +71,7 @@ public class VolumeEndpoint implements Serializable {
 	}
 
 	public Volume getVolume(final String anId) {
-		final RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
+		final RestCommand<String, VolumeResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes/" + anId);
 		command.setResponseModel(VolumeResponse.class);
@@ -79,7 +79,7 @@ public class VolumeEndpoint implements Serializable {
 	}
 
 	public List<Volume> listVolumes() {
-		final RestCommand<String, VolumeResponse> command = new RestCommand<>(token);
+		final RestCommand<String, VolumeResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/volumes");
 		command.setResponseModel(VolumeResponse.class);

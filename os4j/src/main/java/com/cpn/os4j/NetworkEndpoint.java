@@ -17,7 +17,7 @@ public class NetworkEndpoint {
 		super();
 		token = aToken;
 		serverUrl = aServerUrl;
-		headerDelegate=new CommonHttpHeaderDelegate(aToken);
+		headerDelegate=new XAuthTokenHeaderDelegate(aToken);
 	}
 
 	public String getServerUrl() {
@@ -30,7 +30,7 @@ public class NetworkEndpoint {
 
 	
 	public List<Network> listNetworks() {
-		final RestCommand<String, NetworkResponse> command = new RestCommand<>(token);
+		final RestCommand<String, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setPath(getServerUrl() + "/tenants/" + getTenantId() + "/networks/detail");
 		command.setResponseModel(NetworkResponse.class);

@@ -6,11 +6,11 @@ import org.springframework.http.MediaType;
 import com.cpn.os4j.command.HttpHeaderDelegate;
 import com.cpn.os4j.model.Token;
 
-public class CommonHttpHeaderDelegate implements HttpHeaderDelegate {
+public class XAuthTokenHeaderDelegate implements HttpHeaderDelegate {
 
 	private Token token;
 	
-	public CommonHttpHeaderDelegate(Token token){
+	public XAuthTokenHeaderDelegate(Token token){
 		this.token=token;
 	}
 	
