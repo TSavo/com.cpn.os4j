@@ -1,7 +1,8 @@
 package com.cpn.os4j.model;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Flavor extends AbstractOpenStackModel {
 

@@ -3,7 +3,8 @@ package com.cpn.os4j.model;
 import java.io.Serializable;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;;
+
 
 public abstract class AbstractOpenStackModel implements Serializable {
 

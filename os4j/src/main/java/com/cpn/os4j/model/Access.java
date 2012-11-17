@@ -3,12 +3,11 @@ package com.cpn.os4j.model;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import com.cpn.os4j.ComputeEndpoint;
 import com.cpn.os4j.NetworkEndpoint;
 import com.cpn.os4j.VolumeEndpoint;
 import com.cpn.os4j.glance.GlanceEndPoint;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Access {
 	List<EndPointDescription> serviceCatalog;

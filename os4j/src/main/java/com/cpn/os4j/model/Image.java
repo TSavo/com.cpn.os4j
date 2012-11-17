@@ -3,7 +3,8 @@ package com.cpn.os4j.model;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Image extends AbstractOpenStackModel {
 

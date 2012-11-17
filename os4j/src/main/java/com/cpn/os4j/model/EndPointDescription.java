@@ -3,7 +3,9 @@ package com.cpn.os4j.model;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
 
 public class EndPointDescription {
 	List<Map<String, String>> endpoints;

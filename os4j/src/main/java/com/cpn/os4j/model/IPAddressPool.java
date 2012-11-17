@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.cpn.os4j.ComputeEndpoint;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class IPAddressPool {
 

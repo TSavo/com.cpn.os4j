@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class IPAddresses implements Serializable {
 

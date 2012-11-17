@@ -2,7 +2,7 @@ package com.cpn.os4j.model;
 
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class IPAddressResponse {
 

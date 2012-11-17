@@ -3,7 +3,8 @@ package com.cpn.os4j.model;
 import java.io.Serializable;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class IPAddress implements Serializable {
 
