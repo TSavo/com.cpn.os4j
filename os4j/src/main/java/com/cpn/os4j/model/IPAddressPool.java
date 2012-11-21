@@ -16,7 +16,7 @@ public class IPAddressPool {
 	private transient ComputeEndpoint computeEndpoint;
 
 	public IPAddressPool() {
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	public IPAddressPool(final String aName) {

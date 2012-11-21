@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.cpn.logging.Logged;
-import com.cpn.os4j.command.HttpHeaderDelegate;
-import com.cpn.os4j.command.RestCommand;
+import com.cpn.apiomatic.logging.Logged;
+import com.cpn.apiomatic.rest.HttpHeaderDelegate;
+import com.cpn.apiomatic.rest.RestCommand;
 import com.cpn.os4j.model.Flavor;
 import com.cpn.os4j.model.FlavorsResponse;
 import com.cpn.os4j.model.FullServerConfiguration;

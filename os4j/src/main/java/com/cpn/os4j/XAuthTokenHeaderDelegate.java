@@ -3,7 +3,7 @@ package com.cpn.os4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-import com.cpn.os4j.command.HttpHeaderDelegate;
+import com.cpn.apiomatic.rest.HttpHeaderDelegate;
 import com.cpn.os4j.model.Token;
 
 public class XAuthTokenHeaderDelegate implements HttpHeaderDelegate {

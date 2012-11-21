@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.cpn.os4j.command.HttpHeaderDelegate;
-import com.cpn.os4j.command.RestCommand;
+import com.cpn.apiomatic.rest.HttpHeaderDelegate;
+import com.cpn.apiomatic.rest.RestCommand;
 import com.cpn.os4j.model.Token;
 import com.cpn.os4j.model.Volume;
 import com.cpn.os4j.model.VolumeResponse;

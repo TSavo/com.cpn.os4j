@@ -2,8 +2,8 @@ package com.cpn.os4j;
 
 import java.util.List;
 
-import com.cpn.os4j.command.HttpHeaderDelegate;
-import com.cpn.os4j.command.RestCommand;
+import com.cpn.apiomatic.rest.HttpHeaderDelegate;
+import com.cpn.apiomatic.rest.RestCommand;
 import com.cpn.os4j.model.Network;
 import com.cpn.os4j.model.NetworkResponse;
 import com.cpn.os4j.model.Token;
