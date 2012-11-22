@@ -39,7 +39,7 @@ public class VolumeEndpoint implements Serializable {
 	public Volume createVolume(final Volume aVolume) {
 		final RestCommand<Map<String, Volume>, VolumeResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
-		command.setPath(getServerUrl() + "/volumes");
+		command.setUrl(getServerUrl() + "/volumes");
 		final Map<String, Volume> map = new HashMap<>();
 		map.put("volume", aVolume);
 		command.setRequestModel(map);
@@ -50,7 +50,7 @@ public class VolumeEndpoint implements Serializable {
 	public void deleteVolume(final String aVolumeId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
-		command.setPath(getServerUrl() + "/volumes/" + aVolumeId);
+		command.setUrl(getServerUrl() + "/volumes/" + aVolumeId);
 		command.delete();
 	}
 
@@ -73,7 +73,7 @@ public class VolumeEndpoint implements Serializable {
 	public Volume getVolume(final String anId) {
 		final RestCommand<String, VolumeResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
-		command.setPath(getServerUrl() + "/volumes/" + anId);
+		command.setUrl(getServerUrl() + "/volumes/" + anId);
 		command.setResponseModel(VolumeResponse.class);
 		return command.get().getVolume();
 	}
@@ -81,7 +81,7 @@ public class VolumeEndpoint implements Serializable {
 	public List<Volume> listVolumes() {
 		final RestCommand<String, VolumeResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
-		command.setPath(getServerUrl() + "/volumes");
+		command.setUrl(getServerUrl() + "/volumes");
 		command.setResponseModel(VolumeResponse.class);
 		return command.get().getVolumes();
 	}

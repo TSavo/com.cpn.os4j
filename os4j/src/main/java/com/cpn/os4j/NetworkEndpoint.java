@@ -32,7 +32,7 @@ public class NetworkEndpoint {
 	public List<Network> listNetworks() {
 		final RestCommand<String, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
-		command.setPath(getServerUrl() + "/tenants/" + getTenantId() + "/networks/detail");
+		command.setUrl(getServerUrl() + "/tenants/" + getTenantId() + "/networks/detail");
 		command.setResponseModel(NetworkResponse.class);
 		return command.get().getNetworks();
 	}

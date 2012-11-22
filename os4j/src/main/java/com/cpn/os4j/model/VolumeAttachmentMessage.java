@@ -4,10 +4,21 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class VolumeAttachmentResponse {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
+public class VolumeAttachmentMessage {
 
 	VolumeAttachment volumeAttachment;
 	List<VolumeAttachment> volumeAttachments;
+	
+	public VolumeAttachmentMessage() {
+	}
+
+	public VolumeAttachmentMessage(VolumeAttachment aVolumeAttachment) {
+		volumeAttachment = aVolumeAttachment;
+	}
 
 	public VolumeAttachment getVolumeAttachment() {
 		return volumeAttachment;

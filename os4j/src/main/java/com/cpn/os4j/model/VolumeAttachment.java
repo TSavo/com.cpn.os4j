@@ -14,6 +14,15 @@ public class VolumeAttachment implements Serializable {
 	String volumeId;
 	String device;
 
+	public VolumeAttachment() {
+	}
+
+	public VolumeAttachment(String volumeId, String device) {
+		super();
+		this.volumeId = volumeId;
+		this.device = device;
+	}
+
 	public String getDevice() {
 		return device;
 	}

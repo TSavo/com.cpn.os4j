@@ -7,8 +7,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.cpn.os4j.ComputeEndpoint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(Include.NON_NULL)
 public class Server extends AbstractOpenStackModel {
 
 	private static final long serialVersionUID = 8308147727947512720L;
