@@ -13,6 +13,8 @@ public class Access {
 	List<EndPointDescription> serviceCatalog;
 	Token token;
 	User user;
+	@JsonIgnore
+	Metadata metadata;
 
 	public boolean localhostHack = false;
 
@@ -50,8 +52,8 @@ public class Access {
 					if (urls.get("region").equals(aRegion)) {
 						if (localhostHack) {
 							return new NetworkEndpoint(urls.get(endPointType)
-									.replaceAll("192\\.168\\.31\\.38",
-											"control.dev.intercloud.net"),
+									.replaceAll("10\\.1\\.14\\.33",
+											"10.1.14.33"),
 									token);
 						} else {
 							return new NetworkEndpoint(urls.get(endPointType),
@@ -117,6 +119,14 @@ public class Access {
 
 	public void setUser(final User user) {
 		this.user = user;
+	}
+
+	public Metadata getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
 	}
 
 }
