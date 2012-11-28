@@ -1,5 +1,6 @@
 package com.cpn.os4j;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,8 +12,10 @@ import org.junit.Test;
 import com.cpn.os4j.model.Access;
 import com.cpn.os4j.model.ExternalGatewayInfo;
 import com.cpn.os4j.model.ExternalNetwork;
+import com.cpn.os4j.model.Fixedips;
 import com.cpn.os4j.model.Floatingip;
 import com.cpn.os4j.model.Network;
+import com.cpn.os4j.model.Port;
 import com.cpn.os4j.model.Router;
 import com.cpn.os4j.model.Subnet;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -146,6 +149,21 @@ public class NetworkEndpointTest {
 		}
 	}
 
+	@Test
+	public void testCreatePort() {
+		Port aPort = new Port();
+		aPort.setNetworkId("30eb4a1f-9f50-4029-bdec-3968269595c2");
+		aPort.setAdminStateUp(true);
+		Fixedips someFixedips = new Fixedips();
+		someFixedips.setIpAddress("10.3.19.4");
+		someFixedips.setSubnetId("66d70cee-da58-476d-b0d6-6e8d4fe8e2b9");
+		List<Fixedips> ips = new ArrayList<>();
+		ips.add(someFixedips);
+		aPort.setFixedIps(ips);
+		Port portResponse = nep.createPort(aPort);
+		System.out.println("Allocated floating ip:"+portResponse.getId());
+	}
+
 	private Floatingip testCreateFloatingip(String tenantId, Network netWorkResponse) {
 		Floatingip aFloatingIp = new Floatingip();
 		aFloatingIp.setFloatingNetworkId(netWorkResponse.getId());
@@ -224,7 +242,7 @@ public class NetworkEndpointTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testListFloatingips() {
 		try{
 			List<Floatingip> someListFloatingips = nep.listFloatingips();

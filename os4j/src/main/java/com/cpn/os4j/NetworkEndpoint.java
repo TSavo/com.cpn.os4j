@@ -13,6 +13,8 @@ import com.cpn.os4j.model.FloatingIpResponse;
 import com.cpn.os4j.model.Floatingip;
 import com.cpn.os4j.model.Network;
 import com.cpn.os4j.model.NetworkResponse;
+import com.cpn.os4j.model.Port;
+import com.cpn.os4j.model.PortResponse;
 import com.cpn.os4j.model.Router;
 import com.cpn.os4j.model.RouterResponse;
 import com.cpn.os4j.model.Subnet;
@@ -218,4 +220,14 @@ public class NetworkEndpoint {
 		return command.get().getFloatingips();
 	}
 	
+	public Port createPort(Port aPort){
+		final RestCommand<Map<String, Port>, PortResponse> command = new RestCommand<>();
+		command.setHeaderDelegate(headerDelegate);
+		command.setUrl(getServerUrl() + "v2.0/ports.json");
+		final Map<String, Port> args = new HashMap<>();
+		args.put("port", aPort);
+		command.setRequestModel(args);
+		command.setResponseModel(PortResponse.class);
+		return command.post().getPort();
+	}
 }
