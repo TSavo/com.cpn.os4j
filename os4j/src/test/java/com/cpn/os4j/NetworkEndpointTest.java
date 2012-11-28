@@ -50,10 +50,7 @@ public class NetworkEndpointTest {
 		try{
 			List<Network> someListNetwork = nep.listNetworks();
 			System.out.println("List of Networks");
-			for (Iterator iterator = someListNetwork.iterator(); iterator.hasNext();) {
-				Network network = (Network) iterator.next();
-				mapper.writeValue(System.out,network);
-			}
+			mapper.writeValue(System.out,someListNetwork);
 		}catch(Exception e){
 			Assert.fail("Exception occured while listing network:" + e);
 		}
@@ -242,7 +239,7 @@ public class NetworkEndpointTest {
 		}
 	}
 
-	//@Test
+	@Test
 	public void testListFloatingips() {
 		try{
 			List<Floatingip> someListFloatingips = nep.listFloatingips();
@@ -250,6 +247,17 @@ public class NetworkEndpointTest {
 			mapper.writeValue(System.out, someListFloatingips);
 		}catch(Exception e){
 			Assert.fail("Exception occured while listing floatingips:" + e);
+		}
+	}
+	
+	@Test
+	public void testListPorts() {
+		try{
+			List<Port> someListPorts = nep.listPorts();
+			System.out.println("List of ports");
+			mapper.writeValue(System.out, someListPorts);
+		}catch(Exception e){
+			Assert.fail("Exception occured while listing ports:" + e);
 		}
 	}
 }

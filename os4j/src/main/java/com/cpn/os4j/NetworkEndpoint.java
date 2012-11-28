@@ -50,7 +50,7 @@ public class NetworkEndpoint {
 		return command.get().getNetworks();
 	}
 	
-	public Network createNetwork(Network aNetwork){
+	public Network createNetwork(final Network aNetwork){
 		final RestCommand<Map<String, Network>, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/networks.json");
@@ -61,7 +61,7 @@ public class NetworkEndpoint {
 		return command.post().getNetwork();
 	}
 	
-	public Network createExtNetwork(ExternalNetwork anExternalNetwork){
+	public Network createExtNetwork(final ExternalNetwork anExternalNetwork){
 		final RestCommand<Map<String, ExternalNetwork>, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/networks.json");
@@ -72,14 +72,14 @@ public class NetworkEndpoint {
 		return command.post().getNetwork();
 	}
 	
-	public void deleteNetwork(String anId) {
+	public void deleteNetwork(final String anId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/networks/" + anId + ".json");
 		command.delete();
 	}
 	
-	public Subnet createSubnet(Subnet aSubnet){
+	public Subnet createSubnet(final Subnet aSubnet){
 		final RestCommand<Map<String, Subnet>, SubnetResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/subnets.json");
@@ -90,7 +90,7 @@ public class NetworkEndpoint {
 		return command.post().getSubnet();
 	}
 	
-	public Subnet getSubnet(String anId){
+	public Subnet getSubnet(final String anId){
 		final RestCommand<String, SubnetResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/subnets/"+ anId +".json");
@@ -98,14 +98,14 @@ public class NetworkEndpoint {
 		return command.get().getSubnet();
 	}
 	
-	public void deleteSubnet(String anId) {
+	public void deleteSubnet(final String anId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/subnets/" + anId + ".json");
 		command.delete();
 	}
 	
-	public Router createRouter(Router aRouter){
+	public Router createRouter(final Router aRouter){
 		final RestCommand<Map<String, Router>, RouterResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/routers.json");
@@ -124,14 +124,14 @@ public class NetworkEndpoint {
 		return command.get().getRouters();
 	}
 	
-	public void deleteRouter(String anId) {
+	public void deleteRouter(final String anId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/routers/" + anId + ".json");
 		command.delete();
 	}
 	
-	public String addRouterToSubnet(String aRouterId, String aSubnetId){
+	public String addRouterToSubnet(final String aRouterId, final String aSubnetId){
 		final RestCommand<Map<String, String>, AddRouterResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/routers/" + aRouterId + "/add_router_interface.json");
@@ -142,7 +142,7 @@ public class NetworkEndpoint {
 		return command.put().getPortId();
 	}
 	
-	public List<String> removeRouterToSubnet(String aRouterId, String aSubnetId){
+	public List<String> removeRouterToSubnet(final String aRouterId, final String aSubnetId){
 		final RestCommand<Map<String, String>, List<String>> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/routers/" + aRouterId + "/remove_router_interface.json");
@@ -152,7 +152,7 @@ public class NetworkEndpoint {
 		return command.put();
 	}
 	
-	public Router setRouterToExtNetwork(String aRouterId, Router aRouter){
+	public Router setRouterToExtNetwork(final String aRouterId,final Router aRouter){
 		final RestCommand<Map<String, Router>, RouterResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/routers/" + aRouterId +".json");
@@ -163,7 +163,7 @@ public class NetworkEndpoint {
 		return command.put().getRouter();
 	}
 	
-	public Router deleteRouterGateway(Router aRouter){
+	public Router deleteRouterGateway(final Router aRouter){
 		final RestCommand<Map<String, Router>, RouterResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/routers/" + aRouter.getId() +".json");
@@ -174,7 +174,7 @@ public class NetworkEndpoint {
 		return command.put().getRouter();
 	}
 	
-	public Floatingip allocateFloatingIp(Floatingip aFloatingIp){
+	public Floatingip allocateFloatingIp(final Floatingip aFloatingIp){
 		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/floatingips.json");
@@ -185,7 +185,7 @@ public class NetworkEndpoint {
 		return command.post().getFloatingip();
 	}
 	
-	public Floatingip associateFloatingIp(String aFloatingId, Floatingip aFloatingIp){
+	public Floatingip associateFloatingIp(final String aFloatingId, final Floatingip aFloatingIp){
 		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/floatingips/" + aFloatingId +".json");
@@ -196,7 +196,7 @@ public class NetworkEndpoint {
 		return command.put().getFloatingip();
 	}
 	
-	public Floatingip disAssociateFloatingIp(String aFloatingId, Floatingip aFloatingIp){
+	public Floatingip disAssociateFloatingIp(final String aFloatingId,final Floatingip aFloatingIp){
 		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/floatingips/" + aFloatingId +".json");
@@ -206,7 +206,7 @@ public class NetworkEndpoint {
 		command.setResponseModel(FloatingIpResponse.class);
 		return command.put().getFloatingip();
 	}
-	public void deleteFloatingip(String anId) {
+	public void deleteFloatingip(final String anId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/floatingips/" + anId + ".json");
@@ -220,7 +220,7 @@ public class NetworkEndpoint {
 		return command.get().getFloatingips();
 	}
 	
-	public Port createPort(Port aPort){
+	public Port createPort(final Port aPort){
 		final RestCommand<Map<String, Port>, PortResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/ports.json");
@@ -229,5 +229,13 @@ public class NetworkEndpoint {
 		command.setRequestModel(args);
 		command.setResponseModel(PortResponse.class);
 		return command.post().getPort();
+	}
+	
+	public List<Port> listPorts() {
+		final RestCommand<String, PortResponse> command = new RestCommand<>();
+		command.setHeaderDelegate(headerDelegate);
+		command.setUrl(getServerUrl() + "v2.0/ports.json");
+		command.setResponseModel(PortResponse.class);
+		return command.get().getSomePort();
 	}
 }

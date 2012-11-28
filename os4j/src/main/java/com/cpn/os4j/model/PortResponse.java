@@ -13,7 +13,7 @@ public class PortResponse {
 		return aPort;
 	}
 
-	public void setPort(Port aPort) {
+	public void setPort(final Port aPort) {
 		this.aPort = aPort;
 	}
 
@@ -21,7 +21,7 @@ public class PortResponse {
 		return somePort;
 	}
 
-	public void setSomePort(List<Port> somePort) {
+	public void setSomePort(final List<Port> somePort) {
 		this.somePort = somePort;
 	}
 
