@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cpn.apiomatic.annotation.Documentation;
 import com.cpn.apiomatic.rest.HttpHeaderDelegate;
 import com.cpn.apiomatic.rest.RestCommand;
 import com.cpn.os4j.model.AddRouterResponse;
@@ -42,6 +43,7 @@ public class NetworkEndpoint {
 		return token.getTenant().getId();
 	}
 	
+	@Documentation("retrieves the network lists")
 	public List<Network> listNetworks() {
 		final RestCommand<String, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -50,6 +52,7 @@ public class NetworkEndpoint {
 		return command.get().getNetworks();
 	}
 	
+	@Documentation("creates the internal network. see the testCreateNetwork junit for data setup")
 	public Network createNetwork(final Network aNetwork){
 		final RestCommand<Map<String, Network>, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -61,6 +64,7 @@ public class NetworkEndpoint {
 		return command.post().getNetwork();
 	}
 	
+	@Documentation("creates the internal network. see the testExtCreateNetwork junit for data setup")
 	public Network createExtNetwork(final ExternalNetwork anExternalNetwork){
 		final RestCommand<Map<String, ExternalNetwork>, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -79,6 +83,7 @@ public class NetworkEndpoint {
 		command.delete();
 	}
 	
+	@Documentation("creates the subnet. see the testCreateSubnet junit for data setup")
 	public Subnet createSubnet(final Subnet aSubnet){
 		final RestCommand<Map<String, Subnet>, SubnetResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -105,6 +110,7 @@ public class NetworkEndpoint {
 		command.delete();
 	}
 	
+	@Documentation("creates the router. see the testCreateSubnet junit for data setup")
 	public Router createRouter(final Router aRouter){
 		final RestCommand<Map<String, Router>, RouterResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -131,6 +137,7 @@ public class NetworkEndpoint {
 		command.delete();
 	}
 	
+	@Documentation("adds the router to the subnet. see the testAddRouterToSubnet for data setup")
 	public String addRouterToSubnet(final String aRouterId, final String aSubnetId){
 		final RestCommand<Map<String, String>, AddRouterResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -152,6 +159,7 @@ public class NetworkEndpoint {
 		return command.put();
 	}
 	
+	@Documentation("sets the external gateway to the router. see the testSetExtGateway for data setup")
 	public Router setRouterToExtNetwork(final String aRouterId,final Router aRouter){
 		final RestCommand<Map<String, Router>, RouterResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -174,6 +182,7 @@ public class NetworkEndpoint {
 		return command.put().getRouter();
 	}
 	
+	@Documentation("allocates the floating ip to the network. see the testCreateFloatingip for data setup")
 	public Floatingip allocateFloatingIp(final Floatingip aFloatingIp){
 		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -185,6 +194,7 @@ public class NetworkEndpoint {
 		return command.post().getFloatingip();
 	}
 	
+	@Documentation("associates the floating ip with port. see the testAssociateFloatingIp for data setup")
 	public Floatingip associateFloatingIp(final String aFloatingId, final Floatingip aFloatingIp){
 		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -196,6 +206,7 @@ public class NetworkEndpoint {
 		return command.put().getFloatingip();
 	}
 	
+	@Documentation("removes the port from the floating ip.")
 	public Floatingip disAssociateFloatingIp(final String aFloatingId,final Floatingip aFloatingIp){
 		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -220,6 +231,7 @@ public class NetworkEndpoint {
 		return command.get().getFloatingips();
 	}
 	
+	@Documentation("create  the port. see the testCreatePort for data setup")
 	public Port createPort(final Port aPort){
 		final RestCommand<Map<String, Port>, PortResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
