@@ -161,6 +161,17 @@ public class NetworkEndpoint {
 		return command.put().getRouter();
 	}
 	
+	public Router deleteRouterGateway(Router aRouter){
+		final RestCommand<Map<String, Router>, RouterResponse> command = new RestCommand<>();
+		command.setHeaderDelegate(headerDelegate);
+		command.setUrl(getServerUrl() + "v2.0/routers/" + aRouter.getId() +".json");
+		final Map<String, Router> args = new HashMap<>();
+		args.put("router", aRouter);
+		command.setRequestModel(args);
+		command.setResponseModel(RouterResponse.class);
+		return command.put().getRouter();
+	}
+	
 	public Floatingip allocateFloatingIp(Floatingip aFloatingIp){
 		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
@@ -183,6 +194,16 @@ public class NetworkEndpoint {
 		return command.put().getFloatingip();
 	}
 	
+	public Floatingip disAssociateFloatingIp(String aFloatingId, Floatingip aFloatingIp){
+		final RestCommand<Map<String, Floatingip>, FloatingIpResponse> command = new RestCommand<>();
+		command.setHeaderDelegate(headerDelegate);
+		command.setUrl(getServerUrl() + "v2.0/floatingips/" + aFloatingId +".json");
+		final Map<String, Floatingip> args = new HashMap<>();
+		args.put("floatingip", aFloatingIp);
+		command.setRequestModel(args);
+		command.setResponseModel(FloatingIpResponse.class);
+		return command.put().getFloatingip();
+	}
 	public void deleteFloatingip(String anId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
