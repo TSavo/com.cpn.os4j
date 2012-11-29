@@ -29,7 +29,8 @@ public class NetworkEndpointTest {
 
 	@Before
 	public void init(){
-		creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("admin", "admin_pass"), "admin"));
+		//creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("admin", "admin_pass"), "admin"));
+		creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("user_one", "user_one"), "project_one"));
 		ep = new ServiceCatalog("http://10.1.14.33:5000", creds);
 		access = ep.getAccess();
 		access.localhostHack = true;
@@ -132,14 +133,14 @@ public class NetworkEndpointTest {
 		String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
 		Network netWorkResponse = testCreateExtNetwork(tenantId);
 		System.out.println("External Network created with an Id:"+netWorkResponse.getId());
-		/*Subnet subnetResponse = testCreateExtSubnet(tenantId, netWorkResponse);
+		Subnet subnetResponse = testCreateExtSubnet(tenantId, netWorkResponse);
 		System.out.println("Subnet created with an Id:"+subnetResponse.getId());
 		Router routerResponse = testCreateExtRouter(tenantId);
 		System.out.println("Router created with an Id:"+routerResponse.getId());
 		Router anExtRouterResponse = testSetExtGateway(netWorkResponse, routerResponse);
 		System.out.println("Set router to external net for router Id:"+anExtRouterResponse.getId());
 		Floatingip aFloatingIpResponse = testCreateFloatingip(tenantId, netWorkResponse);
-		System.out.println("Allocated floating ip:"+aFloatingIpResponse.getId());*/
+		System.out.println("Allocated floating ip:"+aFloatingIpResponse.getId());
 		}catch(Exception e){
 			System.out.println("Exception occured while creating an external network");
 		}
@@ -147,17 +148,20 @@ public class NetworkEndpointTest {
 
 	@Test
 	public void testCreatePort() {
+		String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
+		//Network networkResponse = testCreateExtNetwork(tenantId);
 		Port aPort = new Port();
-		aPort.setNetworkId("30eb4a1f-9f50-4029-bdec-3968269595c2");
+		aPort.setNetworkId("e1d6b1d9-f6a0-4fc7-9e86-2a3a798ba0b7");
 		aPort.setAdminStateUp(true);
+		//Subnet subnetResponse = testCreateExtSubnet(tenantId, networkResponse);
 		Fixedips someFixedips = new Fixedips();
-		someFixedips.setIpAddress("10.3.19.4");
-		someFixedips.setSubnetId("66d70cee-da58-476d-b0d6-6e8d4fe8e2b9");
+		someFixedips.setIpAddress("40.0.0.3");
+		someFixedips.setSubnetId("a437e006-f663-4eca-8342-a9776e02701b");
 		List<Fixedips> ips = new ArrayList<>();
 		ips.add(someFixedips);
 		aPort.setFixedIps(ips);
 		Port portResponse = nep.createPort(aPort);
-		System.out.println("Allocated floating ip:"+portResponse.getId());
+		System.out.println("port created with an id:"+portResponse.getId());
 	}
 
 	private Floatingip testCreateFloatingip(String tenantId, Network netWorkResponse) {
@@ -189,23 +193,23 @@ public class NetworkEndpointTest {
 	private Subnet testCreateExtSubnet(String tenantId, Network netWorkResponse) {
 		Subnet aSubnet = new Subnet();
 		aSubnet.setIpVersion(4);
-		aSubnet.setGatewayIp("10.3.19.1");
+		aSubnet.setGatewayIp("10.3.20.1");
 		aSubnet.setEnableDhcp(false);
 		aSubnet.setNetworkId(netWorkResponse.getId());
 		aSubnet.setTenantId(tenantId);
-		aSubnet.setCidr("10.3.19.0/24");
+		aSubnet.setCidr("10.3.20.0/24");
 		Subnet subnetResponse = nep.createSubnet(aSubnet);
 		return subnetResponse;
 	}
 
 	private Network testCreateExtNetwork(String tenantId) {
 		Network anExtNetwork = new Network();
-		anExtNetwork.setName("net_ext_proj2");
+		anExtNetwork.setName("net_ext_proj3");
 		anExtNetwork.setAdminStateUp(true);
 		anExtNetwork.setNetworkType("vlan");
 		anExtNetwork.setTenantId(tenantId);
 		anExtNetwork.setExternal(true);
-		anExtNetwork.setSegmentationId(12);
+		anExtNetwork.setSegmentationId(14);
 		anExtNetwork.setPhysicalNetwork("physnet1");
 		Network netWorkResponse = nep.createNetwork(anExtNetwork);
 		return netWorkResponse;

@@ -25,6 +25,16 @@ public class Port
     private boolean adminStateUp;
     private String id;
     private final static long serialVersionUID = 3838636331252864045L;
+    private String status;
+    private String name;
+    @JsonProperty("tenant_id")
+    private String tenantId;
+    @JsonProperty("device_owner")
+    private String deviceOwner;
+    @JsonProperty("mac_address")
+    private String macAddress;
+    @JsonProperty("device_id")
+    private String deviceId;
 
     public Port() {
     }
@@ -57,13 +67,63 @@ public class Port
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(final String status) {
+		this.status = status;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(final String tenantId) {
+		this.tenantId = tenantId;
+	}
+
+	public String getDeviceOwner() {
+		return deviceOwner;
+	}
+
+	public void setDeviceOwner(final String deviceOwner) {
+		this.deviceOwner = deviceOwner;
+	}
+
+	public String getMacAddress() {
+		return macAddress;
+	}
+
+	public void setMacAddress(final String macAddress) {
+		this.macAddress = macAddress;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(final String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	@Override
     public String toString() {
-        return new ToStringBuilder(this.getClass()).append("id", id).append("networkId", networkId).append("fixedIps", fixedIps).append("adminStateUp", adminStateUp).toString();
+        return new ToStringBuilder(this.getClass()).append("id", id).append("networkId", networkId).append("fixedIps", fixedIps).append("adminStateUp", adminStateUp)
+        .append("id", id).append("name", name).append("tenantId", tenantId).append("deviceOwner", deviceOwner).
+        append("macAddress", macAddress).append("deviceId", deviceId).toString();
     }
 
 }

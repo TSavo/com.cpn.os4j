@@ -51,16 +51,16 @@ public class EndpointTest {
 	
 	@Test
 	public void testCreateQuantumServer() throws InterruptedException{
-		OpenStackCredentials creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("admin", "admin_pass"), "admin"));
+		OpenStackCredentials creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("user_one", "user_one"), "project_one"));
 		ServiceCatalog ep = new ServiceCatalog("http://10.1.14.33:5000", creds);
 		Access access = ep.getAccess();
 		access.localhostHack = true;
 		List<NetworkInterface> networks = new ArrayList<>();
 		NetworkInterface networkInterface1 = new NetworkInterface();
-		networkInterface1.setPort("01f6aae3-4a55-468d-a7e4-34df505609f4");
+		networkInterface1.setPort("d8d67542-3136-42c0-909b-bbd048f63f7d");
 		networks.add(networkInterface1);
 		NetworkInterface networkInterface2 = new NetworkInterface();
-		networkInterface2.setUuid("6912c85c-ccee-4872-a3ed-4143dd544ec5");
+		networkInterface2.setUuid("201b4517-61bb-4cf3-9672-3d065992b759");
 		networks.add(networkInterface2);
 		ComputeEndpoint cep = access.getQuantumComputeEndpoint("RegionOne", "publicURL");
 		Server serverResponse = cep.createQuantumServer("Test Quantum Server", null, "e2d2d65c-f21b-4e4a-a8fb-05484d11decb", "2", null, null, null, null, 1, 1, networks);
