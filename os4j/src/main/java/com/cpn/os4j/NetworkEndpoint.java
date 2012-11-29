@@ -52,7 +52,7 @@ public class NetworkEndpoint {
 		return command.get().getNetworks();
 	}
 	
-	@Documentation("creates the internal network. see the testCreateNetwork junit for data setup")
+	@Documentation("creates the internal/external network. see the testCreateNetwork/testExtCreateNetwork junit for data setup")
 	public Network createNetwork(final Network aNetwork){
 		final RestCommand<Map<String, Network>, NetworkResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);

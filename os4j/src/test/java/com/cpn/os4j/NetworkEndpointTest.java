@@ -1,7 +1,6 @@
 package com.cpn.os4j;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.After;
@@ -62,11 +61,11 @@ public class NetworkEndpointTest {
 			String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
 			Network netWorkResponse = testCreateNetwork(tenantId);
 			System.out.println("Network created with an Id:"+netWorkResponse.getId());
-			Subnet subnetResponse = testCreateSubnet(tenantId, netWorkResponse);
+			/*Subnet subnetResponse = testCreateSubnet(tenantId, netWorkResponse);
 			System.out.println("Subnet response:"+subnetResponse.getId());
 			Router routerResponse = testCreateRouter(tenantId);
 			String portId = testAddRouterToSubnet(subnetResponse, routerResponse);
-			System.out.println("Add router with portId:"+portId);
+			System.out.println("Add router with portId:"+portId);*/
 		} catch (Exception e) {
 			Assert.fail("Exception occured while creating a network:" + e);
 		}
@@ -100,14 +99,14 @@ public class NetworkEndpointTest {
 
 	private Network testCreateNetwork(String tenantId) {
 		Network aNetwork = new Network();
-		aNetwork.setName("net_internal_proj1");
+		aNetwork.setName("net_internal_proj2");
 		aNetwork.setShared(false);
 		aNetwork.setPhysicalNetwork("physnet1");
 		aNetwork.setAdminStateUp(true);
 		aNetwork.setTenantId(tenantId);
 		aNetwork.setNetworkType("vlan");
 		aNetwork.setExternal(false);
-		aNetwork.setSegmentationId(10);
+		aNetwork.setSegmentationId(11);
 		Network netWorkResponse = nep.createNetwork(aNetwork);
 		return netWorkResponse;
 	}
@@ -133,14 +132,14 @@ public class NetworkEndpointTest {
 		String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
 		Network netWorkResponse = testCreateExtNetwork(tenantId);
 		System.out.println("External Network created with an Id:"+netWorkResponse.getId());
-		Subnet subnetResponse = testCreateExtSubnet(tenantId, netWorkResponse);
+		/*Subnet subnetResponse = testCreateExtSubnet(tenantId, netWorkResponse);
 		System.out.println("Subnet created with an Id:"+subnetResponse.getId());
 		Router routerResponse = testCreateExtRouter(tenantId);
 		System.out.println("Router created with an Id:"+routerResponse.getId());
 		Router anExtRouterResponse = testSetExtGateway(netWorkResponse, routerResponse);
 		System.out.println("Set router to external net for router Id:"+anExtRouterResponse.getId());
 		Floatingip aFloatingIpResponse = testCreateFloatingip(tenantId, netWorkResponse);
-		System.out.println("Allocated floating ip:"+aFloatingIpResponse.getId());
+		System.out.println("Allocated floating ip:"+aFloatingIpResponse.getId());*/
 		}catch(Exception e){
 			System.out.println("Exception occured while creating an external network");
 		}
@@ -200,13 +199,15 @@ public class NetworkEndpointTest {
 	}
 
 	private Network testCreateExtNetwork(String tenantId) {
-		ExternalNetwork anExtNetwork = new ExternalNetwork();
-		anExtNetwork.setName("net_ext_proj1");
+		Network anExtNetwork = new Network();
+		anExtNetwork.setName("net_ext_proj2");
 		anExtNetwork.setAdminStateUp(true);
 		anExtNetwork.setNetworkType("vlan");
 		anExtNetwork.setTenantId(tenantId);
 		anExtNetwork.setExternal(true);
-		Network netWorkResponse = nep.createExtNetwork(anExtNetwork);
+		anExtNetwork.setSegmentationId(12);
+		anExtNetwork.setPhysicalNetwork("physnet1");
+		Network netWorkResponse = nep.createNetwork(anExtNetwork);
 		return netWorkResponse;
 	}
 
