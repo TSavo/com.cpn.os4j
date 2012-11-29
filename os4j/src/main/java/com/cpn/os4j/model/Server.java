@@ -45,7 +45,9 @@ public class Server extends AbstractOpenStackModel {
 	String diskConfig;
 	@JsonProperty("OS-EXT-STS:task_state")
 	String taskState;
-
+	@JsonProperty("security_groups")
+	List<SecurityGroups> securityGroups;
+	
 	@JsonIgnore
 	ComputeEndpoint computeEndpoint;
 
@@ -163,6 +165,14 @@ public class Server extends AbstractOpenStackModel {
 
 	public Map<String, String> getMetadata() {
 		return metadata;
+	}
+
+	public List<SecurityGroups> getSecurityGroups() {
+		return securityGroups;
+	}
+
+	public void setSecurityGroups(final List<SecurityGroups> securityGroups) {
+		this.securityGroups = securityGroups;
 	}
 
 	public String getName() {

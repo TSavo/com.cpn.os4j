@@ -42,6 +42,31 @@ public class Access {
 				"Couldn't find the ComputeEndpoint for region: " + aRegion
 						+ " and type: " + endPointType);
 	}
+	
+	@JsonIgnore
+	public ComputeEndpoint getQuantumComputeEndpoint(final String aRegion,
+			final String endPointType) {
+		for (final EndPointDescription d : serviceCatalog) {
+			if (d.getType().equals("compute")) {
+				for (final Map<String, String> urls : d.getEndpoints()) {
+					if (urls.get("region").equals(aRegion)) {
+						if (localhostHack) {
+							return new ComputeEndpoint(urls.get(endPointType)
+									.replaceAll("10\\.1\\.14\\.33",
+											"10.1.14.33"),
+									token);
+						} else {
+							return new ComputeEndpoint(urls.get(endPointType),
+									token);
+						}
+					}
+				}
+			}
+		}
+		throw new RuntimeException(
+				"Couldn't find the ComputeEndpoint for region: " + aRegion
+						+ " and type: " + endPointType);
+	}
 
 	@JsonIgnore
 	public NetworkEndpoint getNetworkEndpoint(final String aRegion,

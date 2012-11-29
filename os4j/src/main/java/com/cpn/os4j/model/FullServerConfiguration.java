@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(Include.NON_NULL)
 public class FullServerConfiguration implements Serializable, ServerConfiguration {
 
 	private static final long serialVersionUID = -5963753281735130626L;
@@ -17,9 +20,13 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 	String keyName;
 	@JsonProperty("user_data")
 	String userData;
-
+	@JsonProperty("max_count")
+	Integer maxCount;
+	@JsonProperty("min_count")
+	Integer minCount;
 	Map<String, String> metadata;
 	List<SerializedFile> personality;
+	List<NetworkInterface> networks;
 
 	public FullServerConfiguration() {
 	}
@@ -37,6 +44,24 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 		accessIPv4 = anIpAddress;
 		keyName = aKeyName;
 		userData = aUserData;
+	}
+	
+	public FullServerConfiguration(final String aName, final IPAddress anIpAddress, final Image anImage, final Flavor aFlavor, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<NetworkInterface> someNetworks) {
+		this(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality, aKeyName, aUserData, aMaxCount, aMinCount, someNetworks);
+	}
+
+	public FullServerConfiguration(final String aName, final String anIpAddress, final String anImageRef, final String aFlavorRef, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<NetworkInterface> someNetworks) {
+		name = aName;
+		imageRef = anImageRef;
+		flavorRef = aFlavorRef;
+		metadata = someMetadata;
+		personality = aPersonality;
+		accessIPv4 = anIpAddress;
+		keyName = aKeyName;
+		userData = aUserData;
+		maxCount = aMaxCount;
+		minCount = aMinCount;
+		networks = someNetworks;
 	}
 
 	public String getAccessIPv4() {
@@ -85,6 +110,30 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 
 	public void setPersonality(final List<SerializedFile> personality) {
 		this.personality = personality;
+	}
+
+	public Integer getMaxCount() {
+		return maxCount;
+	}
+
+	public void setMaxCount(final Integer maxCount) {
+		this.maxCount = maxCount;
+	}
+
+	public Integer getMinCount() {
+		return minCount;
+	}
+
+	public void setMinCount(final Integer minCount) {
+		this.minCount = minCount;
+	}
+
+	public List<NetworkInterface> getNetworks() {
+		return networks;
+	}
+
+	public void setNetworks(final List<NetworkInterface> networks) {
+		this.networks = networks;
 	}
 
 }

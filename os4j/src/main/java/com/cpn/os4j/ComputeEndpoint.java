@@ -19,6 +19,7 @@ import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.ImagesResponse;
 import com.cpn.os4j.model.KeyPair;
 import com.cpn.os4j.model.KeyPairResponse;
+import com.cpn.os4j.model.NetworkInterface;
 import com.cpn.os4j.model.RebootRequest;
 import com.cpn.os4j.model.SerializedFile;
 import com.cpn.os4j.model.Server;
@@ -316,4 +317,22 @@ public class ComputeEndpoint implements Serializable {
 		return command.put().getServer().setComputeEndpoint(this);
 	}
 
+	public Server createQuantumServer(final String aName, final IPAddress anIpAddress, final Image anImage, final Flavor aFlavor, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<NetworkInterface> someNetworks) {
+		return createQuantumServer(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality, aKeyName, aUserData, aMaxCount, aMinCount, someNetworks);
+	}
+
+	public Server createQuantumServer(final String aName, final String anIpAddress, final String anImageRef, final String aFlavorRef, Map<String, String> someMetadata, List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<NetworkInterface> someNetworks) {
+		someMetadata = null;
+		aPersonality = null;
+		final RestCommand<Map<String, Object>, ServerMessage> command = new RestCommand<>();
+		command.setHeaderDelegate(headerDelegate);
+		command.setUrl(getServerUrl() + "/servers");
+		Map<String, Object> map = new HashMap<>();
+		map.put("server", new FullServerConfiguration(aName, anIpAddress, anImageRef, aFlavorRef, someMetadata, aPersonality, aKeyName, aUserData, aMaxCount, aMinCount, someNetworks));
+		command.setRequestModel(map);
+		command.setResponseModel(ServerMessage.class);
+		return command.post().getServer().setComputeEndpoint(this);
+	}
+
 }
+
