@@ -64,18 +64,6 @@ public class NetworkEndpoint {
 		return command.post().getNetwork();
 	}
 	
-	@Documentation("creates the internal network. see the testExtCreateNetwork junit for data setup")
-	public Network createExtNetwork(final ExternalNetwork anExternalNetwork){
-		final RestCommand<Map<String, ExternalNetwork>, NetworkResponse> command = new RestCommand<>();
-		command.setHeaderDelegate(headerDelegate);
-		command.setUrl(getServerUrl() + "v2.0/networks.json");
-		final Map<String, ExternalNetwork> args = new HashMap<>();
-		args.put("network", anExternalNetwork);
-		command.setRequestModel(args);
-		command.setResponseModel(NetworkResponse.class);
-		return command.post().getNetwork();
-	}
-	
 	public void deleteNetwork(final String anId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
