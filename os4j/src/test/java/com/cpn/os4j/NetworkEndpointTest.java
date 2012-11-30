@@ -29,8 +29,10 @@ public class NetworkEndpointTest {
 
 	@Before
 	public void init(){
-		//creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("admin", "admin_pass"), "admin"));
-		creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("user_one", "user_one"), "project_one"));
+		creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("admin", "admin_pass"), "admin"));
+		//creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("user_one", "user_one"), "project_one"));
+		//creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("user_one", "dev_user"), "dev_tenant"));
+		//ep = new ServiceCatalog("http://control.dev.intercloud.net:5000", creds);
 		ep = new ServiceCatalog("http://10.1.14.33:5000", creds);
 		access = ep.getAccess();
 		access.localhostHack = true;
@@ -59,7 +61,7 @@ public class NetworkEndpointTest {
 	@Test
 	public void testCreateNetwork() {
 		try {
-			String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
+			String tenantId = "0c0022b5a0cb4945a7692198ff89ba46";
 			Network netWorkResponse = testCreateNetwork(tenantId);
 			System.out.println("Network created with an Id:"+netWorkResponse.getId());
 			/*Subnet subnetResponse = testCreateSubnet(tenantId, netWorkResponse);
@@ -77,11 +79,17 @@ public class NetworkEndpointTest {
 		String portId = nep.addRouterToSubnet(routerResponse.getId(), subnetResponse.getId());
 		return portId;
 	}
+	
+	@Test
+	public void  testAddRouterToSubnet() {
+		String portId = nep.addRouterToSubnet("9fa72c38-eb26-4c84-8dc8-fac0595e667b", "66d70cee-da58-476d-b0d6-6e8d4fe8e2b9");
+		System.out.println("PortId:"+portId);
+	}
 
 	private Router testCreateRouter(String tenantId) {
 		Router aRouter = new Router();
 		aRouter.setTenantId(tenantId);
-		aRouter.setName("router_internal_proj1");
+		aRouter.setName("router_internal_proj2");
 		aRouter.setAdminStateUp(true);
 		Router routerResponse = nep.createRouter(aRouter);
 		return routerResponse;
@@ -90,24 +98,25 @@ public class NetworkEndpointTest {
 	private Subnet testCreateSubnet(String tenantId, Network netWorkResponse) {
 		Subnet aSubnet = new Subnet();
 		aSubnet.setIpVersion(4);
-		aSubnet.setGatewayIp("10.3.19.1");
+		aSubnet.setGatewayIp("10.3.24.1");
 		aSubnet.setNetworkId(netWorkResponse.getId());
 		aSubnet.setTenantId(tenantId);
-		aSubnet.setCidr("10.3.19.0/24");
+		aSubnet.setCidr("10.3.24.0/24");
+		aSubnet.setEnableDhcp(false);
 		Subnet subnetResponse = nep.createSubnet(aSubnet);
 		return subnetResponse;
 	}
 
 	private Network testCreateNetwork(String tenantId) {
 		Network aNetwork = new Network();
-		aNetwork.setName("net_internal_proj2");
+		aNetwork.setName("net_internal_proj1");
 		aNetwork.setShared(false);
 		aNetwork.setPhysicalNetwork("physnet1");
 		aNetwork.setAdminStateUp(true);
 		aNetwork.setTenantId(tenantId);
 		aNetwork.setNetworkType("vlan");
 		aNetwork.setExternal(false);
-		aNetwork.setSegmentationId(11);
+		aNetwork.setSegmentationId(1);
 		Network netWorkResponse = nep.createNetwork(aNetwork);
 		return netWorkResponse;
 	}
@@ -151,12 +160,12 @@ public class NetworkEndpointTest {
 		String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
 		//Network networkResponse = testCreateExtNetwork(tenantId);
 		Port aPort = new Port();
-		aPort.setNetworkId("e1d6b1d9-f6a0-4fc7-9e86-2a3a798ba0b7");
+		aPort.setNetworkId("6912c85c-ccee-4872-a3ed-4143dd544ec5");
 		aPort.setAdminStateUp(true);
 		//Subnet subnetResponse = testCreateExtSubnet(tenantId, networkResponse);
 		Fixedips someFixedips = new Fixedips();
-		someFixedips.setIpAddress("40.0.0.3");
-		someFixedips.setSubnetId("a437e006-f663-4eca-8342-a9776e02701b");
+		someFixedips.setIpAddress("20.20.3.20");
+		someFixedips.setSubnetId("3fa19c27-0880-48f7-9c31-8680266cce66");
 		List<Fixedips> ips = new ArrayList<>();
 		ips.add(someFixedips);
 		aPort.setFixedIps(ips);
@@ -181,10 +190,20 @@ public class NetworkEndpointTest {
 		return anExtRouterResponse;
 	}
 
+	@Test
+	public void testSetExtGateway() {
+		ExternalGatewayInfo anExternalGatewayInfo = new ExternalGatewayInfo();
+		anExternalGatewayInfo.setNetworkId("30eb4a1f-9f50-4029-bdec-3968269595c2");
+		Router anExtRouter = new Router();
+		anExtRouter.setExternalGatewayInfo(anExternalGatewayInfo);
+		Router anExtRouterResponse = nep.setRouterToExtNetwork("9fa72c38-eb26-4c84-8dc8-fac0595e667b", anExtRouter);
+		System.out.println("The ext net added to router and generated portId:"+anExtRouterResponse.getId());
+	}
+	
 	private Router testCreateExtRouter(String tenantId) {
 		Router aRouter = new Router();
 		aRouter.setTenantId(tenantId);
-		aRouter.setName("router_ext_proj1");
+		aRouter.setName("router_ext_proj4");
 		aRouter.setAdminStateUp(true);
 		Router routerResponse = nep.createRouter(aRouter);
 		return routerResponse;
@@ -193,23 +212,23 @@ public class NetworkEndpointTest {
 	private Subnet testCreateExtSubnet(String tenantId, Network netWorkResponse) {
 		Subnet aSubnet = new Subnet();
 		aSubnet.setIpVersion(4);
-		aSubnet.setGatewayIp("10.3.20.1");
-		aSubnet.setEnableDhcp(false);
+		aSubnet.setGatewayIp("10.3.22.1");
+		aSubnet.setEnableDhcp(true);
 		aSubnet.setNetworkId(netWorkResponse.getId());
 		aSubnet.setTenantId(tenantId);
-		aSubnet.setCidr("10.3.20.0/24");
+		aSubnet.setCidr("10.3.22.0/24");
 		Subnet subnetResponse = nep.createSubnet(aSubnet);
 		return subnetResponse;
 	}
 
 	private Network testCreateExtNetwork(String tenantId) {
 		Network anExtNetwork = new Network();
-		anExtNetwork.setName("net_ext_proj3");
+		anExtNetwork.setName("net_ext_proj1");
 		anExtNetwork.setAdminStateUp(true);
 		anExtNetwork.setNetworkType("vlan");
 		anExtNetwork.setTenantId(tenantId);
 		anExtNetwork.setExternal(true);
-		anExtNetwork.setSegmentationId(14);
+		anExtNetwork.setSegmentationId(16);
 		anExtNetwork.setPhysicalNetwork("physnet1");
 		Network netWorkResponse = nep.createNetwork(anExtNetwork);
 		return netWorkResponse;
@@ -232,13 +251,18 @@ public class NetworkEndpointTest {
 		}
 	}
 	
-	//@Test 
+	@Test 
 	public void testAssociateFloatingIp() {
 		try{
+			String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
 			Floatingip aFloatingIp = new Floatingip();
-			aFloatingIp.setPortId("581a4925-b380-4f12-8086-fee9df1ebe96");
-			Floatingip aFloatingIpResponse = nep.associateFloatingIp("457ba692-aa13-4d7c-b778-6c6df0116105", aFloatingIp);
-			System.out.println("Allocate floating ip response:"+aFloatingIpResponse.getId());
+			aFloatingIp.setFloatingNetworkId("e299ed53-ebfd-4d1a-9a77-18444e87b1d4");
+			aFloatingIp.setTenantId(tenantId);
+			Floatingip aFloatingIpResponse = nep.allocateFloatingIp(aFloatingIp);
+			Floatingip anFloatingIp = new Floatingip();
+			anFloatingIp.setPortId("0eb41a6c-a4b3-4414-9b69-f8ef5dbbdcfe");
+			Floatingip anFloatingIpResponse = nep.associateFloatingIp(aFloatingIpResponse.getId(), anFloatingIp);
+			System.out.println("associated floating ip to the port id:"+anFloatingIpResponse.getId());
 		}catch(Exception e){
 			Assert.fail("Exception occured while associating floating IP:" + e);
 		}

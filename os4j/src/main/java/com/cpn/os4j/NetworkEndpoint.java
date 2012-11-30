@@ -248,6 +248,6 @@ public class NetworkEndpoint {
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/ports.json");
 		command.setResponseModel(PortResponse.class);
-		return command.get().getSomePort();
+		return command.get().getPorts();
 	}
 }

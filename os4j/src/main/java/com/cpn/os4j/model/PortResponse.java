@@ -4,35 +4,31 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-@JsonInclude(Include.NON_NULL)
 public class PortResponse {
 	
-	Port aPort;
-	List<Port> somePort;
+	Port port;
+	List<Port> ports;
 
 	public Port getPort() {
-		return aPort;
+		return port;
 	}
 
-	public void setPort(final Port aPort) {
-		this.aPort = aPort;
+	public void setPort(final Port port) {
+		this.port = port;
 	}
 
-	public List<Port> getSomePort() {
-		return somePort;
+	public List<Port> getPorts() {
+		return ports;
 	}
 
-	public void setSomePort(final List<Port> somePort) {
-		this.somePort = somePort;
+	public void setPorts(final List<Port> ports) {
+		this.ports = ports;
 	}
 
 	@Override
 	public String toString() {
 		final ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("aPort", aPort).append("somePort", somePort);
+		builder.append("port", port).append("ports", ports);
 		return builder.toString();
 	}
 
