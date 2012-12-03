@@ -8,8 +8,6 @@ import com.cpn.apiomatic.annotation.Documentation;
 import com.cpn.apiomatic.rest.HttpHeaderDelegate;
 import com.cpn.apiomatic.rest.RestCommand;
 import com.cpn.os4j.model.AddRouterResponse;
-import com.cpn.os4j.model.ExternalNetwork;
-import com.cpn.os4j.model.ExternalNetworkResponse;
 import com.cpn.os4j.model.FloatingIpResponse;
 import com.cpn.os4j.model.Floatingip;
 import com.cpn.os4j.model.Network;
@@ -21,7 +19,6 @@ import com.cpn.os4j.model.RouterResponse;
 import com.cpn.os4j.model.Subnet;
 import com.cpn.os4j.model.SubnetResponse;
 import com.cpn.os4j.model.Token;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NetworkEndpoint {
 
@@ -205,13 +202,13 @@ public class NetworkEndpoint {
 		command.setResponseModel(FloatingIpResponse.class);
 		return command.put().getFloatingip();
 	}
-	public void deleteFloatingip(final String anId) {
+	public void deleteFloatingIp(final String anId) {
 		final RestCommand<String, String> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/floatingips/" + anId + ".json");
 		command.delete();
 	}
-	public List<Floatingip> listFloatingips() {
+	public List<Floatingip> listFloatingIps() {
 		final RestCommand<String, FloatingIpResponse> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "v2.0/floatingips.json");

@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import com.cpn.os4j.model.Access;
 import com.cpn.os4j.model.ExternalGatewayInfo;
-import com.cpn.os4j.model.ExternalNetwork;
 import com.cpn.os4j.model.Fixedips;
 import com.cpn.os4j.model.Floatingip;
 import com.cpn.os4j.model.Network;
@@ -30,9 +29,6 @@ public class NetworkEndpointTest {
 	@Before
 	public void init(){
 		creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("admin", "admin_pass"), "admin"));
-		//creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("user_one", "user_one"), "project_one"));
-		//creds = new OpenStackCredentials(new AuthenticationCredentials(new PasswordCredentials("user_one", "dev_user"), "dev_tenant"));
-		//ep = new ServiceCatalog("http://control.dev.intercloud.net:5000", creds);
 		ep = new ServiceCatalog("http://10.1.14.33:5000", creds);
 		access = ep.getAccess();
 		access.localhostHack = true;
@@ -62,19 +58,19 @@ public class NetworkEndpointTest {
 	public void testCreateNetwork() {
 		try {
 			String tenantId = "0c0022b5a0cb4945a7692198ff89ba46";
-			Network netWorkResponse = testCreateNetwork(tenantId);
+			Network netWorkResponse = createNetwork(tenantId);
 			System.out.println("Network created with an Id:"+netWorkResponse.getId());
-			/*Subnet subnetResponse = testCreateSubnet(tenantId, netWorkResponse);
+			Subnet subnetResponse = createSubnet(tenantId, netWorkResponse);
 			System.out.println("Subnet response:"+subnetResponse.getId());
-			Router routerResponse = testCreateRouter(tenantId);
-			String portId = testAddRouterToSubnet(subnetResponse, routerResponse);
-			System.out.println("Add router with portId:"+portId);*/
+			Router routerResponse = createRouter(tenantId);
+			String portId = addRouterToSubnet(subnetResponse, routerResponse);
+			System.out.println("Add router with portId:"+portId);
 		} catch (Exception e) {
 			Assert.fail("Exception occured while creating a network:" + e);
 		}
 	}
 
-	private String testAddRouterToSubnet(Subnet subnetResponse, Router routerResponse) {
+	private String addRouterToSubnet(Subnet subnetResponse, Router routerResponse) {
 		System.out.println("Router response:"+routerResponse.getId());
 		String portId = nep.addRouterToSubnet(routerResponse.getId(), subnetResponse.getId());
 		return portId;
@@ -86,7 +82,7 @@ public class NetworkEndpointTest {
 		System.out.println("PortId:"+portId);
 	}
 
-	private Router testCreateRouter(String tenantId) {
+	private Router createRouter(String tenantId) {
 		Router aRouter = new Router();
 		aRouter.setTenantId(tenantId);
 		aRouter.setName("router_internal_proj2");
@@ -95,7 +91,7 @@ public class NetworkEndpointTest {
 		return routerResponse;
 	}
 
-	private Subnet testCreateSubnet(String tenantId, Network netWorkResponse) {
+	private Subnet createSubnet(String tenantId, Network netWorkResponse) {
 		Subnet aSubnet = new Subnet();
 		aSubnet.setIpVersion(4);
 		aSubnet.setGatewayIp("10.3.24.1");
@@ -107,7 +103,7 @@ public class NetworkEndpointTest {
 		return subnetResponse;
 	}
 
-	private Network testCreateNetwork(String tenantId) {
+	private Network createNetwork(String tenantId) {
 		Network aNetwork = new Network();
 		aNetwork.setName("net_internal_proj1");
 		aNetwork.setShared(false);
@@ -140,15 +136,15 @@ public class NetworkEndpointTest {
 	public void testCreateExtNetwork() throws Exception {
 		try{
 		String tenantId = "0d6f0bf548a645ac950bb630bd7ac17f";
-		Network netWorkResponse = testCreateExtNetwork(tenantId);
+		Network netWorkResponse = createExtNetwork(tenantId);
 		System.out.println("External Network created with an Id:"+netWorkResponse.getId());
-		Subnet subnetResponse = testCreateExtSubnet(tenantId, netWorkResponse);
+		Subnet subnetResponse = createExtSubnet(tenantId, netWorkResponse);
 		System.out.println("Subnet created with an Id:"+subnetResponse.getId());
-		Router routerResponse = testCreateExtRouter(tenantId);
+		Router routerResponse = createExtRouter(tenantId);
 		System.out.println("Router created with an Id:"+routerResponse.getId());
-		Router anExtRouterResponse = testSetExtGateway(netWorkResponse, routerResponse);
+		Router anExtRouterResponse = setExtGateway(netWorkResponse, routerResponse);
 		System.out.println("Set router to external net for router Id:"+anExtRouterResponse.getId());
-		Floatingip aFloatingIpResponse = testCreateFloatingip(tenantId, netWorkResponse);
+		Floatingip aFloatingIpResponse = createFloatingip(tenantId, netWorkResponse);
 		System.out.println("Allocated floating ip:"+aFloatingIpResponse.getId());
 		}catch(Exception e){
 			System.out.println("Exception occured while creating an external network");
@@ -173,7 +169,7 @@ public class NetworkEndpointTest {
 		System.out.println("port created with an id:"+portResponse.getId());
 	}
 
-	private Floatingip testCreateFloatingip(String tenantId, Network netWorkResponse) {
+	private Floatingip createFloatingip(String tenantId, Network netWorkResponse) {
 		Floatingip aFloatingIp = new Floatingip();
 		aFloatingIp.setFloatingNetworkId(netWorkResponse.getId());
 		aFloatingIp.setTenantId(tenantId);
@@ -181,7 +177,7 @@ public class NetworkEndpointTest {
 		return aFloatingIpResponse;
 	}
 
-	private Router testSetExtGateway(Network netWorkResponse, Router routerResponse) {
+	private Router setExtGateway(Network netWorkResponse, Router routerResponse) {
 		ExternalGatewayInfo anExternalGatewayInfo = new ExternalGatewayInfo();
 		anExternalGatewayInfo.setNetworkId(netWorkResponse.getId());
 		Router anExtRouter = new Router();
@@ -200,7 +196,7 @@ public class NetworkEndpointTest {
 		System.out.println("The ext net added to router and generated portId:"+anExtRouterResponse.getId());
 	}
 	
-	private Router testCreateExtRouter(String tenantId) {
+	private Router createExtRouter(String tenantId) {
 		Router aRouter = new Router();
 		aRouter.setTenantId(tenantId);
 		aRouter.setName("router_ext_proj4");
@@ -209,7 +205,7 @@ public class NetworkEndpointTest {
 		return routerResponse;
 	}
 
-	private Subnet testCreateExtSubnet(String tenantId, Network netWorkResponse) {
+	private Subnet createExtSubnet(String tenantId, Network netWorkResponse) {
 		Subnet aSubnet = new Subnet();
 		aSubnet.setIpVersion(4);
 		aSubnet.setGatewayIp("10.3.22.1");
@@ -221,7 +217,7 @@ public class NetworkEndpointTest {
 		return subnetResponse;
 	}
 
-	private Network testCreateExtNetwork(String tenantId) {
+	private Network createExtNetwork(String tenantId) {
 		Network anExtNetwork = new Network();
 		anExtNetwork.setName("net_ext_proj1");
 		anExtNetwork.setAdminStateUp(true);
@@ -240,7 +236,7 @@ public class NetworkEndpointTest {
 			String subnetId = "bc639a4e-041a-49bc-accb-a7b6cbba9170";
 			String routerId = "af6ad42d-9ba4-49b1-b633-47a99c6e1a01";
 			String floatingipId = "72147d3b-469b-4bde-909f-7d03031fa452";
-			nep.deleteFloatingip(floatingipId);
+			nep.deleteFloatingIp(floatingipId);
 			nep.removeRouterToSubnet(routerId, subnetId);
 			nep.deleteRouter(routerId);
 			Subnet SubnetResponse = nep.getSubnet(subnetId);
@@ -271,7 +267,7 @@ public class NetworkEndpointTest {
 	@Test
 	public void testListFloatingips() {
 		try{
-			List<Floatingip> someListFloatingips = nep.listFloatingips();
+			List<Floatingip> someListFloatingips = nep.listFloatingIps();
 			System.out.println("List of floatingips");
 			mapper.writeValue(System.out, someListFloatingips);
 		}catch(Exception e){
