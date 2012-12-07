@@ -25,6 +25,8 @@ public class NetworkEndpoint {
 	String serverUrl;
 	Token token;
 	HttpHeaderDelegate headerDelegate;
+	
+	
 	public NetworkEndpoint(final String aServerUrl, final Token aToken) {
 		super();
 		token = aToken;
@@ -40,6 +42,15 @@ public class NetworkEndpoint {
 		return token.getTenant().getId();
 	}
 	
+	
+	public Token getToken() {
+		return token;
+	}
+
+	public void setToken(Token token) {
+		this.token = token;
+	}
+
 	@Documentation("retrieves the network lists")
 	public List<Network> listNetworks() {
 		final RestCommand<String, NetworkResponse> command = new RestCommand<>();
