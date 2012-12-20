@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+
 public class FlavorsResponse {
 	List<Flavor> flavors;
 
@@ -15,6 +18,8 @@ public class FlavorsResponse {
 		this.flavors = flavors;
 	}
 
+	
+	
 	@Override
 	public String toString() {
 		final ToStringBuilder builder = new ToStringBuilder(this);

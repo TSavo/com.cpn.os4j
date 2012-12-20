@@ -2,8 +2,11 @@ package com.cpn.os4j.model;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Flavor extends AbstractOpenStackModel {
 
 	private static final long serialVersionUID = 1264918407525243722L;
@@ -12,8 +15,8 @@ public class Flavor extends AbstractOpenStackModel {
 	int ram;
 	int disk;
 	int vcpus;
-	@JsonProperty("rxtx_factor")
-	float rxtxFactor;
+//	@JsonProperty("rxtx_factor")
+//	float rxtxFactor;
 	@JsonProperty("OS-FLV-EXT-DATA:ephemeral")
 	int ephemeral;
 	String swap;
@@ -36,10 +39,6 @@ public class Flavor extends AbstractOpenStackModel {
 
 	public int getRam() {
 		return ram;
-	}
-
-	public float getRxtxFactor() {
-		return rxtxFactor;
 	}
 
 	public String getSwap() {
@@ -70,9 +69,6 @@ public class Flavor extends AbstractOpenStackModel {
 		this.ram = ram;
 	}
 
-	public void setRxtxFactor(final float rxtxFactor) {
-		this.rxtxFactor = rxtxFactor;
-	}
 
 	public void setSwap(final String swap) {
 		this.swap = swap;
@@ -82,10 +78,22 @@ public class Flavor extends AbstractOpenStackModel {
 		this.vcpus = vcpus;
 	}
 
+	//TODO:: Remove these
+	@JsonAnySetter
+	public void anySetter(final String aKey, final Object anObject){
+	
+	}
+	
+	@JsonAnyGetter
+	public String anyGetter(final String key){
+		return key;
+	}
+	
+	
 	@Override
 	public String toString() {
 		final ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append("id", id).append("links", links).append("name", name).append("ram", ram).append("disk", disk).append("vcpus", vcpus).append("rxtxFactor", rxtxFactor).append("ephemeral", ephemeral).append("swap", swap);
+		builder.append("id", id).append("links", links).append("name", name).append("ram", ram).append("disk", disk).append("vcpus", vcpus).append("ephemeral", ephemeral).append("swap", swap);
 		return builder.toString();
 	}
 

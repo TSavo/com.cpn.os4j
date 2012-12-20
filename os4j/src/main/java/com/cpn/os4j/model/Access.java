@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.cpn.os4j.ComputeEndpoint;
+import com.cpn.os4j.EssexComputeEndpoint;
 import com.cpn.os4j.NetworkEndpoint;
+import com.cpn.os4j.PlatformEndpointFactory;
 import com.cpn.os4j.VolumeEndpoint;
 import com.cpn.os4j.glance.GlanceEndPoint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,12 +28,12 @@ public class Access {
 				for (final Map<String, String> urls : d.getEndpoints()) {
 					if (urls.get("region").equals(aRegion)) {
 						if (localhostHack) {
-							return new ComputeEndpoint(urls.get(endPointType)
+							return PlatformEndpointFactory.createComputeEndpoint(urls.get(endPointType)
 									.replaceAll("192\\.168\\.31\\.38",
 											"control.dev.intercloud.net"),
 									token);
 						} else {
-							return new ComputeEndpoint(urls.get(endPointType),
+							return PlatformEndpointFactory.createComputeEndpoint(urls.get(endPointType),
 									token);
 						}
 					}
@@ -43,31 +45,6 @@ public class Access {
 						+ " and type: " + endPointType);
 	}
 	
-	@JsonIgnore
-	public ComputeEndpoint getQuantumComputeEndpoint(final String aRegion,
-			final String endPointType) {
-		for (final EndPointDescription d : serviceCatalog) {
-			if (d.getType().equals("compute")) {
-				for (final Map<String, String> urls : d.getEndpoints()) {
-					if (urls.get("region").equals(aRegion)) {
-						if (localhostHack) {
-							return new ComputeEndpoint(urls.get(endPointType)
-									.replaceAll("10\\.1\\.14\\.33",
-											"10.1.14.33"),
-									token);
-						} else {
-							return new ComputeEndpoint(urls.get(endPointType),
-									token);
-						}
-					}
-				}
-			}
-		}
-		throw new RuntimeException(
-				"Couldn't find the ComputeEndpoint for region: " + aRegion
-						+ " and type: " + endPointType);
-	}
-
 	@JsonIgnore
 	public NetworkEndpoint getNetworkEndpoint(final String aRegion,
 			final String endPointType) {

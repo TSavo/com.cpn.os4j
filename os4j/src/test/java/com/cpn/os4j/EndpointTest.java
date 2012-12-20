@@ -1,19 +1,13 @@
 package com.cpn.os4j;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
 
 import com.cpn.os4j.model.Access;
-import com.cpn.os4j.model.Flavor;
-import com.cpn.os4j.model.IPAddress;
-import com.cpn.os4j.model.IPAddressPool;
-import com.cpn.os4j.model.Image;
 import com.cpn.os4j.model.NetworkInterface;
 import com.cpn.os4j.model.Server;
-import com.cpn.os4j.model.Volume;
 
 public class EndpointTest {
 
@@ -62,8 +56,8 @@ public class EndpointTest {
 		NetworkInterface networkInterface2 = new NetworkInterface();
 		networkInterface2.setUuid("201b4517-61bb-4cf3-9672-3d065992b759");
 		networks.add(networkInterface2);
-		ComputeEndpoint cep = access.getQuantumComputeEndpoint("RegionOne", "publicURL");
-		Server serverResponse = cep.createQuantumServer("Test Quantum Server", null, "e2d2d65c-f21b-4e4a-a8fb-05484d11decb", "2", null, null, null, null, 1, 1, networks);
+		ComputeEndpoint cep = access.getComputeEndpoint("RegionOne", "publicURL");
+		Server serverResponse = cep.createServer("Test Quantum Server", null, "e2d2d65c-f21b-4e4a-a8fb-05484d11decb", "2", null, null, null, null, 1, 1, networks);
 		//Server serverResponse = cep.createServer("Test Quantum Server", null, "e2d2d65c-f21b-4e4a-a8fb-05484d11decb", "2", null, null, null, null);
 		System.out.println("The server created with an id:"+serverResponse.getId());
 	}

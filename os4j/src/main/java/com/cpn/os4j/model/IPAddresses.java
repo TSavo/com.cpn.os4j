@@ -2,9 +2,12 @@ package com.cpn.os4j.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class IPAddresses implements Serializable {
@@ -31,6 +34,17 @@ public class IPAddresses implements Serializable {
 		this.publicAddresses = publicAddresses;
 	}
 
+	//TODO:: Remove these
+	@JsonAnySetter
+	public void anySetter(final String aKey, final Object anObject){
+	
+	}
+	
+	@JsonAnyGetter
+	public Map<String, Object> anyGetter(final String key){
+		return null;
+	}
+	
 	@Override
 	public String toString() {
 		final ToStringBuilder builder = new ToStringBuilder(this);

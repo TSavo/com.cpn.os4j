@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.cpn.os4j.ComputeEndpoint;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -303,6 +305,19 @@ public class Server extends AbstractOpenStackModel {
 	public void setVmState(final String vmState) {
 		this.vmState = vmState;
 	}
+	
+	//TODO:: Remove these
+	@JsonAnySetter
+	public void anySetter(final String aKey, final Object anObject){
+	
+	}
+	
+
+	@JsonAnyGetter
+	public Map<String, Object> anyGetter(final String key){
+		return null;
+	}
+	
 
 	@Override
 	public String toString() {
