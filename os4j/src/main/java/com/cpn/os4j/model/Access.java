@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cpn.os4j.ComputeEndpoint;
-import com.cpn.os4j.EssexComputeEndpoint;
 import com.cpn.os4j.NetworkEndpoint;
-import com.cpn.os4j.PlatformEndpointFactory;
 import com.cpn.os4j.VolumeEndpoint;
 import com.cpn.os4j.glance.GlanceEndPoint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,12 +26,12 @@ public class Access {
 				for (final Map<String, String> urls : d.getEndpoints()) {
 					if (urls.get("region").equals(aRegion)) {
 						if (localhostHack) {
-							return PlatformEndpointFactory.createComputeEndpoint(urls.get(endPointType)
+							return new ComputeEndpoint(urls.get(endPointType)
 									.replaceAll("192\\.168\\.31\\.38",
 											"control.dev.intercloud.net"),
 									token);
 						} else {
-							return PlatformEndpointFactory.createComputeEndpoint(urls.get(endPointType),
+							return new ComputeEndpoint(urls.get(endPointType),
 									token);
 						}
 					}

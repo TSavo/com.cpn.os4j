@@ -30,6 +30,7 @@ public class Floatingip
 
     public Floatingip() {
     }
+    
     public String getFloatingNetworkId() {
         return floatingNetworkId;
     }

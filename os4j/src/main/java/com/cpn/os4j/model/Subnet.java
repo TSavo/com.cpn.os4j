@@ -16,7 +16,7 @@ public class Subnet
 
     private String name;
     @JsonProperty("enable_dhcp")
-    private Boolean enableDhcp = Boolean.FALSE;
+    private Boolean enableDhcp ;
     @JsonProperty("network_id")
     private String networkId;
     @JsonProperty("tenant_id")

@@ -26,7 +26,7 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 	Integer minCount;
 	Map<String, String> metadata;
 	List<SerializedFile> personality;
-	List<NetworkInterface> networks;
+	List<Map<String,String>> networks;
 
 	public FullServerConfiguration() {
 	}
@@ -46,11 +46,11 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 		userData = aUserData;
 	}
 	
-	public FullServerConfiguration(final String aName, final IPAddress anIpAddress, final Image anImage, final Flavor aFlavor, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<NetworkInterface> someNetworks) {
+	public FullServerConfiguration(final String aName, final IPAddress anIpAddress, final Image anImage, final Flavor aFlavor, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<Map<String,String>> someNetworks) {
 		this(aName, anIpAddress.getIp(), anImage.getSelfRef(), aFlavor.getSelfRef(), someMetadata, aPersonality, aKeyName, aUserData, aMaxCount, aMinCount, someNetworks);
 	}
 
-	public FullServerConfiguration(final String aName, final String anIpAddress, final String anImageRef, final String aFlavorRef, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<NetworkInterface> someNetworks) {
+	public FullServerConfiguration(final String aName, final String anIpAddress, final String anImageRef, final String aFlavorRef, final Map<String, String> someMetadata, final List<SerializedFile> aPersonality, final String aKeyName, final String aUserData, final Integer aMaxCount, final Integer aMinCount, final List<Map<String,String>> someNetworks) {
 		name = aName;
 		imageRef = anImageRef;
 		flavorRef = aFlavorRef;
@@ -128,12 +128,11 @@ public class FullServerConfiguration implements Serializable, ServerConfiguratio
 		this.minCount = minCount;
 	}
 
-	public List<NetworkInterface> getNetworks() {
+	public List<Map<String,String>> getNetworks() {
 		return networks;
 	}
 
-	public void setNetworks(final List<NetworkInterface> networks) {
+	public void setNetworks(final List<Map<String,String>> networks) {
 		this.networks = networks;
 	}
-
 }

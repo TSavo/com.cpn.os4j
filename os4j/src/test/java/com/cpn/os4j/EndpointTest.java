@@ -49,7 +49,7 @@ public class EndpointTest {
 		ServiceCatalog ep = new ServiceCatalog("http://10.1.14.33:5000", creds);
 		Access access = ep.getAccess();
 		access.localhostHack = true;
-		List<NetworkInterface> networks = new ArrayList<>();
+		/*List<NetworkInterface> networks = new ArrayList<>();
 		NetworkInterface networkInterface1 = new NetworkInterface();
 		networkInterface1.setPort("d8d67542-3136-42c0-909b-bbd048f63f7d");
 		networks.add(networkInterface1);
@@ -59,6 +59,8 @@ public class EndpointTest {
 		ComputeEndpoint cep = access.getComputeEndpoint("RegionOne", "publicURL");
 		Server serverResponse = cep.createServer("Test Quantum Server", null, "e2d2d65c-f21b-4e4a-a8fb-05484d11decb", "2", null, null, null, null, 1, 1, networks);
 		//Server serverResponse = cep.createServer("Test Quantum Server", null, "e2d2d65c-f21b-4e4a-a8fb-05484d11decb", "2", null, null, null, null);
+		 
 		System.out.println("The server created with an id:"+serverResponse.getId());
+		*/
 	}
 }

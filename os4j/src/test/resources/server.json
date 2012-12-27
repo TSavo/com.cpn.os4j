@@ -1,0 +1,67 @@
+{
+    "status": "ACTIVE",
+    "updated": "2012-12-21T00:19:28Z",
+    "hostId": "631adce74dc1e7cbda0691841f70bcfc249473b7c09f63d72922a44a",
+    "addresses": {
+        "net_vsc": [
+            {
+                "version": 4,
+                "addr": "10.32.0.4"
+            }
+        ],
+        "ravi_internal_test1": [
+            {
+                "version": 4,
+                "addr": "20.20.20.20"
+            }
+        ]
+    },
+    "links": [
+        {
+            "href": "http://172.24.254.38:8774/v2/00715a25567d44fe8b9331e5603c8342/servers/c179b68d-5158-40f0-bbb2-29449388c935",
+            "rel": "self"
+        },
+        {
+            "href": "http://172.24.254.38:8774/00715a25567d44fe8b9331e5603c8342/servers/c179b68d-5158-40f0-bbb2-29449388c935",
+            "rel": "bookmark"
+        }
+    ],
+    "key_name": null,
+    "image": {
+        "id": "6645af7e-7991-45de-ad20-716d2eb2f828",
+        "links": [
+            {
+                "href": "http://172.24.254.38:8774/00715a25567d44fe8b9331e5603c8342/images/6645af7e-7991-45de-ad20-716d2eb2f828",
+                "rel": "bookmark"
+            }
+        ]
+    },
+    "OS-EXT-STS:task_state": null,
+    "OS-EXT-STS:vm_state": "active",
+    "flavor": {
+        "id": "7",
+        "links": [
+            {
+                "href": "http://172.24.254.38:8774/00715a25567d44fe8b9331e5603c8342/flavors/7",
+                "rel": "bookmark"
+            }
+        ]
+    },
+    "id": "c179b68d-5158-40f0-bbb2-29449388c935",
+    "security_groups": [
+        {
+            "name": "default"
+        }
+    ],
+    "user_id": "049e0548f9da40c29aa521a329c0fa74",
+    "name": "ravi_port_network",
+    "created": "2012-12-21T00:18:40Z",
+    "tenant_id": "00715a25567d44fe8b9331e5603c8342",
+    "OS-DCF:diskConfig": "MANUAL",
+    "accessIPv4": "",
+    "accessIPv6": "",
+    "progress": 0,
+    "OS-EXT-STS:power_state": 1,
+    "config_drive": "",
+    "metadata": {}
+}

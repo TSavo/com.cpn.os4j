@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.cpn.os4j.model.Access;
 import com.cpn.os4j.model.ExternalGatewayInfo;
-import com.cpn.os4j.model.Fixedips;
+import com.cpn.os4j.model.FixedIp;
 import com.cpn.os4j.model.Floatingip;
 import com.cpn.os4j.model.Network;
 import com.cpn.os4j.model.Port;
@@ -162,10 +162,10 @@ public class NetworkEndpointTest {
 		aPort.setNetworkId("6912c85c-ccee-4872-a3ed-4143dd544ec5");
 		aPort.setAdminStateUp(true);
 		//Subnet subnetResponse = testCreateExtSubnet(tenantId, networkResponse);
-		Fixedips someFixedips = new Fixedips();
+		FixedIp someFixedips = new FixedIp();
 		someFixedips.setIpAddress("20.20.3.20");
 		someFixedips.setSubnetId("3fa19c27-0880-48f7-9c31-8680266cce66");
-		List<Fixedips> ips = new ArrayList<>();
+		List<FixedIp> ips = new ArrayList<>();
 		ips.add(someFixedips);
 		aPort.setFixedIps(ips);
 		Port portResponse = nep.createPort(aPort);

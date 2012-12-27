@@ -3,12 +3,14 @@ package com.cpn.os4j.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
 public class Network
@@ -26,8 +28,8 @@ public class Network
     @JsonProperty("provider:network_type")
     private String networkType;
     @JsonProperty("router:external")
-    private Boolean external=Boolean.FALSE;
-    private Boolean shared=Boolean.FALSE;
+    private Boolean external;
+    private Boolean shared;
     private String id;
     @JsonProperty("provider:segmentation_id")
     private Integer segmentationId;
@@ -94,6 +96,7 @@ public class Network
     public void setExternal(final Boolean anExternal) {
         this.external = anExternal;
     }
+    
     public Boolean getShared() {
         return shared;
     }

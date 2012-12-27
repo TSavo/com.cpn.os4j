@@ -20,7 +20,7 @@ public class Port
     @JsonProperty("network_id")
     private String networkId;
     @JsonProperty("fixed_ips")
-    private List<Fixedips> fixedIps;
+    private List<FixedIp> fixedIps;
     @JsonProperty("admin_state_up")
     private boolean adminStateUp;
     private String id;
@@ -47,11 +47,11 @@ public class Port
         this.networkId = aNetworkId;
     }
 
-    public List<Fixedips> getFixedIps() {
+    public List<FixedIp> getFixedIps() {
         return fixedIps;
     }
 
-    public void setFixedIps(final List<Fixedips> someFixedIps) {
+    public void setFixedIps(final List<FixedIp> someFixedIps) {
         this.fixedIps = someFixedIps;
     }
 
