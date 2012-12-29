@@ -145,7 +145,7 @@ public class NetworkEndpoint {
 		return command.put().getPortId();
 	}
 	
-	public List<String> removeRouterToSubnet(final String aRouterId, final String aSubnetId){
+	public List<String> detachRouterFromSubnet(final String aRouterId, final String aSubnetId){
 		final RestCommand<Map<String, String>, List<String>> command = new RestCommand<>();
 		command.setHeaderDelegate(headerDelegate);
 		command.setUrl(getServerUrl() + "/v2.0/routers/" + aRouterId + "/remove_router_interface.json");
