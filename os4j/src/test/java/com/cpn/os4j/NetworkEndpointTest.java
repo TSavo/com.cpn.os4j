@@ -125,7 +125,7 @@ public class NetworkEndpointTest {
 		try{
 			String routerId = "df16f164-fb42-46cc-9bcf-a74657f54c1e";
 			String subnetId = "f54790fc-46a1-4ed9-9147-c3744852e1a8";
-			nep.removeRouterToSubnet(routerId, subnetId);
+			nep.detachRouterFromSubnet(routerId, subnetId);
 			nep.deleteRouter(routerId);
 			Subnet SubnetResponse = nep.getSubnet(subnetId);
 			nep.deleteSubnet(subnetId);
@@ -240,7 +240,7 @@ public class NetworkEndpointTest {
 			String routerId = "af6ad42d-9ba4-49b1-b633-47a99c6e1a01";
 			String floatingipId = "72147d3b-469b-4bde-909f-7d03031fa452";
 			nep.deleteFloatingIp(floatingipId);
-			nep.removeRouterToSubnet(routerId, subnetId);
+			nep.detachRouterFromSubnet(routerId, subnetId);
 			nep.deleteRouter(routerId);
 			Subnet SubnetResponse = nep.getSubnet(subnetId);
 			nep.deleteSubnet(subnetId);

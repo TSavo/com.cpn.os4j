@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.cpn.os4j.model.Access;
-import com.cpn.os4j.model.NetworkInterface;
 import com.cpn.os4j.model.Server;
 
 public class EndpointTest {
